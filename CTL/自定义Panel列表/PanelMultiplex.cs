@@ -51,6 +51,8 @@ namespace 自定义Panel列表
             set
             {
                 vScrollValue = value;
+                if (value < 0)
+                    vScrollValue = 0;
             }
         }
         #endregion

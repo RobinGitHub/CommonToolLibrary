@@ -61,10 +61,7 @@ namespace 自定义Panel列表
             PanelItem item = new PanelItem();
             item.DataRow = row;
             item.Height = this.panelEx1.MinRowHeight;
-            item.IsSelected = false;
-            item.RowIndex = dt.Rows.IndexOf(row);
             this.panelEx1.Add(item);
-            this.panelEx1.ScrollToCaret();
         }
 
         int updCount = 0;

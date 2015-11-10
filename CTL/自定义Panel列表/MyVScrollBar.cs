@@ -211,12 +211,6 @@ namespace 自定义Panel列表
             {//有时候赋值后没有变过来
                 this.Visible = isVisible;
             }                
-
-            if (this.Visible)
-            {
-                this.BringToFront();
-                this.moControl.SendToBack();
-            }
             customScrollInfo.IsVisible = isVisible;
             customScrollInfo.Offset = offset;
             customScrollInfo.TrackHeight = this.Height;
@@ -243,11 +237,11 @@ namespace 自定义Panel列表
             }
             this.Value = offset;
 
-            if (this.Visible)
-            {
-                this.BringToFront();
-                this.moControl.SendToBack();
-            }
+            //if (this.Visible)
+            //{
+            //    this.BringToFront();
+            //    this.moControl.SendToBack();
+            //}
 
             this.Invalidate();
         }

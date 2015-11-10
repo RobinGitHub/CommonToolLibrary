@@ -316,6 +316,10 @@ namespace 自定义Panel列表
                     };
                     this.AddItem(item);
                 }
+                if (controlList.Count > 0)
+                {
+                    item_MouseClick(controlList.First().Key, null);
+                }
                 this.UpdateScrollbar();
             }
         }
@@ -354,9 +358,12 @@ namespace 自定义Panel列表
 
         public void Add(PanelItem item)
         {
+            item.RowIndex = itemList.Count;
+            item.IsSelected = true;
             AddItem(item);
             this.Refresh(item.RowIndex);
             this.UpdateScrollbar();
+            this.ScrollToCaret();
         }
         #endregion
 
@@ -375,11 +382,6 @@ namespace 自定义Panel列表
 
             controlList.Add(item, item.RowIndex);
             this.pnlContent.Controls.Add(item);
-            if (controlList.Count == 1)
-            {
-                item_MouseClick(item, null);
-            }
-
             item.MouseClick += item_MouseClick;
         }
 
@@ -572,10 +574,10 @@ namespace 自定义Panel列表
             }
             ContentLengthChange();
 
-            if (!myVScrollBar1.Visible && find.Key != null)
-            {
-                ScrollItem(find.Key.RowIndex, find.Key.Height);
-            }
+            //if (!myVScrollBar1.Visible && find.Key != null)
+            //{
+            //    ScrollItem(find.Key.RowIndex, find.Key.Height);
+            //}
         }
         /// <summary>
         /// 给控件赋值
@@ -627,7 +629,9 @@ namespace 自定义Panel列表
             {
                 PanelItem item = itemList.First(t => t.RowIndex == rowIndex);
                 find.Key.DataRow = item.DataRow;
+                find.Key.IsSelected = item.IsSelected;
                 UpdateChildItem(find.Key, null);
+                item_MouseClick(find.Key, null);
             }
         }
         #endregion
@@ -649,7 +653,10 @@ namespace 自定义Panel列表
         /// </summary>
         public void ScrollToCaret()
         {
-            this.pnlContent.VScrollValue = displayRectangleHeight - this.pnlContent.Height;
+            int value = displayRectangleHeight - this.pnlContent.Height;
+            if (value < 0)
+                value = 0;
+            this.pnlContent.VScrollValue = value;
             UpdateScrollbar();
             ScrollItem();
         }
@@ -974,7 +981,7 @@ namespace 自定义Panel列表
                 }
             }
 
-            KeyValuePair<MyControlChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == rowIndex);
+            KeyValuePair<MyControlChild, int> find = controlList.FirstOrDefault(t => t.Value == rowIndex);
             if (find.Key != null)
             {
                 find.Key.IsSelected = true;
