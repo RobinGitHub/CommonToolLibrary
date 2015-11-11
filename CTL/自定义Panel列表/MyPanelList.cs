@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace 自定义Panel列表
 {
-    public partial class UserControl1 : UserControl
+    public partial class MyPanelList : UserControl
     {
         #region 事件
         /// <summary>
@@ -231,7 +231,7 @@ namespace 自定义Panel列表
         #endregion
 
         #region 构造函数
-        public UserControl1()
+        public MyPanelList()
         {
             InitializeComponent();
             base.SetStyle(
@@ -979,5 +979,6 @@ namespace 自定义Panel列表
         #endregion
 
         #endregion
+
     }
 }

@@ -33,7 +33,7 @@
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
-            this.panelEx1 = new 自定义Panel列表.UserControl1();
+            this.panelEx1 = new 自定义Panel列表.MyPanelList();
             this.SuspendLayout();
             // 
             // richTextBox1
@@ -86,12 +86,12 @@
             this.panelEx1.DefaultColor = System.Drawing.Color.White;
             this.panelEx1.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelEx1.FirstDisplayedScrollingRowIndex = 0;
-            this.panelEx1.Location = new System.Drawing.Point(175, 0);
+            this.panelEx1.Location = new System.Drawing.Point(187, 0);
             this.panelEx1.MinRowHeight = 60;
             this.panelEx1.MouseEnterColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(240)))), ((int)(((byte)(193)))));
             this.panelEx1.Name = "panelEx1";
             this.panelEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
-            this.panelEx1.Size = new System.Drawing.Size(312, 313);
+            this.panelEx1.Size = new System.Drawing.Size(300, 313);
             this.panelEx1.TabIndex = 20;
             // 
             // Form1
@@ -118,7 +118,7 @@
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnInit;
-        private UserControl1 panelEx1;
+        private MyPanelList panelEx1;
 
     }
 }

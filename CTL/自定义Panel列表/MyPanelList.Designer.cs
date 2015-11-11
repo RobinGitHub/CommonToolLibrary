@@ -1,6 +1,6 @@
 ﻿namespace 自定义Panel列表
 {
-    partial class PanelEx
+    partial class MyPanelList
     {
         /// <summary> 
         /// 必需的设计器变量。
@@ -28,22 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pnlContent = new 自定义Panel列表.PanelMultiplex();
             this.myVScrollBar1 = new 自定义Panel列表.MyVScrollBar();
+            this.pnlContent = new 自定义Panel列表.PanelMultiplex();
             this.SuspendLayout();
-            // 
-            // pnlContent
-            // 
-            this.pnlContent.DisplayRectangleHeight = 0;
-            this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlContent.LargeChange = 0;
-            this.pnlContent.Location = new System.Drawing.Point(0, 0);
-            this.pnlContent.Name = "pnlContent";
-            this.pnlContent.RowHeight = 0;
-            this.pnlContent.Size = new System.Drawing.Size(292, 200);
-            this.pnlContent.SmallChange = 0;
-            this.pnlContent.TabIndex = 1;
-            this.pnlContent.VScrollValue = 0;
             // 
             // myVScrollBar1
             // 
@@ -59,14 +46,26 @@
             this.myVScrollBar1.Value = 0;
             this.myVScrollBar1.Visible = false;
             // 
-            // PanelEx
+            // pnlContent
+            // 
+            this.pnlContent.DisplayRectangleHeight = 0;
+            this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlContent.LargeChange = 0;
+            this.pnlContent.Location = new System.Drawing.Point(0, 0);
+            this.pnlContent.Name = "pnlContent";
+            this.pnlContent.RowHeight = 0;
+            this.pnlContent.Size = new System.Drawing.Size(292, 200);
+            this.pnlContent.SmallChange = 0;
+            this.pnlContent.TabIndex = 1;
+            this.pnlContent.VScrollValue = 0;
+            // 
+            // MyPanelList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pnlContent);
             this.Controls.Add(this.myVScrollBar1);
-            this.DoubleBuffered = true;
-            this.Name = "PanelEx";
+            this.Name = "MyPanelList";
             this.Size = new System.Drawing.Size(300, 200);
             this.ResumeLayout(false);
 
