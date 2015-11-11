@@ -7,20 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-/* 添加
- * 修改
- * 删除
- * 清空
- * 返回选中项
- * 是否允许多选
- * 返回选中项（集合）
- * 设置鼠标停留 默认背景 选中背景色
- * 
- */
-
 namespace 自定义Panel列表
 {
-    public partial class PanelEx : UserControl
+    public partial class UserControl1 : UserControl
     {
         #region 事件
         /// <summary>
@@ -34,15 +23,15 @@ namespace 自定义Panel列表
         /// <summary>
         /// 设置行模版
         /// </summary>
-        public event ItemTemplateDelegate SetItemTemplate = null;
+        public event ItemTemplateDelegate SetItemTemplate;
         /// <summary>
         /// 选中发生变化
         /// </summary>
-        public event SelectionChangedDeletegate SelectionChanged = null;
+        public event SelectionChangedDeletegate SelectionChanged;
         /// <summary>
         /// 更新内容
         /// </summary>
-        public event EventHandler UpdateChildItem = null;
+        public event EventHandler UpdateChildItem;
         #endregion
 
         #region 私有属性
@@ -88,11 +77,6 @@ namespace 自定义Panel列表
         /// 最小行高
         /// </summary>
         private int minRowHeight = 60;
-
-        /// <summary>
-        /// 是否允许快捷键
-        /// </summary>
-        private bool allowShortCut = true;
         #endregion
 
         #region 公布属性
@@ -169,6 +153,7 @@ namespace 自定义Panel列表
         /// </summary>
         /// <param name="rowIndex"></param>
         /// <returns></returns>
+        [Browsable(false)]
         public PanelItem this[int rowIndex]
         {
             get
@@ -194,21 +179,11 @@ namespace 自定义Panel列表
         }
         #endregion
 
-        #region 是否允许快捷键
-        /// <summary>
-        /// 是否允许快捷键
-        /// </summary>
-        public bool AllowShortCut
-        {
-            get { return allowShortCut; }
-            set { allowShortCut = value; }
-        }
-        #endregion
-
         #region 获取或设置当前滚动条，滚动到第几行
         /// <summary>
         /// 获取或设置当前滚动条，滚动到第几行
         /// </summary>
+        [Browsable(false)]
         public int FirstDisplayedScrollingRowIndex
         {
             get
@@ -250,13 +225,13 @@ namespace 自定义Panel列表
                 UpdateScrollbar();
                 ScrollItem();
             }
-        } 
+        }
         #endregion
 
         #endregion
 
         #region 构造函数
-        public PanelEx()
+        public UserControl1()
         {
             InitializeComponent();
             base.SetStyle(
@@ -273,9 +248,7 @@ namespace 自定义Panel列表
             this.myVScrollBar1.BindControl = this.pnlContent;
             this.myVScrollBar1.Scroll += myVScrollBar1_Scroll;
             this.SizeChanged += PanelEx_SizeChanged;
-
-        }
-
+        } 
         #endregion
 
         #region 公共方法
@@ -361,9 +334,9 @@ namespace 自定义Panel列表
             item.RowIndex = itemList.Count;
             item.IsSelected = true;
             AddItem(item);
-            this.Refresh(item.RowIndex);
             this.UpdateScrollbar();
             this.ScrollToCaret();
+            this.Refresh(item.RowIndex);
         }
         #endregion
 
@@ -546,26 +519,28 @@ namespace 自定义Panel列表
                     //controlCount -= 1;
                 }
 
-
-                for (int i = rowIndex + 1; i < indexArr.Count(); i++)
-                {//更新控件的索引
-                    MyControlChild tmpChildItem = controlList.FirstOrDefault(t => t.Value == i).Key;
-                    if (tmpChildItem != null)
-                    {
-                        tmpChildItem.RowIndex = i - 1;
-                        controlList[tmpChildItem] = tmpChildItem.RowIndex;
+                foreach (int tmpIndex in indexArr)
+                {
+                    if (tmpIndex > rowIndex)
+                    { //更新控件的索引
+                        MyControlChild tmpChildItem = controlList.FirstOrDefault(t => t.Value == tmpIndex).Key;
+                        if (tmpChildItem != null)
+                        {
+                            tmpChildItem.RowIndex = tmpIndex - 1;
+                            controlList[tmpChildItem] = tmpChildItem.RowIndex;
+                        }
                     }
                 }
 
                 //默认选中删除的下一个，下面没有，选中上面一个
-                KeyValuePair<MyControlChild, int> nextChildItem = controlList.FirstOrDefault(t => t.Value == rowIndex);
+                KeyValuePair<MyControlChild, int> nextChildItem = controlList.FirstOrDefault(t => t.Key.RowIndex == rowIndex);
                 if (nextChildItem.Key != null)
                 {
                     item_MouseClick(nextChildItem.Key, null);
                 }
                 else
                 {
-                    KeyValuePair<MyControlChild, int> prevChildItem = controlList.FirstOrDefault(t => t.Value == rowIndex - 1);
+                    KeyValuePair<MyControlChild, int> prevChildItem = controlList.FirstOrDefault(t => t.Key.RowIndex == rowIndex - 1);
                     if (prevChildItem.Key != null)
                     {
                         item_MouseClick(prevChildItem.Key, null);
@@ -687,153 +662,149 @@ namespace 自定义Panel列表
         #region 处理快捷键 ProcessCmdKey
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (allowShortCut)
+            switch (keyData)
             {
-                switch (keyData)
-                {
-                    #region Up
-                    case Keys.Up://向上滚动
-                        //清除所有选中项，选中Focus=true的上一个
-                        if (itemList[0].IsFocus)
+                #region Up
+                case Keys.Up://向上滚动
+                    //清除所有选中项，选中Focus=true的上一个
+                    if (itemList[0].IsFocus)
+                    {
+                        this.myVScrollBar1.Value = 0;
+                        this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                        ScrollItem();
+                        return true;
+                    }
+
+                    //找到最后一次点击的控件
+                    PanelItem tmpItem = null;
+                    foreach (PanelItem pnlItem in itemList)
+                    {
+                        if (pnlItem.IsFocus)
                         {
-                            this.myVScrollBar1.Value = 0;
-                            this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                            tmpItem = pnlItem;
+                            break;
+                        }
+                    }
+                    if (tmpItem != null)
+                    {
+                        ClearSelectedItem(tmpItem.RowIndex - 1);
+
+                        KeyValuePair<MyControlChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == tmpItem.RowIndex - 1);
+                        if (find.Key == null || find.Key.Top < 0 || find.Key.Top > this.Height)
+                        {
+                            //这里要直接计算Value 的位置
+                            int firstRowIndex = 0;
+                            int firstRowTop = 0;
+                            for (int i = itemList.Count - 1; i >= 0; i--)
+                            {
+                                firstRowTop += itemList[i].Height;
+                                if (this.pnlContent.Height - firstRowTop < 0)
+                                {
+                                    firstRowIndex = i;
+                                    break;
+                                }
+                            }
+                            if (firstRowIndex < tmpItem.RowIndex - 1)
+                            { //重新计算滚动条的Value
+                                int displayRowCount = this.Height / this.minRowHeight;
+                                this.myVScrollBar1.Value = (tmpItem.RowIndex - displayRowCount - 1) * tmpItem.Height + ((displayRowCount + 1) * tmpItem.Height - this.Height);
+                                this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                            }
+                            else
+                            {
+                                this.myVScrollBar1.Value = (tmpItem.RowIndex - 1) * tmpItem.Height;
+                                this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                            }
                             ScrollItem();
-                            return true;
-                        }
 
-                        //找到最后一次点击的控件
-                        PanelItem tmpItem = null;
-                        foreach (PanelItem pnlItem in itemList)
-                        {
-                            if (pnlItem.IsFocus)
-                            {
-                                tmpItem = pnlItem;
-                                break;
-                            }
-                        }
-                        if (tmpItem != null)
-                        {
-                            ClearSelectedItem(tmpItem.RowIndex - 1);
-
-                            KeyValuePair<MyControlChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == tmpItem.RowIndex - 1);
-                            if (find.Key == null || find.Key.Top < 0 || find.Key.Top > this.Height)
-                            {
-                                //这里要直接计算Value 的位置
-                                int firstRowIndex = 0;
-                                int firstRowTop = 0;
-                                for (int i = itemList.Count - 1; i >= 0; i--)
-                                {
-                                    firstRowTop += itemList[i].Height;
-                                    if (this.pnlContent.Height - firstRowTop < 0)
-                                    {
-                                        firstRowIndex = i;
-                                        break;
-                                    }
-                                }
-                                if (firstRowIndex < tmpItem.RowIndex - 1)
-                                { //重新计算滚动条的Value
-                                    int displayRowCount = this.Height / this.minRowHeight;
-                                    this.myVScrollBar1.Value = (tmpItem.RowIndex - displayRowCount - 1) * tmpItem.Height + ((displayRowCount + 1) * tmpItem.Height - this.Height);
-                                    this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
-                                }
-                                else
-                                {
-                                    this.myVScrollBar1.Value = (tmpItem.RowIndex - 1) * tmpItem.Height;
-                                    this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
-                                }
-                                ScrollItem();
-
-                                if (SelectionChanged != null)
-                                    SelectionChanged(tmpItem);
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    #region Down
-                    case Keys.Down://向下滚动
-                        if (itemList[itemList.Count - 1].IsFocus)
-                        {
-                            this.myVScrollBar1.Value = displayRectangleHeight - this.pnlContent.Height;
-                            this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
-                            ScrollItem();
-                            return true;
-                        }
-
-                        //找到最后一次点击的控件
-                        tmpItem = null;
-                        foreach (PanelItem pnlItem in itemList)
-                        {
-                            if (pnlItem.IsFocus)
-                            {
-                                tmpItem = pnlItem;
-                                break;
-                            }
-                        }
-                        if (tmpItem != null)
-                        {
-                            ClearSelectedItem(tmpItem.RowIndex + 1);
-                            KeyValuePair<MyControlChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == tmpItem.RowIndex + 1);
-                            if (find.Key == null || find.Key.Top < 0 || find.Key.Top + tmpItem.Height > this.Height)
-                            {
-                                int[] indexArr = controlList.Values.OrderBy(t => t).ToArray();
-                                int firstRowIndex = 0;
-                                int firstRowTop = 0;
-                                for (int i = itemList.Count - 1; i >= 0; i--)
-                                {
-                                    firstRowTop += itemList[i].Height;
-                                    if (this.pnlContent.Height - firstRowTop < 0)
-                                    {
-                                        firstRowIndex = i;
-                                        break;
-                                    }
-                                }
-                                if (firstRowIndex < tmpItem.RowIndex - 1)//这里判断 在选中项不再控件范围内滚动有问题？？？？
-                                { //重新计算滚动条的Value
-                                    int displayRowCount = this.Height / this.minRowHeight;
-                                    this.myVScrollBar1.Value = (tmpItem.RowIndex - displayRowCount + 1) * tmpItem.Height + ((displayRowCount + 1) * tmpItem.Height - this.Height);
-                                    this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
-                                }
-                                else if (find.Key != null && find.Key.Top + tmpItem.Height > this.Height)
-                                {//为了完全显示内容
-                                    this.myVScrollBar1.Value += find.Key.Top + tmpItem.Height - this.Height;//加上隐藏的部分
-                                    this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
-                                }
-                                else
-                                {
-                                    this.myVScrollBar1.Value = (tmpItem.RowIndex + 1) * tmpItem.Height;
-                                    this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
-                                }
-
-
-                                ScrollItem();
-                            }
                             if (SelectionChanged != null)
                                 SelectionChanged(tmpItem);
                         }
-                        break;
-                    #endregion
+                    }
+                    break;
+                #endregion
 
-                    #region Control + A
-                    case Keys.Control | Keys.A://全选
-                        if (multiSelect)
+                #region Down
+                case Keys.Down://向下滚动
+                    if (itemList[itemList.Count - 1].IsFocus)
+                    {
+                        this.myVScrollBar1.Value = displayRectangleHeight - this.pnlContent.Height;
+                        this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                        ScrollItem();
+                        return true;
+                    }
+
+                    //找到最后一次点击的控件
+                    tmpItem = null;
+                    foreach (PanelItem pnlItem in itemList)
+                    {
+                        if (pnlItem.IsFocus)
                         {
-                            foreach (var item in controlList)
-                            {
-                                if (!item.Key.IsSelected)
-                                    item.Key.IsSelected = true;
-                            }
-                            foreach (var item in itemList)
-                            {
-                                if (!item.IsSelected)
-                                    item.IsSelected = true;
-                            }
+                            tmpItem = pnlItem;
+                            break;
                         }
-                        break;
-                    #endregion
-                }
-                return true;
+                    }
+                    if (tmpItem != null)
+                    {
+                        ClearSelectedItem(tmpItem.RowIndex + 1);
+                        KeyValuePair<MyControlChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == tmpItem.RowIndex + 1);
+                        if (find.Key == null || find.Key.Top < 0 || find.Key.Top + tmpItem.Height > this.Height)
+                        {
+                            int[] indexArr = controlList.Values.OrderBy(t => t).ToArray();
+                            int firstRowIndex = 0;
+                            int firstRowTop = 0;
+                            for (int i = itemList.Count - 1; i >= 0; i--)
+                            {
+                                firstRowTop += itemList[i].Height;
+                                if (this.pnlContent.Height - firstRowTop < 0)
+                                {
+                                    firstRowIndex = i;
+                                    break;
+                                }
+                            }
+                            if (firstRowIndex < tmpItem.RowIndex - 1)//这里判断 在选中项不再控件范围内滚动有问题？？？？
+                            { //重新计算滚动条的Value
+                                int displayRowCount = this.Height / this.minRowHeight;
+                                this.myVScrollBar1.Value = (tmpItem.RowIndex - displayRowCount + 1) * tmpItem.Height + ((displayRowCount + 1) * tmpItem.Height - this.Height);
+                                this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                            }
+                            else if (find.Key != null && find.Key.Top + tmpItem.Height > this.Height)
+                            {//为了完全显示内容
+                                this.myVScrollBar1.Value += find.Key.Top + tmpItem.Height - this.Height;//加上隐藏的部分
+                                this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                            }
+                            else
+                            {
+                                this.myVScrollBar1.Value = (tmpItem.RowIndex + 1) * tmpItem.Height;
+                                this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                            }
+
+
+                            ScrollItem();
+                        }
+                        if (SelectionChanged != null)
+                            SelectionChanged(tmpItem);
+                    }
+                    break;
+                #endregion
+
+                #region Control + A
+                case Keys.Control | Keys.A://全选
+                    if (multiSelect)
+                    {
+                        foreach (var item in controlList)
+                        {
+                            if (!item.Key.IsSelected)
+                                item.Key.IsSelected = true;
+                        }
+                        foreach (var item in itemList)
+                        {
+                            if (!item.IsSelected)
+                                item.IsSelected = true;
+                        }
+                    }
+                    break;
+                #endregion
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
@@ -850,8 +821,18 @@ namespace 自定义Panel列表
         private void ScrollItem()
         {
             int startIndex = myVScrollBar1.Value / this.minRowHeight;
-            int tmpStart = startIndex;
             int endIndex = startIndex + controlList.Count - 1;
+            if (controlList.Count < maxControlCount)
+            {//当控件内容个数小于最大个数时，不需要调整行索引
+                startIndex = 0;
+                endIndex = controlList.Count - 1;
+            }
+            else if (endIndex > itemList.Count)
+            {//当endIndex > itemList.Count 即endIndex超过内容行数
+                endIndex = itemList.Count - 1;
+                startIndex = endIndex - (controlList.Count - 1);
+            }
+            int tmpStart = startIndex;
 
             int[] indexArr = controlList.Values.ToArray();
             for (int i = 0; i < indexArr.Length; i++)
@@ -917,7 +898,8 @@ namespace 自定义Panel列表
                     }
                 }
                 int[] indexArr = controlList.Values.OrderBy(t => t).ToArray();
-                if (firstRowIndex <= indexArr[0])
+                int displayCount = this.Height / this.minRowHeight;
+                if (firstRowIndex <= (indexArr[indexArr.Count() - 1] - displayCount))
                 { //重新计算滚动条的Value
                     int tmpValue = displayRectangleHeight - this.pnlContent.Height;
                     if (tmpValue < 0)
@@ -997,6 +979,5 @@ namespace 自定义Panel列表
         #endregion
 
         #endregion
-
     }
 }

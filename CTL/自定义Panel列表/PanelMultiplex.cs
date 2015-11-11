@@ -46,12 +46,14 @@ namespace 自定义Panel列表
         {
             get
             {
+                if (!VScrollVisible)
+                    vScrollValue = 0;
                 return vScrollValue;
             }
             set
             {
                 vScrollValue = value;
-                if (value < 0)
+                if (value < 0 || !VScrollVisible)
                     vScrollValue = 0;
             }
         }

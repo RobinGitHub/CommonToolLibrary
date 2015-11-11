@@ -44,6 +44,8 @@ namespace 自定义Panel列表
             //}
 
             //this.panelEx1.UpdateScrollbar();
+
+
             DateTime startDate = DateTime.Now;
             richTextBox1.AppendText(startDate.ToString() + "\n");
             this.panelEx1.DataSource = dt.Copy();
@@ -53,27 +55,27 @@ namespace 自定义Panel列表
         int count = 0;
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            count++;
             DataRow row = dt.NewRow();
             row[0] = "新" + count;
             dt.Rows.Add(row);
 
             PanelItem item = new PanelItem();
             item.DataRow = row;
-            item.Height = this.panelEx1.MinRowHeight;
+            //item.Height = this.panelEx1.MinRowHeight;
             this.panelEx1.Add(item);
+            count++;
         }
 
         int updCount = 0;
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            updCount++;
             List<PanelItem> selectedItems = this.panelEx1.SelectedItems();
             foreach (PanelItem item in selectedItems)
             {
                 item.DataRow[0] = "更新" + updCount.ToString();
-                this.panelEx1.Refresh(item.RowIndex);
+                //this.panelEx1.Refresh(item.RowIndex);
             }
+            updCount++;
         }
 
         private void btnDel_Click(object sender, EventArgs e)
@@ -103,7 +105,6 @@ namespace 自定义Panel列表
         }
         void panelEx1_SelectionChanged(PanelItem item)
         {
-            //richTextBox1.ScrollToCaret();
         }
 
         private DataTable DataSource()
@@ -112,7 +113,7 @@ namespace 自定义Panel列表
             dt.Columns.Add("Title");
             dt.Columns.Add("Desc");
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 7; i++)
             {
                 DataRow row = dt.NewRow();
                 row[0] = "测试" + i.ToString();
