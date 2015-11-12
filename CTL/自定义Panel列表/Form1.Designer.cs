@@ -33,9 +33,9 @@
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
-            this.panelEx1 = new 自定义Panel列表.MyPanelList();
             this.label1 = new System.Windows.Forms.Label();
             this.txtRowCount = new System.Windows.Forms.TextBox();
+            this.panelEx1 = new 自定义Panel列表.MyPanelList();
             this.SuspendLayout();
             // 
             // richTextBox1
@@ -82,6 +82,23 @@
             this.btnInit.Text = "初始化";
             this.btnInit.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 12);
+            this.label1.TabIndex = 21;
+            this.label1.Text = "行：";
+            // 
+            // txtRowCount
+            // 
+            this.txtRowCount.Location = new System.Drawing.Point(47, 8);
+            this.txtRowCount.Name = "txtRowCount";
+            this.txtRowCount.Size = new System.Drawing.Size(122, 21);
+            this.txtRowCount.TabIndex = 22;
+            this.txtRowCount.Text = "200";
+            // 
             // panelEx1
             // 
             this.panelEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -98,23 +115,6 @@
             this.panelEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
             this.panelEx1.Size = new System.Drawing.Size(300, 313);
             this.panelEx1.TabIndex = 20;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 12);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "行：";
-            // 
-            // txtRowCount
-            // 
-            this.txtRowCount.Location = new System.Drawing.Point(47, 8);
-            this.txtRowCount.Name = "txtRowCount";
-            this.txtRowCount.Size = new System.Drawing.Size(122, 21);
-            this.txtRowCount.TabIndex = 22;
-            this.txtRowCount.Text = "20";
             // 
             // Form1
             // 
