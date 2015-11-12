@@ -528,9 +528,6 @@ namespace 自定义Panel列表
             }
             int startIndex = rowIndexList[0];
             //更新索引
-            int selIndex = 0;
-            //判断是否已经有选中项
-            bool isHasFocus = false;
             foreach (PanelItem item in itemList)
             {
                 if (item.RowIndex > rowIndexList[0])
@@ -538,22 +535,27 @@ namespace 自定义Panel列表
                     item.RowIndex = startIndex;
                     startIndex++;
                 }
-                if (!isHasFocus && focusItem != null && focusItem.RowIndex == item.RowIndex)
+            }
+            //设置选中项
+            if (focusItem != null)
+            {
+                PanelItem find = itemList.FirstOrDefault(t => t.RowIndex == focusItem.RowIndex);
+                if (find != null)
                 {
-                    item.IsSelected = true;
-                    item.IsFocus = true;
-                    selIndex = item.RowIndex;
-                    isHasFocus = true;
+                    find.IsSelected = true;
+                    find.IsFocus = true;
                 }
-                else if (!isHasFocus && focusItem != null && focusItem.RowIndex - 1 == item.RowIndex)
+                else
                 {
-                    item.IsSelected = true;
-                    item.IsFocus = true;
-                    selIndex = item.RowIndex;
-                    isHasFocus = true;
+                    find = itemList.FirstOrDefault(t => t.RowIndex == focusItem.RowIndex - 1);
+                    if (find != null)
+                    {
+                        find.IsSelected = true;
+                        find.IsFocus = true;
+                    }
                 }
             }
-            var t1 = itemList.Where(t => t.IsSelected).ToList();
+
             #endregion
 
             //重新给控件赋值
@@ -594,6 +596,7 @@ namespace 自定义Panel列表
 
             //重新定位，设置选中项
             //FirstDisplayedScrollingRowIndex = selIndex;
+            UpdateScrollbar();
             ContentLengthChange();
         }
 
