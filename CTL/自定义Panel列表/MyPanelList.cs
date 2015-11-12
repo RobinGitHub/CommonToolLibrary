@@ -252,8 +252,9 @@ namespace 自定义Panel列表
             base.UpdateStyles();
             this.BackColor = Color.White;
 
-            this.pnlContent.LargeChange = 30;
-            this.pnlContent.SmallChange = 15;
+            this.pnlContent.LargeChange = 50;
+            //控制滚动条滚动速度
+            this.pnlContent.SmallChange = 30;
 
             this.myVScrollBar1.BindControl = this.pnlContent;
             this.myVScrollBar1.Scroll += myVScrollBar1_Scroll;
@@ -759,6 +760,7 @@ namespace 自定义Panel列表
             {
                 #region Up
                 case Keys.Up://向上滚动
+                    isActiveMouseEvent = false;
                     //清除所有选中项，选中Focus=true的上一个
                     if (itemList[0].IsFocus)
                     {
@@ -818,6 +820,7 @@ namespace 自定义Panel列表
 
                 #region Down
                 case Keys.Down://向下滚动
+                    isActiveMouseEvent = false;
                     if (itemList[itemList.Count - 1].IsFocus)
                     {
                         this.myVScrollBar1.Value = displayRectangleHeight - this.pnlContent.Height;
