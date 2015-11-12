@@ -9,13 +9,13 @@ using System.Windows.Forms;
 
 namespace 自定义Panel列表
 {
-    public partial class WorkBench : MyControlChild
+    public partial class WorkBench : MyPanelChild
     {
         public WorkBench()
         {
             InitializeComponent();
         }
-        
+
         #region 刷新数据
         /// <summary>
         /// 刷新数据
@@ -32,7 +32,7 @@ namespace 自定义Panel列表
                 label6.Text = base.DataRow[0].ToString();
 
             }
-        } 
+        }
         #endregion
     }
 }

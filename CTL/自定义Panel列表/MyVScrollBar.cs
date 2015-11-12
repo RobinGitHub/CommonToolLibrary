@@ -59,6 +59,7 @@ namespace 自定义Panel列表
         /// 要绑定的控件
         /// </summary>
         Control moControl = null;
+
         #endregion
 
         #region 事件

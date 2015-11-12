@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace 自定义Panel列表
 {
-    public partial class MyControlChild : UserControl
+    public partial class MyPanelChild : UserControl
     {
         #region 私有属性
         /// <summary>
@@ -101,7 +101,7 @@ namespace 自定义Panel列表
         #endregion
 
         #region 构造函数
-        public MyControlChild()
+        public MyPanelChild()
         {
             InitializeComponent();
             base.SetStyle(
@@ -114,8 +114,7 @@ namespace 自定义Panel列表
             this.MouseClick += MyControlChild_MouseClick;
             this.MouseEnter += MyControlChild_MouseEnter;
             this.MouseLeave += MyControlChild_MouseLeave;
-        }
-
+        } 
         #endregion
 
         #region 鼠标事件

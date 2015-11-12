@@ -95,7 +95,7 @@ namespace 自定义Panel列表
             WorkBench item = sender as WorkBench;
             item.RefreshData();
         }
-        MyControlChild panelEx1_SetItemTemplate(PanelItem item, int scrollValue)
+        MyPanelChild panelEx1_SetItemTemplate(PanelItem item, int scrollValue)
         {
             WorkBench pnl = new WorkBench();
             pnl.Height = this.panelEx1.MinRowHeight;
