@@ -67,10 +67,6 @@ namespace 自定义Panel列表
         /// 内容显示的高度
         /// </summary>
         private int displayRectangleHeight = 0;
-        /// <summary>
-        /// 内容显示的高度的偏差值，为了整行显示控件，每次窗体变化时要进行调整
-        /// </summary>
-        private int displayRectangleHeightOffset = 0;
 
         ///// <summary>
         ///// 控件绑定的个数
@@ -701,8 +697,6 @@ namespace 自定义Panel列表
         /// <param name="e"></param>
         void PanelEx_SizeChanged(object sender, EventArgs e)
         {
-            //int tmpOffset = this.Height - this.Height / this.minRowHeight * this.minRowHeight;
-            //displayRectangleHeightOffset = displayRectangleHeight - tmpOffset;
             ContentLengthChange();
         }
         #endregion
@@ -710,6 +704,14 @@ namespace 自定义Panel列表
         #region 滚动条滚动事件
         void myVScrollBar1_Scroll(object sender, EventArgs e)
         {
+            //Thread t = new Thread(() =>
+            //{
+            //    this.Invoke((MethodInvoker)delegate 
+            //    {
+            //        ScrollItem(this.myVScrollBar1.IsMoveUp);
+            //    });                                
+            //});
+            //t.Start();
             ScrollItem(this.myVScrollBar1.IsMoveUp);
         }
         #endregion
@@ -967,19 +969,29 @@ namespace 自定义Panel列表
                 }
                 //每次尽可能显示整行
                 int tmpTop = childItem.RowIndex * childItem.Height - myVScrollBar1.Value;
-                if (tmpTop < 0)
-                {
-                    tmpTop = -(tmpTop / this.minRowHeight + 1) * this.minRowHeight;
-                }
-                else
-                {
-                    tmpTop = tmpTop / this.minRowHeight * this.minRowHeight;
-                }
-                //int displayCount = this.Height / this.minRowHeight;
-                //if (isUp != null && !isUp.Value) //&& childItem.RowIndex > itemList.Count - controlList.Count
+                //int tmpOffset = this.Height - this.Height / this.minRowHeight * this.minRowHeight;
+                //if (isUp != null && isUp.Value)
                 //{
-                //    int tmpOffset = this.Height - this.Height / this.minRowHeight * this.minRowHeight;
-                //    tmpTop += tmpOffset;//计算偏差值
+                //    if (tmpTop < 0)
+                //    {
+                //        tmpTop = (tmpTop / this.minRowHeight - 1) * this.minRowHeight;
+                //    }
+                //    else
+                //    {
+                //        tmpTop = tmpTop / this.minRowHeight * this.minRowHeight;                    
+                //    }                   
+                //}
+                //else if (isUp != null && !isUp.Value)
+                //{
+                //    if (tmpTop < 0)
+                //    {
+                //        tmpTop = (tmpTop / this.minRowHeight - 1) * this.minRowHeight;
+                //    }
+                //    else
+                //    {
+                //        tmpTop = tmpTop / this.minRowHeight * this.minRowHeight;
+                //    }
+                //    tmpTop += tmpOffset;
                 //}
                 childItem.Top = tmpTop;
             }
