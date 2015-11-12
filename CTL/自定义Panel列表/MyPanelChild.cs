@@ -114,7 +114,7 @@ namespace 自定义Panel列表
             this.MouseClick += MyControlChild_MouseClick;
             this.MouseEnter += MyControlChild_MouseEnter;
             this.MouseLeave += MyControlChild_MouseLeave;
-        } 
+        }
         #endregion
 
         #region 鼠标事件
