@@ -545,21 +545,29 @@ namespace 自定义Panel列表
                 #endregion
             }
             //设置选中项
-            if (focusItem != null)
+            if (focusItem != null && itemList.Count > 0)
             {
-                PanelItem find = itemList.FirstOrDefault(t => t.RowIndex == focusItem.RowIndex + 1);
-                if (find != null)
+                bool isFind = false;
+                foreach (PanelItem item in itemList)
                 {
-                    find.IsSelected = true;
-                    find.IsFocus = true;
-                }
-                else
-                {
-                    find = itemList.FirstOrDefault(t => t.RowIndex == focusItem.RowIndex - 1);
-                    if (find != null)
+                    if (item.RowIndex == focusItem.RowIndex + 1)
                     {
-                        find.IsSelected = true;
-                        find.IsFocus = true;
+                        item.IsSelected = true;
+                        item.IsFocus = true;
+                        isFind = true;
+                        break;
+                    }
+                }
+                if (!isFind)
+                {
+                    foreach (PanelItem item in itemList)
+                    {
+                        if (item.RowIndex == focusItem.RowIndex - 1)
+                        {
+                            item.IsSelected = true;
+                            item.IsFocus = true;
+                            break;
+                        }
                     }
                 }
             }
