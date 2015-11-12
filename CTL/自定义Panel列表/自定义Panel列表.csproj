@@ -88,6 +88,9 @@
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MyPanelChild.resx">
+      <DependentUpon>MyPanelChild.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WorkBench.resx">
       <DependentUpon>WorkBench.cs</DependentUpon>
     </EmbeddedResource>
