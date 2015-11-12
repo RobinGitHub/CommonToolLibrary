@@ -48,7 +48,7 @@ namespace 自定义Panel列表
 
             DateTime startDate = DateTime.Now;
             richTextBox1.AppendText(startDate.ToString() + "\n");
-            this.panelEx1.DataSource = dt.Copy();
+            this.panelEx1.DataSource = DataSource();
             richTextBox1.AppendText((DateTime.Now - startDate).TotalMilliseconds.ToString() + "\n");
         }
 
@@ -61,7 +61,7 @@ namespace 自定义Panel列表
 
             PanelItem item = new PanelItem();
             item.DataRow = row;
-            //item.Height = this.panelEx1.MinRowHeight;
+            item.Height = this.panelEx1.MinRowHeight;
             this.panelEx1.Add(item);
             count++;
         }
@@ -73,7 +73,7 @@ namespace 自定义Panel列表
             foreach (PanelItem item in selectedItems)
             {
                 item.DataRow[0] = "更新" + updCount.ToString();
-                //this.panelEx1.Refresh(item.RowIndex);
+                this.panelEx1.Refresh(item.RowIndex);
             }
             updCount++;
         }
@@ -81,11 +81,13 @@ namespace 自定义Panel列表
         private void btnDel_Click(object sender, EventArgs e)
         {
             List<PanelItem> selectedItems = this.panelEx1.SelectedItems();
-            foreach (PanelItem item in selectedItems)
-            {
-                this.panelEx1.Remove(item.RowIndex);
-            }
-            this.panelEx1.UpdateScrollbar();
+            List<int> indexArr = selectedItems.Select(t => t.RowIndex).ToList();
+            //foreach (int item in indexArr)
+            //{
+            //    this.panelEx1.Remove(item);
+            //}
+            //this.panelEx1.UpdateScrollbar();
+            this.panelEx1.Remove(indexArr);
         }
 
         void panelEx1_UpdateChildItem(object sender, EventArgs e)
@@ -105,6 +107,8 @@ namespace 自定义Panel列表
         }
         void panelEx1_SelectionChanged(PanelItem item)
         {
+            richTextBox1.AppendText("SelectionChanged \n");
+            richTextBox1.ScrollToCaret();
         }
 
         private DataTable DataSource()
@@ -113,7 +117,7 @@ namespace 自定义Panel列表
             dt.Columns.Add("Title");
             dt.Columns.Add("Desc");
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < int.Parse(txtRowCount.Text); i++)
             {
                 DataRow row = dt.NewRow();
                 row[0] = "测试" + i.ToString();

@@ -224,6 +224,11 @@ namespace 自定义Panel列表
                 }
                 UpdateScrollbar();
                 ScrollItem();
+                KeyValuePair<MyControlChild, int> childItem = controlList.FirstOrDefault(t => t.Key.RowIndex == value);
+                if (childItem.Key != null)
+                {
+                    item_MouseClick(childItem.Key, null);
+                }
             }
         }
         #endregion
@@ -248,7 +253,7 @@ namespace 自定义Panel列表
             this.myVScrollBar1.BindControl = this.pnlContent;
             this.myVScrollBar1.Scroll += myVScrollBar1_Scroll;
             this.SizeChanged += PanelEx_SizeChanged;
-        } 
+        }
         #endregion
 
         #region 公共方法
@@ -350,7 +355,7 @@ namespace 自定义Panel列表
             item.DefaultColor = defaultColor;
             item.MouseEnterColor = mouseEnterColor;
             item.SelectedColor = selectedColor;
-            item.Width = this.pnlContent.Width - 2;
+            item.Width = this.pnlContent.Width;
             item.Anchor = (AnchorStyles)(AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top);
 
             controlList.Add(item, item.RowIndex);
@@ -361,6 +366,8 @@ namespace 自定义Panel列表
         void item_MouseClick(object sender, MouseEventArgs e)
         {
             MyControlChild pnl = sender as MyControlChild;
+            PanelItem tmpItem = itemList.First(t => t.RowIndex == pnl.RowIndex);
+            bool isFocus = tmpItem.IsFocus;
             pnl.Parent.Focus();//只有点击的才是Focus,Focus永远只有一个
 
             #region Control + 鼠标
@@ -376,10 +383,10 @@ namespace 自定义Panel列表
                             break;
                         }
                     }
-
                     PanelItem pnlItem = itemList.First(t => t.RowIndex == pnl.RowIndex);
                     pnlItem.IsFocus = true;
-                    pnlItem.IsSelected = pnl.IsSelected;
+                    pnlItem.IsSelected = !pnlItem.IsSelected;
+                    pnl.IsSelected = pnlItem.IsSelected;
                 }
             }
             #endregion
@@ -413,7 +420,7 @@ namespace 自定义Panel列表
                         pnlItem.IsSelected = pnl.IsSelected;
                     }
                 }
-                else if (focusItem.RowIndex != pnl.RowIndex)
+                else
                 {
                     int startIndex = 0;
                     int endIndex = 0;
@@ -462,7 +469,8 @@ namespace 自定义Panel列表
                 ClearSelectedItem(pnl.RowIndex);
             }
             #endregion
-            if (SelectionChanged != null)
+            tmpItem = itemList.First(t => t.RowIndex == pnl.RowIndex);
+            if (SelectionChanged != null && isFocus != tmpItem.IsFocus)
             {
                 PanelItem pnlItem = itemList.First(t => t.RowIndex == pnl.RowIndex);
                 SelectionChanged(pnlItem);
@@ -480,6 +488,115 @@ namespace 自定义Panel列表
             RemoveItem(rowIndex);
         }
 
+        public void Remove(List<int> rowIndexList)
+        {
+            /* 判断删除的数据是否为 绑定的控件
+            * 找Focus=true的上一个或下一个为选中项
+            */
+
+            #region 处理数据行
+            PanelItem focusItem = null;
+            foreach (PanelItem item in itemList)
+            {
+                if (item.IsFocus)
+                {
+                    focusItem = item;
+                    break;
+                }
+            }
+            rowIndexList = rowIndexList.OrderBy(t => t).ToList();
+            //删除数据行
+            //如果选择任意行进行删除
+            foreach (int item in rowIndexList)
+            {
+                #region 处理数据行
+                PanelItem delItem = null;
+                foreach (PanelItem pnlItem in itemList)
+                {
+                    if (pnlItem.RowIndex == item)
+                    {
+                        delItem = pnlItem;
+                        break;
+                    }
+                }
+                if (delItem != null)
+                {
+                    displayRectangleHeight -= delItem.Height;
+                    itemList.Remove(delItem);
+                } 
+                #endregion
+            }
+            int startIndex = rowIndexList[0];
+            //更新索引
+            int selIndex = 0;
+            //判断是否已经有选中项
+            bool isHasFocus = false;
+            foreach (PanelItem item in itemList)
+            {
+                if (item.RowIndex > rowIndexList[0])
+                {
+                    item.RowIndex = startIndex;
+                    startIndex++;
+                }
+                if (!isHasFocus && focusItem != null && focusItem.RowIndex == item.RowIndex)
+                {
+                    item.IsSelected = true;
+                    item.IsFocus = true;
+                    selIndex = item.RowIndex;
+                    isHasFocus = true;
+                }
+                else if (!isHasFocus && focusItem != null && focusItem.RowIndex - 1 == item.RowIndex)
+                {
+                    item.IsSelected = true;
+                    item.IsFocus = true;
+                    selIndex = item.RowIndex;
+                    isHasFocus = true;
+                }
+            }
+            var t1 = itemList.Where(t => t.IsSelected).ToList();
+            #endregion
+
+            //重新给控件赋值
+            if (itemList.Count > controlList.Count)
+            {
+                List<MyControlChild> childList = controlList.Select(t=>t.Key).ToList();
+                for (int i = 0; i < controlList.Count; i++)
+                {
+                    controlList[childList[i]] = i;
+                    GetNewInfo(childList[i], i);
+                    UpdateChildItem(childList[i], null);
+                }
+            }
+            else
+            {
+                List<MyControlChild> delChild = new List<MyControlChild>();
+                List<MyControlChild> childList = controlList.Select(t => t.Key).ToList();
+
+                for (int i = 0; i < controlList.Count; i++)
+                {
+                    if (i < itemList.Count)
+                    {
+                        controlList[childList[i]] = i;
+                        GetNewInfo(childList[i], i);
+                        UpdateChildItem(childList[i], null);
+                    }
+                    else
+                    {
+                        delChild.Add(childList[i]);
+                    }
+                }
+                foreach (var item in delChild)
+                {
+                    this.controlList.Remove(item);
+                    this.pnlContent.Controls.Remove(item);                    
+                }
+            }
+
+            //重新定位，设置选中项
+            //FirstDisplayedScrollingRowIndex = selIndex;
+            ContentLengthChange();
+        }
+
         private void RemoveItem(int rowIndex)
         {
             /* 判断删除的数据是否为 绑定的控件
@@ -494,10 +611,10 @@ namespace 自定义Panel列表
                 tmpItem.RowIndex -= 1;
             }
             itemList.Remove(item);
-
-            KeyValuePair<MyControlChild, int> find = controlList.FirstOrDefault(t => t.Value == rowIndex);
+            KeyValuePair<MyControlChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == rowIndex);
             if (find.Key != null)
             {
+                #region 删除控件内容
                 int[] indexArr = controlList.Values.OrderBy(t => t).ToArray();
 
                 if (indexArr[0] > 0)
@@ -516,7 +633,6 @@ namespace 自定义Panel列表
                 {//删除控件 
                     this.controlList.Remove(find.Key);
                     this.pnlContent.Controls.Remove(find.Key);
-                    //controlCount -= 1;
                 }
 
                 foreach (int tmpIndex in indexArr)
@@ -546,13 +662,10 @@ namespace 自定义Panel列表
                         item_MouseClick(prevChildItem.Key, null);
                     }
                 }
+                #endregion
             }
-            ContentLengthChange();
-
-            //if (!myVScrollBar1.Visible && find.Key != null)
-            //{
-            //    ScrollItem(find.Key.RowIndex, find.Key.Height);
-            //}
+            UpdateScrollbar();
+            ScrollItem();
         }
         /// <summary>
         /// 给控件赋值
@@ -716,7 +829,6 @@ namespace 自定义Panel列表
                                 this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
                             }
                             ScrollItem();
-
                             if (SelectionChanged != null)
                                 SelectionChanged(tmpItem);
                         }
@@ -778,8 +890,6 @@ namespace 自定义Panel列表
                                 this.myVScrollBar1.Value = (tmpItem.RowIndex + 1) * tmpItem.Height;
                                 this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
                             }
-
-
                             ScrollItem();
                         }
                         if (SelectionChanged != null)
@@ -806,7 +916,7 @@ namespace 自定义Panel列表
                     break;
                 #endregion
             }
-            return base.ProcessCmdKey(ref msg, keyData);
+            return true; //base.ProcessCmdKey(ref msg, keyData);
         }
         #endregion
 
@@ -822,7 +932,7 @@ namespace 自定义Panel列表
         {
             int startIndex = myVScrollBar1.Value / this.minRowHeight;
             int endIndex = startIndex + controlList.Count - 1;
-            if (controlList.Count < maxControlCount)
+            if (controlList.Count == itemList.Count)
             {//当控件内容个数小于最大个数时，不需要调整行索引
                 startIndex = 0;
                 endIndex = controlList.Count - 1;
@@ -884,7 +994,6 @@ namespace 自定义Panel列表
              */
             if (controlList.Count > 0)
             {
-
                 //如果最后一行完全显示，推算第一行显示的行号及Top
                 int firstRowIndex = 0;
                 int firstRowTop = 0;
@@ -905,6 +1014,14 @@ namespace 自定义Panel列表
                     if (tmpValue < 0)
                         tmpValue = 0;
                     this.pnlContent.VScrollValue = tmpValue;
+                }
+                else
+                {//这里是为了判断，当删除数据，删除最后面的数据时
+                    int tmpValue = displayRectangleHeight - this.pnlContent.Height;
+                    if (tmpValue < 0)
+                        tmpValue = 0;
+                    if (this.pnlContent.VScrollValue > tmpValue)
+                        this.pnlContent.VScrollValue = tmpValue;
                 }
                 UpdateScrollbar();
                 ScrollItem();

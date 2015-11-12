@@ -332,6 +332,7 @@ namespace 自定义Panel列表
             //draw thumb
             Brush oWhiteBrush = new SolidBrush(moThumbColor);
             e.Graphics.FillRectangle(oWhiteBrush, 0, moThumbTop, this.Width, customScrollInfo.ThumbHeight);
+            base.OnPaint(e);
         }
         #endregion
 
