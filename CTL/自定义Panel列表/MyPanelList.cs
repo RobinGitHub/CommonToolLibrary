@@ -143,7 +143,7 @@ namespace 自定义Panel列表
                 if (minRowHeight <= 0)
                     throw new Exception("行高必须大于0");
                 minRowHeight = value;
-                maxControlCount = SystemInformation.WorkingArea.Height / minRowHeight + 2;//前后各加一个
+                maxControlCount = SystemInformation.WorkingArea.Height / minRowHeight + 1;//前后各加一个
             }
         }
         #endregion
@@ -519,20 +519,10 @@ namespace 自定义Panel列表
                 }
                 #endregion
             }
-            int startIndex = rowIndexList[0];
-            //更新索引
-            foreach (PanelItem item in itemList)
-            {
-                if (item.RowIndex > rowIndexList[0])
-                {
-                    item.RowIndex = startIndex;
-                    startIndex++;
-                }
-            }
             //设置选中项
             if (focusItem != null)
             {
-                PanelItem find = itemList.FirstOrDefault(t => t.RowIndex == focusItem.RowIndex);
+                PanelItem find = itemList.FirstOrDefault(t => t.RowIndex == focusItem.RowIndex + 1);
                 if (find != null)
                 {
                     find.IsSelected = true;
@@ -549,8 +539,19 @@ namespace 自定义Panel列表
                 }
             }
 
+            int startIndex = rowIndexList[0];
+            //更新索引
+            foreach (PanelItem item in itemList)
+            {
+                if (item.RowIndex > rowIndexList[0])
+                {
+                    item.RowIndex = startIndex;
+                    startIndex++;
+                }
+            }
             #endregion
 
+            #region 重新给控件赋值
             //重新给控件赋值
             if (itemList.Count > controlList.Count)
             {
@@ -585,7 +586,8 @@ namespace 自定义Panel列表
                     this.controlList.Remove(item);
                     this.pnlContent.Controls.Remove(item);
                 }
-            }
+            } 
+            #endregion
 
             //重新定位，设置选中项
             //FirstDisplayedScrollingRowIndex = selIndex;
@@ -922,11 +924,6 @@ namespace 自定义Panel列表
             {//当endIndex > itemList.Count 即endIndex超过内容行数
                 endIndex = itemList.Count - 1;
                 startIndex = endIndex - (controlList.Count - 1);
-            }
-            else if (startIndex > 0)
-            {
-                startIndex -= 1;
-                endIndex -= 1;
             }
             int tmpStart = 0;
 
