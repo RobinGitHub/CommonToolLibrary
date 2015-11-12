@@ -237,13 +237,6 @@ namespace 自定义Panel列表
                 }
             }
             this.Value = offset;
-
-            //if (this.Visible)
-            //{
-            //    this.BringToFront();
-            //    this.moControl.SendToBack();
-            //}
-
             this.Invalidate();
         }
         /// <summary>
