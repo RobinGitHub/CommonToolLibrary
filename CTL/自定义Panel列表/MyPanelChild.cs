@@ -97,7 +97,6 @@ namespace 自定义Panel列表
         }
         #endregion
 
-
         #endregion
 
         #region 构造函数
@@ -110,51 +109,7 @@ namespace 自定义Panel列表
                 ControlStyles.AllPaintingInWmPaint |
                 ControlStyles.ResizeRedraw, true);
             base.UpdateStyles();
-
-            this.MouseClick += MyControlChild_MouseClick;
-            this.MouseEnter += MyControlChild_MouseEnter;
-            this.MouseLeave += MyControlChild_MouseLeave;
         }
-        #endregion
-
-        #region 鼠标事件
-        #region 鼠标离开
-        /// <summary>
-        /// 鼠标离开
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void MyControlChild_MouseLeave(object sender, EventArgs e)
-        {
-            if (!isSelected)
-                this.BackColor = defaultColor;
-        }
-        #endregion
-
-        #region 鼠标悬停
-        /// <summary>
-        /// 鼠标悬停
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void MyControlChild_MouseEnter(object sender, EventArgs e)
-        {
-            if (!isSelected)
-                this.BackColor = mouseEnterColor;
-        }
-        #endregion
-
-        #region 鼠标点击
-        void MyControlChild_MouseClick(object sender, MouseEventArgs e)
-        {
-            this.Focus();
-            if (!isSelected)
-            {
-                this.BackColor = selectedColor;
-                isSelected = true;
-            }
-        }
-        #endregion
         #endregion
 
         #region override

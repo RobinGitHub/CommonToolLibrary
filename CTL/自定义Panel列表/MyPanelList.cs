@@ -67,11 +67,7 @@ namespace 自定义Panel列表
         /// 内容显示的高度
         /// </summary>
         private int displayRectangleHeight = 0;
-
-        ///// <summary>
-        ///// 控件绑定的个数
-        ///// </summary>
-        //private int controlCount = 10;
+        
         /// <summary>
         /// 控件最多显示个数
         /// </summary>
@@ -80,6 +76,11 @@ namespace 自定义Panel列表
         /// 最小行高
         /// </summary>
         private int minRowHeight = 60;
+
+        /// <summary>
+        /// 是否触发鼠标事件
+        /// </summary>
+        private bool isActiveMouseEvent = true;
         #endregion
 
         #region 公布属性
@@ -365,6 +366,28 @@ namespace 自定义Panel列表
             controlList.Add(item, item.RowIndex);
             this.pnlContent.Controls.Add(item);
             item.MouseClick += item_MouseClick;
+            item.MouseEnter += Item_MouseEnter;
+            item.MouseLeave += Item_MouseLeave;
+            item.MouseMove += Item_MouseMove;
+        }
+
+        private void Item_MouseMove(object sender, MouseEventArgs e)
+        {
+            isActiveMouseEvent = true;
+        }
+
+        private void Item_MouseLeave(object sender, EventArgs e)
+        {
+            MyPanelChild pnl = sender as MyPanelChild;
+            if (!pnl.IsSelected)
+                pnl.BackColor = defaultColor;
+        }
+
+        private void Item_MouseEnter(object sender, EventArgs e)
+        {
+            MyPanelChild pnl = sender as MyPanelChild;
+            if (isActiveMouseEvent && !pnl.IsSelected)
+                pnl.BackColor = mouseEnterColor;
         }
 
         void item_MouseClick(object sender, MouseEventArgs e)
@@ -590,12 +613,12 @@ namespace 自定义Panel列表
                 }
             }
             #endregion
-
-            //重新定位，设置选中项
-            //FirstDisplayedScrollingRowIndex = selIndex;
             UpdateScrollbar();
             ContentLengthChange();
         }
+        #endregion
+
+        #region 给控件赋值
         /// <summary>
         /// 给控件赋值
         /// </summary>
@@ -704,15 +727,20 @@ namespace 自定义Panel列表
         #region 滚动条滚动事件
         void myVScrollBar1_Scroll(object sender, EventArgs e)
         {
-            //Thread t = new Thread(() =>
-            //{
-            //    this.Invoke((MethodInvoker)delegate 
-            //    {
-            //        ScrollItem(this.myVScrollBar1.IsMoveUp);
-            //    });                                
-            //});
-            //t.Start();
-            ScrollItem(this.myVScrollBar1.IsMoveUp);
+            //解决快速移动闪屏问题
+            // https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=ZH-CN&k=k(System.Windows.Forms.Control.Update);k(TargetFrameworkMoniker-.NETFramework,Version%3Dv3.5);k(DevLang-csharp)&rd=true
+            Thread t = new Thread(() =>
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    isActiveMouseEvent = false;
+                    ScrollItem(this.myVScrollBar1.IsMoveUp);
+                    ////解决快速移动闪屏问题
+                    this.Invalidate(true);
+                    this.Update();
+                });
+            });
+            t.Start();
         }
         #endregion
 
@@ -875,52 +903,6 @@ namespace 自定义Panel列表
         /// <summary>
         /// 滚动条滚动
         /// </summary>
-        //private void ScrollItem()
-        //{
-        //    int startIndex = myVScrollBar1.Value / this.minRowHeight;
-        //    int endIndex = startIndex + controlList.Count - 1;
-        //    if (controlList.Count == itemList.Count)
-        //    {//当控件内容个数小于最大个数时，不需要调整行索引
-        //        startIndex = 0;
-        //        endIndex = controlList.Count - 1;
-        //    }
-        //    else if (endIndex > itemList.Count)
-        //    {//当endIndex > itemList.Count 即endIndex超过内容行数
-        //        endIndex = itemList.Count - 1;
-        //        startIndex = endIndex - (controlList.Count - 1);
-        //    }
-        //    else if (startIndex > 0)
-        //    {
-        //        startIndex -= 1;
-        //        endIndex -= 1;
-        //    }
-        //    int tmpStart = startIndex;
-
-        //    int[] indexArr = controlList.Values.OrderBy(t => t).ToArray();
-        //    for (int i = 0; i < indexArr.Length; i++)
-        //    {
-        //        MyPanelChild childItem = controlList.First(t => t.Value == indexArr[i]).Key;
-        //        if (controlList[childItem] < startIndex || controlList[childItem] > endIndex)
-        //        {
-        //            while (controlList.ContainsValue(tmpStart) && tmpStart < endIndex)
-        //            {
-        //                tmpStart += 1;
-        //            }
-        //            controlList[childItem] = tmpStart;
-        //            childItem.RowIndex = tmpStart;
-
-        //            if (childItem.RowIndex < itemList.Count)
-        //            {
-        //                GetNewInfo(childItem, childItem.RowIndex);
-        //            }
-
-        //            if (UpdateChildItem != null)
-        //                UpdateChildItem(childItem, null);
-        //        }
-        //        childItem.Top = childItem.RowIndex * childItem.Height - myVScrollBar1.Value;
-        //    }
-        //}
-
         private void ScrollItem(bool? isUp)
         {
             int startIndex = myVScrollBar1.Value / this.minRowHeight;
@@ -967,32 +949,7 @@ namespace 自定义Panel列表
                     if (UpdateChildItem != null)
                         UpdateChildItem(childItem, null);
                 }
-                //每次尽可能显示整行
                 int tmpTop = childItem.RowIndex * childItem.Height - myVScrollBar1.Value;
-                //int tmpOffset = this.Height - this.Height / this.minRowHeight * this.minRowHeight;
-                //if (isUp != null && isUp.Value)
-                //{
-                //    if (tmpTop < 0)
-                //    {
-                //        tmpTop = (tmpTop / this.minRowHeight - 1) * this.minRowHeight;
-                //    }
-                //    else
-                //    {
-                //        tmpTop = tmpTop / this.minRowHeight * this.minRowHeight;                    
-                //    }                   
-                //}
-                //else if (isUp != null && !isUp.Value)
-                //{
-                //    if (tmpTop < 0)
-                //    {
-                //        tmpTop = (tmpTop / this.minRowHeight - 1) * this.minRowHeight;
-                //    }
-                //    else
-                //    {
-                //        tmpTop = tmpTop / this.minRowHeight * this.minRowHeight;
-                //    }
-                //    tmpTop += tmpOffset;
-                //}
                 childItem.Top = tmpTop;
             }
         }

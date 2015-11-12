@@ -28,12 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.pnlSplitLine = new System.Windows.Forms.Panel();
             this.SuspendLayout();
+            // 
+            // pnlSplitLine
+            // 
+            this.pnlSplitLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(234)))), ((int)(((byte)(234)))), ((int)(((byte)(233)))));
+            this.pnlSplitLine.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlSplitLine.Location = new System.Drawing.Point(0, 59);
+            this.pnlSplitLine.Name = "pnlSplitLine";
+            this.pnlSplitLine.Size = new System.Drawing.Size(300, 1);
+            this.pnlSplitLine.TabIndex = 0;
             // 
             // MyPanelChild
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pnlSplitLine);
+            this.DoubleBuffered = true;
             this.Name = "MyPanelChild";
             this.Size = new System.Drawing.Size(300, 60);
             this.ResumeLayout(false);
@@ -41,5 +53,7 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel pnlSplitLine;
     }
 }
