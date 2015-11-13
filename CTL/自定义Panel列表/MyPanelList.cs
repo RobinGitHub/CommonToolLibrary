@@ -19,7 +19,7 @@ namespace 自定义Panel列表
         /// <param name="item">数据</param>
         /// <param name="scrollValue">当前滚动条位置</param>
         /// <returns></returns>
-        public delegate MyPanelChild ItemTemplateDelegate(PanelItem item, int scrollValue);
+        public delegate MyPanelChild ItemTemplateDelegate(PanelItem item);
         public delegate void SelectionChangedDeletegate(PanelItem item);
         /// <summary>
         /// 设置行模版
@@ -337,7 +337,7 @@ namespace 自定义Panel列表
 
             if (controlList.Count < maxControlCount)
             {
-                MyPanelChild childItem = SetItemTemplate(item, myVScrollBar1.Value);
+                MyPanelChild childItem = SetItemTemplate(item);
                 AddControl(childItem);
             }
         }
@@ -365,6 +365,7 @@ namespace 自定义Panel列表
             item.SelectedColor = selectedColor;
             item.Width = this.pnlContent.Width;
             item.Anchor = (AnchorStyles)(AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top);
+            item.Top = item.Height * item.RowIndex - myVScrollBar1.Value;
 
             controlList.Add(item, item.RowIndex);
             this.pnlContent.Controls.Add(item);
@@ -514,7 +515,8 @@ namespace 自定义Panel列表
             /* 判断删除的数据是否为 绑定的控件
             * 找Focus=true的上一个或下一个为选中项
             */
-
+            if (rowIndexList == null || rowIndexList.Count == 0)
+                return;
             #region 处理数据行
             PanelItem focusItem = null;
             foreach (PanelItem item in itemList)

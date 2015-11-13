@@ -61,6 +61,12 @@
     <Compile Include="MyPanelChild.Designer.cs">
       <DependentUpon>MyPanelChild.cs</DependentUpon>
     </Compile>
+    <Compile Include="MyPanelList_V1.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MyPanelList_V1.Designer.cs">
+      <DependentUpon>MyPanelList_V1.cs</DependentUpon>
+    </Compile>
     <Compile Include="WorkBench.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -90,6 +96,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MyPanelChild.resx">
       <DependentUpon>MyPanelChild.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyPanelList_V1.resx">
+      <DependentUpon>MyPanelList_V1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkBench.resx">
       <DependentUpon>WorkBench.cs</DependentUpon>

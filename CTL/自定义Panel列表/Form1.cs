@@ -24,11 +24,12 @@ namespace 自定义Panel列表
             this.btnUpdate.Click += btnUpdate_Click;
             this.btnDel.Click += btnDel_Click;
             this.btnInit.Click += btnInit_Click;
+
+            this.panelEx1.MinRowHeight = 60;
         }
 
         private void btnInit_Click(object sender, EventArgs e)
         {
-            //this.panelEx1.MinRowHeight = 60;
 
             //this.panelEx1.Clear();
             //foreach (DataRow row in dt.Rows)
@@ -95,11 +96,9 @@ namespace 自定义Panel列表
             WorkBench item = sender as WorkBench;
             item.RefreshData();
         }
-        MyPanelChild panelEx1_SetItemTemplate(PanelItem item, int scrollValue)
+        MyPanelChild panelEx1_SetItemTemplate(PanelItem item)
         {
             WorkBench pnl = new WorkBench();
-            pnl.Height = this.panelEx1.MinRowHeight;
-            pnl.Location = new Point(0, pnl.Height * item.RowIndex - scrollValue);
             pnl.DataRow = item.DataRow;
             pnl.RowIndex = item.RowIndex;
             pnl.RefreshData();
