@@ -252,9 +252,9 @@ namespace 自定义Panel列表
             base.UpdateStyles();
             this.BackColor = Color.White;
 
-            this.pnlContent.LargeChange = 50;
+            this.pnlContent.LargeChange = this.minRowHeight * 3;
             //控制滚动条滚动速度
-            this.pnlContent.SmallChange = 30;
+            this.pnlContent.SmallChange = this.minRowHeight * 3;
 
             this.myVScrollBar1.BindControl = this.pnlContent;
             this.myVScrollBar1.Scroll += myVScrollBar1_Scroll;
@@ -305,6 +305,8 @@ namespace 自定义Panel列表
                     item_MouseClick(controlList.First().Key, null);
                 }
                 this.UpdateScrollbar();
+                this.Invalidate(true);
+                this.Update();
             }
         }
         #endregion

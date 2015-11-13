@@ -219,9 +219,9 @@ namespace 自定义Panel列表
             customScrollInfo.DisplayRectangleHeight = displayRectangleHeight;
 
             if (largeChange == 0)
-                largeChange = 15;
+                largeChange = 50;
             if (smallChange == 0)
-                smallChange = 1;
+                smallChange = 30;
 
             customScrollInfo.LargeChange = largeChange;
             customScrollInfo.SmallChange = smallChange;
@@ -237,7 +237,7 @@ namespace 自定义Panel列表
                 }
             }
             this.Value = offset;
-            this.Invalidate();
+            this.Invalidate(true);
         }
         /// <summary>
         /// 当内容更新后，要调用此方法

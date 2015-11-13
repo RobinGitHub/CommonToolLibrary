@@ -97,7 +97,7 @@
             this.txtRowCount.Name = "txtRowCount";
             this.txtRowCount.Size = new System.Drawing.Size(122, 21);
             this.txtRowCount.TabIndex = 22;
-            this.txtRowCount.Text = "20";
+            this.txtRowCount.Text = "200";
             // 
             // panelEx1
             // 
