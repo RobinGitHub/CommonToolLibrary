@@ -21,6 +21,10 @@ namespace 自定义Panel列表
         /// 不管是否多选，有且只能有一个为true
         /// </summary>
         public bool IsFocus { get; set; }
+        /// <summary>
+        /// 对应的控件
+        /// </summary>
+        public MyPanelChild PanelChild { get; set; }
 
     }
 }
