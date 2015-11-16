@@ -158,5 +158,10 @@ namespace 自定义Panel列表
         }
         #endregion
         #endregion
+
+        public virtual void RefreshData()
+        { 
+            
+        }
     }
 }

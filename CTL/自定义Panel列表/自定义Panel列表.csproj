@@ -61,6 +61,12 @@
     <Compile Include="Form3.Designer.cs">
       <DependentUpon>Form3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form4.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form4.Designer.cs">
+      <DependentUpon>Form4.cs</DependentUpon>
+    </Compile>
     <Compile Include="MyPanelChild.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -72,6 +78,12 @@
     </Compile>
     <Compile Include="MyPanelList_V1.Designer.cs">
       <DependentUpon>MyPanelList_V1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MyPanelList_V3.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MyPanelList_V3.Designer.cs">
+      <DependentUpon>MyPanelList_V3.cs</DependentUpon>
     </Compile>
     <Compile Include="MyPanelList_V2.cs">
       <SubType>UserControl</SubType>
@@ -109,11 +121,17 @@
     <EmbeddedResource Include="Form3.resx">
       <DependentUpon>Form3.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Form4.resx">
+      <DependentUpon>Form4.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MyPanelChild.resx">
       <DependentUpon>MyPanelChild.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MyPanelList_V1.resx">
       <DependentUpon>MyPanelList_V1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyPanelList_V3.resx">
+      <DependentUpon>MyPanelList_V3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MyPanelList_V2.resx">
       <DependentUpon>MyPanelList_V2.cs</DependentUpon>

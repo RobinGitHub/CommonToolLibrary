@@ -22,7 +22,7 @@ namespace 自定义Panel列表
         /// <summary>
         /// 刷新数据
         /// </summary>
-        public void RefreshData()
+        public override void RefreshData()
         {
             if (base.DataRow != null)
             {

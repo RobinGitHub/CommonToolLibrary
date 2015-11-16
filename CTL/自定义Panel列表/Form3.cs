@@ -78,6 +78,7 @@ namespace 自定义Panel列表
             WorkBench item = sender as WorkBench;
             item.RefreshData();
         }
+
         MyPanelChild panelEx1_SetItemTemplate(PanelItem item)
         {
             int height = this.panelEx1.MinRowHeight;

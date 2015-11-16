@@ -1,6 +1,6 @@
 ﻿namespace 自定义Panel列表
 {
-    partial class MyPanelList_V2
+    partial class MyPanelList_V3
     {
         /// <summary> 
         /// 必需的设计器变量。
@@ -69,7 +69,7 @@
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
             // 
-            // MyPanelList_V2
+            // MyPanelList_V3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -77,7 +77,7 @@
             this.Controls.Add(this.myVScrollBar1);
             this.Controls.Add(this.richTextBox1);
             this.DoubleBuffered = true;
-            this.Name = "MyPanelList_V2";
+            this.Name = "MyPanelList_V3";
             this.Size = new System.Drawing.Size(300, 200);
             this.ResumeLayout(false);
 
