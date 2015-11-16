@@ -310,29 +310,23 @@ namespace 自定义Panel列表
         {
             set
             {
-                Thread t = new Thread(() =>
+                this.Clear();
+                foreach (DataRow row in value.Rows)
                 {
-                    this.Invoke((MethodInvoker)delegate
+                    PanelItem item = new PanelItem()
                     {
-                        this.Clear();
-                        foreach (DataRow row in value.Rows)
-                        {
-                            PanelItem item = new PanelItem()
-                            {
-                                DataRow = row,
-                                IsSelected = false,
-                                RowIndex = value.Rows.IndexOf(row)
-                            };
-                            this.AddItem(item);
-                        }
-                        if (controlList.Count > 0)
-                        {
-                            item_MouseClick(controlList.First().Key, null);
-                        }
-                        this.UpdateScrollbar();
-                    });
-                });
-                t.Start();
+                        DataRow = row,
+                        IsSelected = false,
+                        RowIndex = value.Rows.IndexOf(row)
+                    };
+                    this.AddItem(item);
+                }
+                if (controlList.Count > 0)
+                {
+                    item_MouseClick(controlList.First().Key, null);
+                }
+                this.UpdateScrollbar();
+                CreateControl(0, 200);
             }
         }
         #endregion
@@ -1026,8 +1020,7 @@ namespace 自定义Panel列表
             else
             {
                 indexArr = controlList.Values.OrderBy(t => t).ToArray();
-            }
-
+            } 
             for (int i = 0; i < indexArr.Length; i++)
             {
                 MyPanelChild childItem = controlList.First(t => t.Value == indexArr[i]).Key;
@@ -1281,6 +1274,57 @@ namespace 自定义Panel列表
         }
         #endregion
 
+        #region 实例化控件
+        /// <summary>
+        /// 实例化控件
+        /// </summary>
+        /// <param name="startIndex"></param>
+        /// <param name="count">从当前位置，前后各count个</param>
+        private void CreateControl(int startIndex, int count)
+        {
+            if (startIndex < 0)
+            {
+                throw new Exception("startIndex 必须大于等于0");
+            }
+            if (startIndex - count < 0)
+                startIndex = 0;
+            else
+            {
+                startIndex = startIndex - count;
+            }
+            count *= 2;
+
+            if (startIndex + count > itemList.Count && count < itemList.Count)
+                startIndex = itemList.Count - count - 1;
+            Thread t = new Thread(() =>
+            {
+                foreach (var item in itemList)
+                {
+                    if (item.RowIndex >= startIndex && startIndex + count >= item.RowIndex)
+                    {
+                        if (item.PanelChild == null)
+                        {
+                            MyPanelChild childItem = SetItemTemplate(item);
+                            item.PanelChild = childItem;
+                        }
+                    }
+                    else
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            if (item.PanelChild != null)
+                            {
+                                item.PanelChild.Dispose();
+                                item.PanelChild = null;
+                            }
+                        });
+                    }
+                }
+            });
+            t.IsBackground = true;
+            t.Start();
+        } 
+        #endregion
         #endregion
     }
 }
