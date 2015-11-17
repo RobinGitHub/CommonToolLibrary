@@ -33,10 +33,10 @@ namespace 自定义Panel列表V1
         #region 公布属性
 
         #region 行号
-        ///// <summary>
-        ///// 行号
-        ///// </summary>
-        //public int RowIndex { get; set; }
+        /// <summary>
+        /// 行号
+        /// </summary>
+        public int RowIndex { get; set; }
         #endregion
 
         #region 是否选中
@@ -53,10 +53,15 @@ namespace 自定义Panel列表V1
                     this.BackColor = selectedColor;
                 else
                     this.BackColor = defaultColor;
-
-                this.PanelItem.IsSelected = value;
             }
         }
+        #endregion
+
+        #region 数据源
+        /// <summary>
+        /// 数据源
+        /// </summary>
+        public DataRow DataRow { get; set; }
         #endregion
 
         #region 数据源

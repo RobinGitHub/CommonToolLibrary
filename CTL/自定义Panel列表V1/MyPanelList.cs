@@ -247,7 +247,7 @@ namespace 自定义Panel列表V1
                 UpdateScrollbar();
                 bool isUp = this.pnlContent.VScrollValue < this.myVScrollBar1.Value;
                 ScrollItem(isUp);
-                KeyValuePair<MyPanelChild, int> childItem = controlList.FirstOrDefault(t => t.Key.PanelItem.RowIndex == value);
+                KeyValuePair<MyPanelChild, int> childItem = controlList.FirstOrDefault(t => t.Key.RowIndex == value);
                 if (childItem.Key != null)
                 {
                     item_MouseClick(childItem.Key, null);
@@ -280,6 +280,7 @@ namespace 自定义Panel列表V1
         }
         #endregion
 
+
         #region 公共方法
 
         #region 清空 Clear
@@ -300,6 +301,7 @@ namespace 自定义Panel列表V1
         #endregion
 
         #region 绑定数据 DataSource
+
         public void DataSource<T>(DataTable dt)
             where T : PanelItem, new()
         {
@@ -324,8 +326,7 @@ namespace 自定义Panel列表V1
         /// <summary>
         /// 绑定数据 DataSource 
         /// </summary>
-        //public DataTable DataSource<T>
-        //    where T : PanelItem, new()
+        //public DataTable DataSource
         //{
         //    set
         //    {
@@ -416,11 +417,11 @@ namespace 自定义Panel列表V1
             }
             else
             {
-                MyPanelChild lastItem = controlList.First(t => t.Value == item.PanelItem.RowIndex - 1).Key;
+                MyPanelChild lastItem = controlList.First(t => t.Value == item.RowIndex - 1).Key;
                 item.Top = lastItem.Top + lastItem.Height;
             }
 
-            controlList.Add(item, item.PanelItem.RowIndex);
+            controlList.Add(item, item.RowIndex);
             this.pnlContent.Controls.Add(item);
             item.MouseClick += item_MouseClick;
             item.MouseEnter += Item_MouseEnter;
@@ -450,23 +451,24 @@ namespace 自定义Panel列表V1
         void item_MouseClick(object sender, MouseEventArgs e)
         {
             MyPanelChild pnl = sender as MyPanelChild;
-            bool isFocus = pnl.PanelItem.IsFocus;
+            PanelItem tmpItem = itemList.First(t => t.RowIndex == pnl.RowIndex);
+            bool isFocus = tmpItem.IsFocus;
             pnl.Parent.Focus();//只有点击的才是Focus,Focus永远只有一个
 
             #region Control + 鼠标
             if (multiSelect && (Control.ModifierKeys & Keys.Control) == Keys.Control)// CTRL is pressed    
             {
-                if (pnl.PanelItem.RowIndex < itemList.Count && pnl.PanelItem.RowIndex >= 0)
+                if (pnl.RowIndex < itemList.Count && pnl.RowIndex >= 0)
                 {
                     foreach (PanelItem item in itemList)
                     {
-                        if (item.RowIndex != pnl.PanelItem.RowIndex && item.IsFocus)
+                        if (item.RowIndex != pnl.RowIndex && item.IsFocus)
                         {
                             item.IsFocus = false;
                             break;
                         }
                     }
-                    PanelItem pnlItem = pnl.PanelItem;
+                    PanelItem pnlItem = itemList.First(t => t.RowIndex == pnl.RowIndex);
                     pnlItem.IsFocus = true;
                     pnlItem.IsSelected = !pnlItem.IsSelected;
                     pnl.IsSelected = pnlItem.IsSelected;
@@ -487,18 +489,18 @@ namespace 自定义Panel列表V1
                 }
                 if (focusItem == null)
                 {
-                    if (pnl.PanelItem.RowIndex < itemList.Count && pnl.PanelItem.RowIndex >= 0)
+                    if (pnl.RowIndex < itemList.Count && pnl.RowIndex >= 0)
                     {
                         foreach (PanelItem item in itemList)
                         {
-                            if (item.RowIndex != pnl.PanelItem.RowIndex && item.IsFocus)
+                            if (item.RowIndex != pnl.RowIndex && item.IsFocus)
                             {
                                 item.IsFocus = false;
                                 break;
                             }
                         }
 
-                        PanelItem pnlItem = pnl.PanelItem;
+                        PanelItem pnlItem = itemList.First(t => t.RowIndex == pnl.RowIndex);
                         pnlItem.IsFocus = true;
                         pnlItem.IsSelected = pnl.IsSelected;
                     }
@@ -507,26 +509,26 @@ namespace 自定义Panel列表V1
                 {
                     int startIndex = 0;
                     int endIndex = 0;
-                    if (focusItem.RowIndex > pnl.PanelItem.RowIndex)
+                    if (focusItem.RowIndex > pnl.RowIndex)
                     {
-                        startIndex = pnl.PanelItem.RowIndex;
+                        startIndex = pnl.RowIndex;
                         endIndex = focusItem.RowIndex;
                     }
                     else
                     {
                         startIndex = focusItem.RowIndex;
-                        endIndex = pnl.PanelItem.RowIndex;
+                        endIndex = pnl.RowIndex;
                     }
                     foreach (MyPanelChild item in controlList.Keys)
                     {
-                        if (item.PanelItem.RowIndex != pnl.PanelItem.RowIndex && item.IsSelected)
+                        if (item.RowIndex != pnl.RowIndex && item.IsSelected)
                         {
                             item.IsSelected = false;
                         }
                     }
                     foreach (PanelItem item in itemList)
                     {
-                        if (item.RowIndex != pnl.PanelItem.RowIndex && item.IsSelected)
+                        if (item.RowIndex != pnl.RowIndex && item.IsSelected)
                         {
                             item.IsSelected = false;
                         }
@@ -537,7 +539,7 @@ namespace 自定义Panel列表V1
                         PanelItem pnlItem = itemList.First(t => t.RowIndex == i);
                         pnlItem.IsSelected = true;
 
-                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.PanelItem.RowIndex == i);
+                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == i);
                         if (find.Key != null)
                         {
                             find.Key.IsSelected = true;
@@ -549,10 +551,10 @@ namespace 自定义Panel列表V1
             #region 单选
             else
             {
-                ClearSelectedItem(pnl.PanelItem.RowIndex);
+                ClearSelectedItem(pnl.RowIndex);
                 if (pnl.Top < 0)
                 {
-                    this.myVScrollBar1.Value = GetItemHeightByRowIndex(pnl.PanelItem.RowIndex);
+                    this.myVScrollBar1.Value = GetItemHeightByRowIndex(tmpItem.RowIndex);
                     this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
                     ScrollItem(true);
                 }
@@ -564,9 +566,11 @@ namespace 自定义Panel列表V1
                 }
             }
             #endregion
-            if (SelectionChanged != null && isFocus != pnl.PanelItem.IsFocus)
+            tmpItem = itemList.First(t => t.RowIndex == pnl.RowIndex);
+            if (SelectionChanged != null && isFocus != tmpItem.IsFocus)
             {
-                SelectionChanged(pnl.PanelItem);
+                PanelItem pnlItem = itemList.First(t => t.RowIndex == pnl.RowIndex);
+                SelectionChanged(pnlItem);
             }
         }
         #endregion
@@ -709,7 +713,9 @@ namespace 自定义Panel列表V1
                         PanelItem item = itemList[i];
                         childItem.PanelItem = item;
                         childItem.IsSelected = item.IsSelected;
+                        childItem.DataRow = item.DataRow;
                         childItem.Height = item.Height;
+                        childItem.RowIndex = rowIndex;
                         break;
                     }
                 }
@@ -748,7 +754,7 @@ namespace 自定义Panel列表V1
             if (find.Key != null)
             {
                 PanelItem item = itemList.First(t => t.RowIndex == rowIndex);
-                find.Key.PanelItem = item;
+                find.Key.DataRow = item.DataRow;
                 find.Key.IsSelected = item.IsSelected;
 
                 bool isSizeChange = false;
@@ -859,7 +865,7 @@ namespace 自定义Panel列表V1
                     {
                         ClearSelectedItem(tmpItem.RowIndex - 1);
 
-                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.PanelItem.RowIndex == tmpItem.RowIndex - 1);
+                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == tmpItem.RowIndex - 1);
                         if (find.Key == null || find.Key.Top < 0 || find.Key.Top > this.Height)
                         {
                             //这里要直接计算Value 的位置
@@ -921,7 +927,7 @@ namespace 自定义Panel列表V1
                     if (tmpItem != null)
                     {
                         ClearSelectedItem(tmpItem.RowIndex + 1);
-                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.PanelItem.RowIndex == tmpItem.RowIndex + 1);
+                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == tmpItem.RowIndex + 1);
                         if (find.Key == null || find.Key.Top < 0 || find.Key.Top + tmpItem.Height > this.Height)
                         {
                             int[] indexArr = controlList.Values.OrderBy(t => t).ToArray();
@@ -1028,21 +1034,23 @@ namespace 自定义Panel列表V1
                 MyPanelChild childItem = controlList.First(t => t.Value == indexArr[i]).Key;
                 if (controlList[childItem] < startIndex || controlList[childItem] > endIndex)
                 {
+                    DateTime startTime = DateTime.Now;
                     while (controlList.ContainsValue(tmpStart) && tmpStart < endIndex)
                     {
                         tmpStart += 1;
                     }
                     controlList[childItem] = tmpStart;
+                    childItem.RowIndex = tmpStart;
 
-                    if (tmpStart < itemList.Count)
+                    if (childItem.RowIndex < itemList.Count)
                     {
-                        GetNewInfo(childItem, tmpStart);
+                        GetNewInfo(childItem, childItem.RowIndex);
                     }
 
                     if (UpdateChildItem != null)
                         UpdateChildItem(childItem, null);
                 }
-                childItem.Top = GetItemHeightByRowIndex(controlList[childItem]) - this.myVScrollBar1.Value;
+                childItem.Top = GetItemHeightByRowIndex(childItem.RowIndex) - this.myVScrollBar1.Value;
             }
         }
         #endregion
@@ -1106,7 +1114,7 @@ namespace 自定义Panel列表V1
             {//多选
                 foreach (MyPanelChild item in controlList.Keys)
                 {
-                    if (item.PanelItem.RowIndex != rowIndex && item.IsSelected)
+                    if (item.RowIndex != rowIndex && item.IsSelected)
                     {
                         item.IsSelected = false;
                     }
@@ -1127,7 +1135,7 @@ namespace 自定义Panel列表V1
             {
                 foreach (MyPanelChild item in controlList.Keys)
                 {
-                    if (item.PanelItem.RowIndex != rowIndex && item.IsSelected)
+                    if (item.RowIndex != rowIndex && item.IsSelected)
                     {
                         item.IsSelected = false;
                         break;
@@ -1255,6 +1263,7 @@ namespace 自定义Panel列表V1
         #endregion
 
         #endregion
+
 
     }
 }

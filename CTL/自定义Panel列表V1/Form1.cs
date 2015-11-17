@@ -75,16 +75,12 @@ namespace 自定义Panel列表V1
         MyPanelChild panelEx1_SetItemTemplate(PanelItem item)
         {
             ReplyModel model = item as ReplyModel;
-            //ReplyModel model = new ReplyModel();
-            //model.DataRow = item.DataRow;
-            //model.RowIndex = item.RowIndex;
-            //model.Height = item.Height;
-            //model.IsFocus = item.IsFocus;
-            //model.IsSelected = item.IsSelected;
             model.ReplyData = GetReply(int.Parse(model.DataRow[0].ToString()));
 
             ReplyUserControl pnl = new ReplyUserControl();
             pnl.PanelItem = model;
+            pnl.DataRow = item.DataRow;
+            pnl.RowIndex = item.RowIndex;
             pnl.RefreshData();
             pnl.SizeChanged += pnl_SizeChanged;
             return pnl;
@@ -107,7 +103,7 @@ namespace 自定义Panel列表V1
             dt.Columns.Add("Date");
             dt.Columns.Add("UserName");
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < int.Parse(txtRowCount.Text); i++)
             {
                 DataRow row = dt.NewRow();
                 row[0] = i;
