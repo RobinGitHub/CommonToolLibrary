@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace 自定义Panel列表
+namespace 自定义Panel列表V1
 {
     public partial class MyPanelChild : UserControl
     {
@@ -33,10 +33,10 @@ namespace 自定义Panel列表
         #region 公布属性
 
         #region 行号
-        /// <summary>
-        /// 行号
-        /// </summary>
-        public int RowIndex { get; set; }
+        ///// <summary>
+        ///// 行号
+        ///// </summary>
+        //public int RowIndex { get; set; }
         #endregion
 
         #region 是否选中
@@ -53,6 +53,8 @@ namespace 自定义Panel列表
                     this.BackColor = selectedColor;
                 else
                     this.BackColor = defaultColor;
+
+                this.PanelItem.IsSelected = value;
             }
         }
         #endregion
@@ -61,7 +63,7 @@ namespace 自定义Panel列表
         /// <summary>
         /// 数据源
         /// </summary>
-        public DataRow DataRow { get; set; }
+        public PanelItem PanelItem { get; set; }
         #endregion
 
         #region 默认的背景色
@@ -159,9 +161,14 @@ namespace 自定义Panel列表
         #endregion
         #endregion
 
+        #region 刷新数据
+        /// <summary>
+        /// 刷新数据
+        /// </summary>
         public virtual void RefreshData()
-        { 
-            
-        }
+        {
+
+        } 
+        #endregion
     }
 }

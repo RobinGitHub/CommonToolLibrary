@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace 自定义Panel列表
+namespace 自定义Panel列表V1
 {
     //http://blog.csdn.net/tdgx2004/article/details/5864784
     [Designer(typeof(ScrollbarControlDesigner))]
@@ -211,7 +211,7 @@ namespace 自定义Panel列表
             while (this.Visible != isVisible)
             {//有时候赋值后没有变过来
                 this.Visible = isVisible;
-            }                
+            }
             customScrollInfo.IsVisible = isVisible;
             customScrollInfo.Offset = offset;
             customScrollInfo.TrackHeight = this.Height;
