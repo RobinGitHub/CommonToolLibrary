@@ -15,5 +15,7 @@ namespace 自定义Panel列表V1
         /// 评论
         /// </summary>
         public DataTable ReplyData { get; set; }
+
+        public bool IsShowReply { get; set; }
     }
 }

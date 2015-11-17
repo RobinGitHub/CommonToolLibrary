@@ -128,6 +128,16 @@ namespace 自定义Panel列表V1
             control.Click += control_Click;
             control.MouseClick += control_MouseClick;
             control.DoubleClick += control_DoubleClick;
+            if (control.GetType() == typeof(PictureBox))
+            {
+
+            }
+            else if (control.GetType() != typeof(Panel))
+            {
+
+            }
+
+
             base.OnControlAdded(e);
         }
 
@@ -163,6 +173,8 @@ namespace 自定义Panel列表V1
                 base.OnMouseLeave(e);
             }
         }
+
+
         #endregion
         #endregion
 

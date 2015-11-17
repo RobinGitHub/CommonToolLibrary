@@ -30,7 +30,11 @@ namespace 自定义Panel列表V1
 
         private void btnInit_Click(object sender, EventArgs e)
         {
+            richTextBox1.Clear(); 
+            DateTime startTime = DateTime.Now;
             this.panelEx1.DataSource<ReplyModel>(GetDataSource());
+            richTextBox1.AppendText("总耗时：" + (DateTime.Now - startTime).TotalMilliseconds + "\n");
+            richTextBox1.ScrollToCaret();
         }
 
         int count = 0;
@@ -74,6 +78,7 @@ namespace 自定义Panel列表V1
 
         MyPanelChild panelEx1_SetItemTemplate(PanelItem item)
         {
+            DateTime startTime = DateTime.Now;
             ReplyModel model = item as ReplyModel;
             model.ReplyData = GetReply(int.Parse(model.DataRow[0].ToString()));
 
@@ -83,6 +88,8 @@ namespace 自定义Panel列表V1
             pnl.RowIndex = item.RowIndex;
             pnl.RefreshData();
             pnl.SizeChanged += pnl_SizeChanged;
+            richTextBox1.AppendText((DateTime.Now - startTime).TotalMilliseconds + "\n");
+            richTextBox1.ScrollToCaret();
             return pnl;
         }
 

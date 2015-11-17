@@ -152,7 +152,7 @@ namespace 自定义Panel列表V1
                 if (minRowHeight <= 0)
                     throw new Exception("行高必须大于0");
                 minRowHeight = value;
-                maxControlCount = SystemInformation.WorkingArea.Height / minRowHeight + 1;//前后各加一个
+                maxControlCount = SystemInformation.WorkingArea.Height / minRowHeight + 2;//前后各加一个
             }
         }
         #endregion
@@ -280,7 +280,6 @@ namespace 自定义Panel列表V1
         }
         #endregion
 
-
         #region 公共方法
 
         #region 清空 Clear
@@ -375,6 +374,9 @@ namespace 自定义Panel列表V1
             {
                 MyPanelChild childItem = SetItemTemplate(item);
 
+                Panel pnl = new Panel();
+                pnl.Controls.Add(childItem);
+
                 item.Height = childItem.Height;
                 displayRectangleHeight += item.Height;
                 itemList.Add(item);
@@ -383,6 +385,8 @@ namespace 自定义Panel列表V1
                 {
                     AddControl(childItem);
                 }
+                pnl.Dispose();
+                pnl = null;
             }
         }
         /// <summary>
@@ -994,7 +998,6 @@ namespace 自定义Panel列表V1
             return true;
         }
         #endregion
-
         #endregion
 
         #region 私有方法
