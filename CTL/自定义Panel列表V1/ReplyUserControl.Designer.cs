@@ -128,6 +128,7 @@
             this.button1.TabIndex = 1;
             this.button1.Text = "回复";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.btnReply_Click);
             // 
             // txtReplyContent
             // 

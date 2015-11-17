@@ -121,7 +121,34 @@ namespace 自定义Panel列表
             control.Click += control_Click;
             control.MouseClick += control_MouseClick;
             control.DoubleClick += control_DoubleClick;
+            control.ControlAdded += control_ControlAdded;
+
+            foreach (Control item in control.Controls)
+            {
+                OnControlAdded(item);
+            }
+
             base.OnControlAdded(e);
+        }
+
+        void control_ControlAdded(object sender, ControlEventArgs e)
+        {
+            Control control = e.Control;
+            OnControlAdded(control);
+        }
+
+        private void OnControlAdded(Control control)
+        {
+            control.MouseLeave += this.control_MouseLeave; // 当鼠标离开该子控件时判断是否是离开  
+            control.MouseEnter += control_MouseEnter;
+            control.Click += control_Click;
+            control.MouseClick += control_MouseClick;
+            control.DoubleClick += control_DoubleClick;
+
+            foreach (Control item in control.Controls)
+            {
+                OnControlAdded(item);
+            }
         }
 
         #region 点击事件

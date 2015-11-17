@@ -42,16 +42,24 @@ namespace 自定义Panel列表V1
 
         private void btnReply_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtReplyContent.Text))
-            {
-                this.pnlReplyContent.Visible = !this.pnlReplyContent.Visible;
+            //if (!string.IsNullOrEmpty(txtReplyContent.Text))
+            //{
+            //    this.pnlReplyContent.Visible = !this.pnlReplyContent.Visible;
 
-                ReplyModel model = base.PanelItem as ReplyModel;
-                model.IsShowReply = this.pnlReplyContent.Visible;
+            //    ReplyModel model = base.PanelItem as ReplyModel;
+            //    model.IsShowReply = this.pnlReplyContent.Visible;
 
-                if (SizeChanged != null)
-                    SizeChanged(this, null);
-            }
+            //    if (SizeChanged != null)
+            //        SizeChanged(this, null);
+            //}
+            Label lbl = new Label();
+            lbl.Text = "测试";
+            lbl.BringToFront();
+            lbl.Left = 20;
+            lbl.Top = 80;
+
+            panel3.Controls.Add(lbl);
+
         }
 
         public override void RefreshData()
