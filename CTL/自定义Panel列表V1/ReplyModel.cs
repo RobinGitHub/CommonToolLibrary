@@ -17,5 +17,9 @@ namespace 自定义Panel列表V1
         public DataTable ReplyData { get; set; }
 
         public bool IsShowReply { get; set; }
+        /// <summary>
+        /// 输入的文本
+        /// </summary>
+        public string InputText { get; set; }
     }
 }

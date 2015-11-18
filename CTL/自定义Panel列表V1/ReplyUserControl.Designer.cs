@@ -132,11 +132,13 @@
             // 
             // txtReplyContent
             // 
+            this.txtReplyContent.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.txtReplyContent.Location = new System.Drawing.Point(4, 4);
             this.txtReplyContent.Multiline = true;
             this.txtReplyContent.Name = "txtReplyContent";
             this.txtReplyContent.Size = new System.Drawing.Size(235, 32);
             this.txtReplyContent.TabIndex = 0;
+            this.txtReplyContent.TextChanged += new System.EventHandler(this.txtReplyContent_TextChanged);
             // 
             // pnlReplyDetail
             // 

@@ -31,10 +31,6 @@ namespace 自定义Panel列表V1
         /// 选中发生变化
         /// </summary>
         public event SelectionChangedDeletegate SelectionChanged;
-        /// <summary>
-        /// 更新内容
-        /// </summary>
-        public event EventHandler UpdateChildItem;
         #endregion
 
         #region 私有属性
@@ -256,6 +252,19 @@ namespace 自定义Panel列表V1
         }
         #endregion
 
+        #region 是否显示更多按钮
+        /// <summary>
+        /// 是否显示更多按钮
+        /// </summary>
+        public bool isShowMore = false;
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(false), Category("其他"), Description("是否显示更多按钮")]
+        public bool IsShowMore
+        {
+            get { return isShowMore; }
+            set { isShowMore = true; }
+        }
+        #endregion
+
         #endregion
 
         #region 构造函数
@@ -277,7 +286,9 @@ namespace 自定义Panel列表V1
             this.myVScrollBar1.BindControl = this.pnlContent;
             this.myVScrollBar1.Scroll += myVScrollBar1_Scroll;
             this.SizeChanged += PanelEx_SizeChanged;
+
         }
+
         #endregion
 
         #region 公共方法
@@ -301,20 +312,56 @@ namespace 自定义Panel列表V1
 
         #region 绑定数据 DataSource
 
-        public void DataSource<T>(DataTable dt)
+        public void DataSource<T>(DataTable dt, string dateGroupFiledName = "")
             where T : PanelItem, new()
         {
             this.Clear();
+            if (!dt.Columns.Contains(dateGroupFiledName))
+            {
+                throw new Exception("该DataTable 没有包含" + dateGroupFiledName + " 的列名！");
+            }
+            //行数
+            int rowCount = 0;
+            //日期值
+            string lastDateValue = "";
+            int rowIndex = 0;
             foreach (DataRow row in dt.Rows)
             {
                 PanelItem item = new T()
                 {
                     DataRow = row,
                     IsSelected = false,
-                    RowIndex = dt.Rows.IndexOf(row)
+                    RowIndex = rowIndex
                 };
                 this.AddItem(item);
+
+                #region 增加统计数据
+                if (dt.Columns.Contains(dateGroupFiledName))
+                {
+                    string date = DateTime.Parse(row[dateGroupFiledName].ToString()).ToString("yyyy/MM");
+                    if (!string.IsNullOrEmpty(lastDateValue) && lastDateValue != date || dt.Rows.IndexOf(row) == dt.Rows.Count - 1)
+                    {
+                        rowIndex++;
+                        item = new GroupRowItem()
+                        {
+                            IsSelected = false,
+                            RowIndex = rowIndex,
+                            RowType = PanelRowType.GroupRow,
+                            GroupDateTime = DateTime.Parse(row[dateGroupFiledName].ToString()),
+                            RowCount = rowCount
+                        };
+                        this.AddItem(item);
+                        rowCount = 0;
+                    }
+                    else
+                        rowCount++;
+                    lastDateValue = date;
+                }
+                #endregion
+
+                rowIndex++;
             }
+
             if (controlList.Count > 0)
             {
                 item_MouseClick(controlList.First().Key, null);
@@ -358,25 +405,46 @@ namespace 自定义Panel列表V1
         {
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
-            if (isEqualHeight)
+            if (item.RowType == PanelRowType.ContentRow)
             {
-                item.Height = this.minRowHeight;
-                displayRectangleHeight += item.Height;
-                itemList.Add(item);
+                #region ContentRow
+                if (isEqualHeight)
+                {
+                    item.Height = this.minRowHeight;
+                    displayRectangleHeight += item.Height;
+                    itemList.Add(item);
 
-                if (controlList.Count < maxControlCount)
+                    if (controlList.Count < maxControlCount)
+                    {
+                        MyPanelChild childItem = SetItemTemplate(item);
+                        AddControl(childItem);
+                    }
+                }
+                else
                 {
                     MyPanelChild childItem = SetItemTemplate(item);
-                    AddControl(childItem);
+
+                    Panel pnl = new Panel();
+                    pnl.Controls.Add(childItem);
+
+                    item.Height = childItem.Height;
+                    displayRectangleHeight += item.Height;
+                    itemList.Add(item);
+
+                    if (controlList.Count < maxControlCount)
+                    {
+                        AddControl(childItem);
+                    }
+                    pnl.Dispose();
+                    pnl = null;
                 }
+                #endregion
             }
-            else
+            else if (item.RowType == PanelRowType.GroupRow)
             {
-                MyPanelChild childItem = SetItemTemplate(item);
-
-                Panel pnl = new Panel();
-                pnl.Controls.Add(childItem);
-
+                GroupRowItem groupItem = item as GroupRowItem;
+                MyPanelChild childItem = new GroupRow(groupItem.GroupDateTime, groupItem.RowCount);
+                childItem.PanelItem = groupItem;
                 item.Height = childItem.Height;
                 displayRectangleHeight += item.Height;
                 itemList.Add(item);
@@ -385,9 +453,7 @@ namespace 自定义Panel列表V1
                 {
                     AddControl(childItem);
                 }
-                pnl.Dispose();
-                pnl = null;
-            }
+            }            
         }
         /// <summary>
         /// 添加行数据
@@ -408,29 +474,36 @@ namespace 自定义Panel列表V1
         /// 添加控件
         /// </summary>
         /// <param name="item"></param>
-        private void AddControl(MyPanelChild item)
+        private void AddControl(MyPanelChild item, bool isSetTop = true)
         {
             item.DefaultColor = defaultColor;
             item.MouseEnterColor = mouseEnterColor;
             item.SelectedColor = selectedColor;
             item.Width = this.pnlContent.Width;
             item.Anchor = (AnchorStyles)(AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top);
-            if (controlList.Count == 0)
+            if (isSetTop)
             {
-                item.Top = 0;
-            }
-            else
-            {
-                MyPanelChild lastItem = controlList.First(t => t.Value == item.RowIndex - 1).Key;
-                item.Top = lastItem.Top + lastItem.Height;
+                if (controlList.Count == 0)
+                {
+                    item.Top = 0;
+                }
+                else
+                {
+                    MyPanelChild lastItem = controlList.First(t => t.Value == item.RowIndex - 1).Key;
+                    item.Top = lastItem.Top + lastItem.Height;
+                }
             }
 
             controlList.Add(item, item.RowIndex);
             this.pnlContent.Controls.Add(item);
-            item.MouseClick += item_MouseClick;
-            item.MouseEnter += Item_MouseEnter;
-            item.MouseLeave += Item_MouseLeave;
-            item.MouseMove += Item_MouseMove;
+
+            if (item.PanelItem.RowType == PanelRowType.ContentRow)
+            {
+                item.MouseClick += item_MouseClick;
+                item.MouseEnter += Item_MouseEnter;
+                item.MouseLeave += Item_MouseLeave;
+                item.MouseMove += Item_MouseMove;
+            }
         }
 
         private void Item_MouseMove(object sender, MouseEventArgs e)
@@ -667,7 +740,7 @@ namespace 自定义Panel列表V1
                 {
                     controlList[childList[i]] = i;
                     GetNewInfo(childList[i], i);
-                    UpdateChildItem(childList[i], null);
+                    childList[i].RefreshData();
                 }
             }
             else
@@ -681,7 +754,7 @@ namespace 自定义Panel列表V1
                     {
                         controlList[childList[i]] = i;
                         GetNewInfo(childList[i], i);
-                        UpdateChildItem(childList[i], null);
+                        childList[i].RefreshData();
                     }
                     else
                     {
@@ -768,7 +841,7 @@ namespace 自定义Panel列表V1
                 displayRectangleHeight += find.Key.Height - item.Height;
 
                 item.Height = find.Key.Height;
-                UpdateChildItem(find.Key, null);
+                find.Key.RefreshData();
                 item_MouseClick(find.Key, null);
 
                 if (isSizeChange)
@@ -869,7 +942,14 @@ namespace 自定义Panel列表V1
                     {
                         ClearSelectedItem(tmpItem.RowIndex - 1);
 
-                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == tmpItem.RowIndex - 1);
+                        int searchIndex = tmpItem.RowIndex - 1;
+                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == searchIndex);
+                        while (find.Key != null && find.Key.PanelItem.RowType != PanelRowType.ContentRow)
+                        {
+                            searchIndex--;
+                            find = controlList.FirstOrDefault(t => t.Key.RowIndex == searchIndex);
+                        }
+
                         if (find.Key == null || find.Key.Top < 0 || find.Key.Top > this.Height)
                         {
                             //这里要直接计算Value 的位置
@@ -931,7 +1011,14 @@ namespace 自定义Panel列表V1
                     if (tmpItem != null)
                     {
                         ClearSelectedItem(tmpItem.RowIndex + 1);
-                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == tmpItem.RowIndex + 1);
+
+                        int searchIndex = tmpItem.RowIndex + 1;
+                        KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == searchIndex);
+                        while (find.Key != null && find.Key.PanelItem.RowType != PanelRowType.ContentRow)
+                        {
+                            searchIndex++;
+                            find = controlList.FirstOrDefault(t => t.Key.RowIndex == searchIndex);
+                        }
                         if (find.Key == null || find.Key.Top < 0 || find.Key.Top + tmpItem.Height > this.Height)
                         {
                             int[] indexArr = controlList.Values.OrderBy(t => t).ToArray();
@@ -980,12 +1067,12 @@ namespace 自定义Panel列表V1
                     {
                         foreach (var item in controlList)
                         {
-                            if (!item.Key.IsSelected)
+                            if (!item.Key.IsSelected && item.Key.PanelItem.RowType == PanelRowType.ContentRow)
                                 item.Key.IsSelected = true;
                         }
                         foreach (var item in itemList)
                         {
-                            if (!item.IsSelected)
+                            if (!item.IsSelected && item.RowType == PanelRowType.ContentRow)
                                 item.IsSelected = true;
                         }
                     }
@@ -1015,7 +1102,7 @@ namespace 自定义Panel列表V1
                 startIndex = 0;
                 endIndex = controlList.Count - 1;
             }
-            else if (endIndex > itemList.Count)
+            else if (endIndex >= itemList.Count)
             {//当endIndex > itemList.Count 即endIndex超过内容行数
                 endIndex = itemList.Count - 1;
                 startIndex = endIndex - (controlList.Count - 1);
@@ -1037,21 +1124,50 @@ namespace 自定义Panel列表V1
                 MyPanelChild childItem = controlList.First(t => t.Value == indexArr[i]).Key;
                 if (controlList[childItem] < startIndex || controlList[childItem] > endIndex)
                 {
-                    DateTime startTime = DateTime.Now;
                     while (controlList.ContainsValue(tmpStart) && tmpStart < endIndex)
                     {
                         tmpStart += 1;
                     }
-                    controlList[childItem] = tmpStart;
-                    childItem.RowIndex = tmpStart;
-
-                    if (childItem.RowIndex < itemList.Count)
+                    //如果替换的这个是统计行，与原本的不一致，则要删除当前控件，删除controlList中的对象，重新添加
+                    PanelItem item = itemList.First(t => t.RowIndex == tmpStart);
+                    if (childItem.PanelItem.RowType != item.RowType)
                     {
-                        GetNewInfo(childItem, childItem.RowIndex);
+                        this.pnlContent.Controls.Remove(childItem);
+                        this.controlList.Remove(childItem);
+                        displayRectangleHeight -= childItem.Height;
+                        if (item.RowType == PanelRowType.ContentRow)
+                        {
+                            MyPanelChild newItem = this.SetItemTemplate(item);
+                            newItem.IsSelected = item.IsSelected;
+                            this.AddControl(newItem, false);
+                            displayRectangleHeight += item.Height;
+                            childItem = newItem;
+                        }
+                        else if (item.RowType == PanelRowType.GroupRow)
+                        { 
+                            GroupRowItem groupItem = item as GroupRowItem;
+                            MyPanelChild newItem = new GroupRow(groupItem.GroupDateTime, groupItem.RowCount);
+                            newItem.PanelItem = groupItem;
+                            this.AddControl(newItem, false);
+                            displayRectangleHeight += newItem.Height;
+                            childItem = newItem;
+                        }
+                        else if (item.RowType == PanelRowType.LoadMoreRow)
+                        { 
+                            
+                        }
                     }
+                    else
+                    {
+                        controlList[childItem] = tmpStart;
+                        childItem.RowIndex = tmpStart;
 
-                    if (UpdateChildItem != null)
-                        UpdateChildItem(childItem, null);
+                        if (childItem.RowIndex < itemList.Count)
+                        {
+                            GetNewInfo(childItem, childItem.RowIndex);
+                        }
+                        childItem.RefreshData();
+                    }
                 }
                 childItem.Top = GetItemHeightByRowIndex(childItem.RowIndex) - this.myVScrollBar1.Value;
             }
@@ -1269,4 +1385,20 @@ namespace 自定义Panel列表V1
 
 
     }
+
+    /// <summary>
+    /// 分组对象
+    /// </summary>
+    internal class GroupRowItem : PanelItem
+    {
+        /// <summary>
+        /// 分组时间
+        /// </summary>
+        public DateTime GroupDateTime { get; set; }
+        /// <summary>
+        /// 行数
+        /// </summary>
+        public int RowCount { get; set; }
+    }
+
 }

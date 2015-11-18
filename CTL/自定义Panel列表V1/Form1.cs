@@ -15,7 +15,6 @@ namespace 自定义Panel列表V1
         public Form1()
         {
             InitializeComponent();
-            this.panelEx1.UpdateChildItem += panelEx1_UpdateChildItem;
             this.panelEx1.SetItemTemplate += panelEx1_SetItemTemplate;
             this.panelEx1.SelectionChanged += panelEx1_SelectionChanged;
 
@@ -32,7 +31,7 @@ namespace 自定义Panel列表V1
         {
             richTextBox1.Clear(); 
             DateTime startTime = DateTime.Now;
-            this.panelEx1.DataSource<ReplyModel>(GetDataSource());
+            this.panelEx1.DataSource<ReplyModel>(GetDataSource(), "Date");
             richTextBox1.AppendText("总耗时：" + (DateTime.Now - startTime).TotalMilliseconds + "\n");
             richTextBox1.ScrollToCaret();
         }
@@ -69,13 +68,7 @@ namespace 自定义Panel列表V1
             List<int> indexArr = selectedItems.Select(t => t.RowIndex).ToList();
             this.panelEx1.Remove(indexArr);
         }
-
-        void panelEx1_UpdateChildItem(object sender, EventArgs e)
-        {
-            ReplyUserControl pnl = sender as ReplyUserControl;
-            pnl.RefreshData();
-        }
-
+        
         MyPanelChild panelEx1_SetItemTemplate(PanelItem item)
         {
             DateTime startTime = DateTime.Now;

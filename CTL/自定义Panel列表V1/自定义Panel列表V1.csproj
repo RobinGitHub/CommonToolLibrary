@@ -49,6 +49,18 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GroupRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GroupRow.Designer.cs">
+      <DependentUpon>GroupRow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadMoreRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LoadMoreRow.Designer.cs">
+      <DependentUpon>LoadMoreRow.cs</DependentUpon>
+    </Compile>
     <Compile Include="MyPanelChild.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -79,6 +91,9 @@
     </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GroupRow.resx">
+      <DependentUpon>GroupRow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MyPanelChild.resx">
       <DependentUpon>MyPanelChild.cs</DependentUpon>

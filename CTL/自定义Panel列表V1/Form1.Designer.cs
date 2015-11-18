@@ -102,6 +102,7 @@
             this.panelEx1.Location = new System.Drawing.Point(167, 0);
             this.panelEx1.MinRowHeight = 60;
             this.panelEx1.MouseEnterColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(240)))), ((int)(((byte)(193)))));
+            this.panelEx1.MultiSelect = true;
             this.panelEx1.Name = "panelEx1";
             this.panelEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
             this.panelEx1.Size = new System.Drawing.Size(371, 327);

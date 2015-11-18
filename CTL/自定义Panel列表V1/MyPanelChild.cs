@@ -28,6 +28,7 @@ namespace 自定义Panel列表V1
         /// 选中时候的背景色
         /// </summary>
         private Color selectedColor = Color.FromArgb(252, 235, 166);
+
         #endregion
 
         #region 公布属性
@@ -122,17 +123,11 @@ namespace 自定义Panel列表V1
         #region override
         protected override void OnControlAdded(ControlEventArgs e)
         {
-            Control control = e.Control; // 获取添加的子控件  
-            control.MouseLeave += this.control_MouseLeave; // 当鼠标离开该子控件时判断是否是离开  
-            control.MouseEnter += control_MouseEnter;
-            control.Click += control_Click;
-            control.MouseClick += control_MouseClick;
-            control.DoubleClick += control_DoubleClick;
-            control.ControlAdded += control_ControlAdded;
-
-            foreach (Control item in control.Controls)
+            if (PanelItem == null ||
+                (PanelItem != null && PanelItem.RowType == PanelRowType.ContentRow))
             {
-                OnControlAdded(item);
+                Control control = e.Control; // 获取添加的子控件  
+                OnControlAdded(control);
             }
 
             base.OnControlAdded(e);
@@ -146,11 +141,19 @@ namespace 自定义Panel列表V1
 
         private void OnControlAdded(Control control)
         {
+            if (((control.GetType() == typeof(TextBox) && !(control as TextBox).ReadOnly)
+                || (control.GetType() == typeof(RichTextBox) && !(control as RichTextBox).ReadOnly)
+                )
+                && control.Enabled)
+            {//控件允许输入
+                return;
+            }
             control.MouseLeave += this.control_MouseLeave; // 当鼠标离开该子控件时判断是否是离开  
             control.MouseEnter += control_MouseEnter;
             control.Click += control_Click;
             control.MouseClick += control_MouseClick;
             control.DoubleClick += control_DoubleClick;
+            control.ControlAdded += control_ControlAdded;
 
             foreach (Control item in control.Controls)
             {
