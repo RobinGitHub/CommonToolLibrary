@@ -108,7 +108,7 @@ namespace 自定义Panel列表V1
                 DataRow row = dt.NewRow();
                 row[0] = i;
                 row[1] = "【生日】 2014/11/20 生日,敬请关注" + i.ToString();
-                row[2] = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                row[2] = DateTime.Now.AddDays(i).ToString("yyyy-MM-dd HH:mm");
                 row[3] = "超级管理员";
                 dt.Rows.Add(row);
             }

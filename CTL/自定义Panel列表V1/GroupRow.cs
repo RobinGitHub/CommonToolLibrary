@@ -24,7 +24,7 @@ namespace 自定义Panel列表V1
 
         private void SetTitle(DateTime dateTime, int rowCount, string dateTimeFormart = "yyyy/MM")
         {
-            lblTitle.Text = string.Format("以上为{0}的数据，共{1}行", dateTime.ToString(dateTimeFormart), rowCount);
+            lblTitle.Text = string.Format("以上为{0}月的数据，共{1}行", dateTime.ToString(dateTimeFormart), rowCount);
         }
 
         public override void RefreshData()

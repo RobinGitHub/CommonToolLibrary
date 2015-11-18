@@ -261,7 +261,7 @@ namespace 自定义Panel列表V1
         public bool IsShowMore
         {
             get { return isShowMore; }
-            set { isShowMore = true; }
+            set { isShowMore = value; }
         }
         #endregion
 
@@ -338,6 +338,7 @@ namespace 自定义Panel列表V1
                 #region 增加统计数据
                 if (dt.Columns.Contains(dateGroupFiledName))
                 {
+                    rowCount++;
                     string date = DateTime.Parse(row[dateGroupFiledName].ToString()).ToString("yyyy/MM");
                     if (!string.IsNullOrEmpty(lastDateValue) && lastDateValue != date || dt.Rows.IndexOf(row) == dt.Rows.Count - 1)
                     {
@@ -347,14 +348,12 @@ namespace 自定义Panel列表V1
                             IsSelected = false,
                             RowIndex = rowIndex,
                             RowType = PanelRowType.GroupRow,
-                            GroupDateTime = DateTime.Parse(row[dateGroupFiledName].ToString()),
+                            GroupDateTime = DateTime.Parse(lastDateValue),
                             RowCount = rowCount
                         };
                         this.AddItem(item);
                         rowCount = 0;
                     }
-                    else
-                        rowCount++;
                     lastDateValue = date;
                 }
                 #endregion
@@ -445,8 +444,10 @@ namespace 自定义Panel列表V1
                 GroupRowItem groupItem = item as GroupRowItem;
                 MyPanelChild childItem = new GroupRow(groupItem.GroupDateTime, groupItem.RowCount);
                 childItem.PanelItem = groupItem;
+                childItem.RowIndex = item.RowIndex;
                 item.Height = childItem.Height;
                 displayRectangleHeight += item.Height;
+
                 itemList.Add(item);
 
                 if (controlList.Count < maxControlCount)
