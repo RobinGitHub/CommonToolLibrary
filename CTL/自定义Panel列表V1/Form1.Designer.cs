@@ -34,8 +34,8 @@
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
-            this.panelEx1 = new 自定义Panel列表V1.MyPanelList();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.panelEx1 = new 自定义Panel列表V1.MyPanelList();
             this.SuspendLayout();
             // 
             // txtRowCount
@@ -91,23 +91,6 @@
             this.btnInit.Text = "初始化";
             this.btnInit.UseVisualStyleBackColor = true;
             // 
-            // panelEx1
-            // 
-            this.panelEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelEx1.BackColor = System.Drawing.Color.White;
-            this.panelEx1.DefaultColor = System.Drawing.Color.White;
-            this.panelEx1.FirstDisplayedScrollingRowIndex = 0;
-            this.panelEx1.Location = new System.Drawing.Point(167, 0);
-            this.panelEx1.MinRowHeight = 60;
-            this.panelEx1.MouseEnterColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(240)))), ((int)(((byte)(193)))));
-            this.panelEx1.MultiSelect = true;
-            this.panelEx1.Name = "panelEx1";
-            this.panelEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
-            this.panelEx1.Size = new System.Drawing.Size(371, 327);
-            this.panelEx1.TabIndex = 54;
-            // 
             // richTextBox1
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -117,6 +100,27 @@
             this.richTextBox1.Size = new System.Drawing.Size(156, 235);
             this.richTextBox1.TabIndex = 55;
             this.richTextBox1.Text = "";
+            // 
+            // panelEx1
+            // 
+            this.panelEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelEx1.BackColor = System.Drawing.Color.White;
+            this.panelEx1.DefaultColor = System.Drawing.Color.White;
+            this.panelEx1.FirstDisplayedScrollingRowIndex = 0;
+            this.panelEx1.GroupFieldName = "Date";
+            this.panelEx1.IsEqualHeight = false;
+            this.panelEx1.IsGroup = true;
+            this.panelEx1.IsShowMore = true;
+            this.panelEx1.Location = new System.Drawing.Point(167, 0);
+            this.panelEx1.MinRowHeight = 60;
+            this.panelEx1.MouseEnterColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(240)))), ((int)(((byte)(193)))));
+            this.panelEx1.MultiSelect = true;
+            this.panelEx1.Name = "panelEx1";
+            this.panelEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
+            this.panelEx1.Size = new System.Drawing.Size(371, 327);
+            this.panelEx1.TabIndex = 54;
             // 
             // Form1
             // 

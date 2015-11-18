@@ -29,9 +29,10 @@ namespace 自定义Panel列表V1
 
         private void btnInit_Click(object sender, EventArgs e)
         {
+            this.panelEx1.IsShowMore = true;
             richTextBox1.Clear(); 
             DateTime startTime = DateTime.Now;
-            this.panelEx1.DataSource<ReplyModel>(GetDataSource(), "Date");
+            this.panelEx1.DataSource<ReplyModel>(GetDataSource());
             richTextBox1.AppendText("总耗时：" + (DateTime.Now - startTime).TotalMilliseconds + "\n");
             richTextBox1.ScrollToCaret();
         }
@@ -39,15 +40,16 @@ namespace 自定义Panel列表V1
         int count = 0;
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            DataRow row = dt.NewRow();
-            row[0] = "新" + count;
-            dt.Rows.Add(row);
+            this.panelEx1.IsShowMore = false;
+            //DataRow row = dt.NewRow();
+            //row[0] = "新" + count;
+            //dt.Rows.Add(row);
 
-            PanelItem item = new PanelItem();
-            item.DataRow = row;
-            item.Height = this.panelEx1.MinRowHeight;
-            this.panelEx1.Add(item);
-            count++;
+            //PanelItem item = new PanelItem();
+            //item.DataRow = row;
+            //item.Height = this.panelEx1.MinRowHeight;
+            //this.panelEx1.Add(item);
+            //count++;
         }
 
         int updCount = 0;
