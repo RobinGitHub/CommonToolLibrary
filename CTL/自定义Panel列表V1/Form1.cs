@@ -15,6 +15,7 @@ namespace 自定义Panel列表V1
         public Form1()
         {
             InitializeComponent();
+
             this.panelEx1.SetItemTemplate += panelEx1_SetItemTemplate;
             this.panelEx1.SelectionChanged += panelEx1_SelectionChanged;
 
@@ -24,11 +25,17 @@ namespace 自定义Panel列表V1
             this.btnInit.Click += btnInit_Click;
             this.btnInsert.Click += btnInsert_Click;
             this.btnAddByDt.Click += btnAddByDt_Click;
+            this.cbxShowMore.CheckedChanged += cbxShowMore_CheckedChanged;
 
             this.panelEx1.MinRowHeight = 60;
             this.panelEx1.IsEqualHeight = false;
 
             dt = GetDataSource();
+        }
+
+        void cbxShowMore_CheckedChanged(object sender, EventArgs e)
+        {
+            this.panelEx1.IsShowMore = cbxShowMore.Checked;
         }
 
 

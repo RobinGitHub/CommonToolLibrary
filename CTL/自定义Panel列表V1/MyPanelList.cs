@@ -306,6 +306,18 @@ namespace 自定义Panel列表V1
                 {
                     this.Remove(new List<int>() { item.RowIndex });
                 }
+                else if (value && item == null)
+                {
+                    PanelItem loadMoreItem = new PanelItem()
+                    {
+                        IsSelected = false,
+                        RowIndex = itemList.Count,
+                        RowType = PanelRowType.LoadMoreRow
+                    };
+                    InsertItem(loadMoreItem.RowIndex, loadMoreItem);
+                    RefreshContent();
+                    this.FirstDisplayedScrollingRowIndex = loadMoreItem.RowIndex;
+                }
             }
         }
         #endregion
@@ -386,7 +398,7 @@ namespace 自定义Panel列表V1
                             GroupDateTime = DateTime.Parse(lastDateValue),
                             RowCount = rowCount
                         };
-                        this.AddItem(groupItem);
+                        InsertItem(rowIndex, groupItem);
                         rowCount = 0;
                         rowIndex++;
                     }
@@ -397,7 +409,7 @@ namespace 自定义Panel列表V1
                         IsSelected = false,
                         RowIndex = rowIndex
                     };
-                    this.AddItem(item);
+                    InsertItem(rowIndex, item);
 
                     //最后一行
                     if (dt.Rows.IndexOf(row) == dt.Rows.Count - 1)
@@ -411,7 +423,7 @@ namespace 自定义Panel列表V1
                             GroupDateTime = DateTime.Parse(lastDateValue),
                             RowCount = rowCount + 1
                         };
-                        this.AddItem(groupItem);
+                        InsertItem(rowIndex, groupItem);
                         rowCount = 0;
                     }
                     rowCount++;
@@ -426,7 +438,7 @@ namespace 自定义Panel列表V1
                         IsSelected = false,
                         RowIndex = rowIndex
                     };
-                    this.AddItem(item);
+                    InsertItem(rowIndex, item);
                 }
                 rowIndex++;
             }
@@ -439,7 +451,7 @@ namespace 自定义Panel列表V1
                     RowIndex = rowIndex,
                     RowType = PanelRowType.LoadMoreRow
                 };
-                this.AddItem(loadMoreItem);
+                InsertItem(rowIndex, loadMoreItem);
             }
 
             if (controlList.Count > 0)
@@ -578,6 +590,24 @@ namespace 自定义Panel列表V1
                 childItem.RowIndex = item.RowIndex;
                 item.Height = childItem.Height;
                 displayRectangleHeight += item.Height;
+
+                itemList.Insert(rowIndex, item);
+
+                if (controlList.Count < maxControlCount)
+                {
+                    AddControl(childItem);
+                }
+            }
+            #endregion
+            #region LoadMoreRow
+            else if (item.RowType == PanelRowType.LoadMoreRow)
+            {
+                LoadMoreRow childItem = new LoadMoreRow();
+                childItem.PanelItem = item;
+                childItem.RowIndex = item.RowIndex;
+                item.Height = childItem.Height;
+                displayRectangleHeight += item.Height;
+                childItem.LoadMore += childItem_LoadMore;
 
                 itemList.Insert(rowIndex, item);
 
@@ -759,86 +789,88 @@ namespace 自定义Panel列表V1
             this.FirstDisplayedScrollingRowIndex = item.RowIndex;
         }
 
-        /// <summary>
-        /// 添加行数据
-        /// </summary>
-        /// <param name="item"></param>
-        private void AddItem(PanelItem item)
-        {
-            if (SetItemTemplate == null)
-                throw new Exception("必须启用 SetItemTemplate 事件");
-            #region ContentRow
-            if (item.RowType == PanelRowType.ContentRow)
-            {
-                if (isEqualHeight)
-                {
-                    item.Height = this.minRowHeight;
-                    displayRectangleHeight += item.Height;
-                    itemList.Add(item);
+        #region 添加行数据 --del
+        ///// <summary>
+        ///// 添加行数据
+        ///// </summary>
+        ///// <param name="item"></param>
+        //private void AddItem(PanelItem item)
+        //{
+        //    //if (SetItemTemplate == null)
+        //    //    throw new Exception("必须启用 SetItemTemplate 事件");
+        //    #region ContentRow
+        //    if (item.RowType == PanelRowType.ContentRow)
+        //    {
+        //        if (isEqualHeight)
+        //        {
+        //            item.Height = this.minRowHeight;
+        //            displayRectangleHeight += item.Height;
+        //            itemList.Add(item);
 
-                    if (controlList.Count < maxControlCount)
-                    {
-                        MyPanelChild childItem = SetItemTemplate(item);
-                        AddControl(childItem);
-                    }
-                }
-                else
-                {
-                    MyPanelChild childItem = SetItemTemplate(item);
+        //            if (controlList.Count < maxControlCount)
+        //            {
+        //                MyPanelChild childItem = SetItemTemplate(item);
+        //                AddControl(childItem);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            MyPanelChild childItem = SetItemTemplate(item);
 
-                    Panel pnl = new Panel();
-                    pnl.Controls.Add(childItem);
+        //            Panel pnl = new Panel();
+        //            pnl.Controls.Add(childItem);
 
-                    item.Height = childItem.Height;
-                    displayRectangleHeight += item.Height;
-                    itemList.Add(item);
+        //            item.Height = childItem.Height;
+        //            displayRectangleHeight += item.Height;
+        //            itemList.Add(item);
 
-                    if (controlList.Count < maxControlCount)
-                    {
-                        AddControl(childItem);
-                    }
-                    pnl.Dispose();
-                    pnl = null;
-                }
-            }
-            #endregion
-            #region GroupRow
-            else if (item.RowType == PanelRowType.GroupRow)
-            {
-                GroupRowItem groupItem = item as GroupRowItem;
-                MyPanelChild childItem = new GroupRow(groupItem.GroupDateTime, groupItem.RowCount);
-                childItem.PanelItem = groupItem;
-                childItem.RowIndex = item.RowIndex;
-                item.Height = childItem.Height;
-                displayRectangleHeight += item.Height;
+        //            if (controlList.Count < maxControlCount)
+        //            {
+        //                AddControl(childItem);
+        //            }
+        //            pnl.Dispose();
+        //            pnl = null;
+        //        }
+        //    }
+        //    #endregion
+        //    #region GroupRow
+        //    else if (item.RowType == PanelRowType.GroupRow)
+        //    {
+        //        GroupRowItem groupItem = item as GroupRowItem;
+        //        MyPanelChild childItem = new GroupRow(groupItem.GroupDateTime, groupItem.RowCount);
+        //        childItem.PanelItem = groupItem;
+        //        childItem.RowIndex = item.RowIndex;
+        //        item.Height = childItem.Height;
+        //        displayRectangleHeight += item.Height;
 
-                itemList.Add(item);
+        //        itemList.Add(item);
 
-                if (controlList.Count < maxControlCount)
-                {
-                    AddControl(childItem);
-                }
-            }
-            #endregion
-            #region LoadMoreRow
-            else if (item.RowType == PanelRowType.LoadMoreRow)
-            {
-                LoadMoreRow childItem = new LoadMoreRow();
-                childItem.PanelItem = item;
-                childItem.RowIndex = item.RowIndex;
-                item.Height = childItem.Height;
-                displayRectangleHeight += item.Height;
-                childItem.LoadMore += childItem_LoadMore;
+        //        if (controlList.Count < maxControlCount)
+        //        {
+        //            AddControl(childItem);
+        //        }
+        //    }
+        //    #endregion
+        //    #region LoadMoreRow
+        //    else if (item.RowType == PanelRowType.LoadMoreRow)
+        //    {
+        //        LoadMoreRow childItem = new LoadMoreRow();
+        //        childItem.PanelItem = item;
+        //        childItem.RowIndex = item.RowIndex;
+        //        item.Height = childItem.Height;
+        //        displayRectangleHeight += item.Height;
+        //        childItem.LoadMore += childItem_LoadMore;
 
-                itemList.Add(item);
+        //        itemList.Add(item);
 
-                if (controlList.Count < maxControlCount)
-                {
-                    AddControl(childItem);
-                }
-            }
-            #endregion
-        }
+        //        if (controlList.Count < maxControlCount)
+        //        {
+        //            AddControl(childItem);
+        //        }
+        //    }
+        //    #endregion
+        //} 
+        #endregion
 
         #region 加载更多
         /// <summary>

@@ -39,6 +39,7 @@
             this.btnInsert = new System.Windows.Forms.Button();
             this.panelEx1 = new 自定义Panel列表V1.MyPanelList();
             this.btnAddByDt = new System.Windows.Forms.Button();
+            this.cbxShowMore = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // txtRowCount
@@ -98,9 +99,9 @@
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.richTextBox1.Location = new System.Drawing.Point(5, 129);
+            this.richTextBox1.Location = new System.Drawing.Point(5, 155);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(156, 198);
+            this.richTextBox1.Size = new System.Drawing.Size(156, 172);
             this.richTextBox1.TabIndex = 55;
             this.richTextBox1.Text = "";
             // 
@@ -151,11 +152,22 @@
             this.btnAddByDt.Text = "批量增加";
             this.btnAddByDt.UseVisualStyleBackColor = true;
             // 
+            // cbxShowMore
+            // 
+            this.cbxShowMore.AutoSize = true;
+            this.cbxShowMore.Location = new System.Drawing.Point(5, 122);
+            this.cbxShowMore.Name = "cbxShowMore";
+            this.cbxShowMore.Size = new System.Drawing.Size(72, 16);
+            this.cbxShowMore.TabIndex = 59;
+            this.cbxShowMore.Text = "显示更多";
+            this.cbxShowMore.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(537, 327);
+            this.Controls.Add(this.cbxShowMore);
             this.Controls.Add(this.btnAddByDt);
             this.Controls.Add(this.btnInsert);
             this.Controls.Add(this.txtDate);
@@ -187,6 +199,7 @@
         private System.Windows.Forms.TextBox txtDate;
         private System.Windows.Forms.Button btnInsert;
         private System.Windows.Forms.Button btnAddByDt;
+        private System.Windows.Forms.CheckBox cbxShowMore;
     }
 }
 
