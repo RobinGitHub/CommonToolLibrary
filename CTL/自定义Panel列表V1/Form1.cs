@@ -22,12 +22,16 @@ namespace 自定义Panel列表V1
             this.btnUpdate.Click += btnUpdate_Click;
             this.btnDel.Click += btnDel_Click;
             this.btnInit.Click += btnInit_Click;
+            this.btnInsert.Click += btnInsert_Click;
+            this.btnAddByDt.Click += btnAddByDt_Click;
 
             this.panelEx1.MinRowHeight = 60;
             this.panelEx1.IsEqualHeight = false;
 
             dt = GetDataSource();
         }
+
+
 
         private void btnInit_Click(object sender, EventArgs e)
         {
@@ -53,6 +57,24 @@ namespace 自定义Panel列表V1
             item.DataRow = row;
             this.panelEx1.Add(item);
             count++;
+        }
+        void btnInsert_Click(object sender, EventArgs e)
+        {
+            DataRow row = dt.NewRow();
+            row[0] = dt.Rows.Count;
+            row[1] = "【生日】 " + DateTime.Now.AddDays(int.Parse(txtDate.Text)).ToString("yyyy-MM-dd HH:mm") + " 生日,TTTT敬请关注" + dt.Rows.Count.ToString();
+            row[2] = DateTime.Now.AddDays(int.Parse(txtDate.Text)).ToString("yyyy-MM-dd HH:mm");
+            row[3] = "超级管理员";
+            dt.Rows.Add(row);
+
+            ReplyModel item = new ReplyModel();
+            item.DataRow = row;
+            this.panelEx1.Insert(int.Parse(txtDate.Text), item);
+            count++;
+        }
+        void btnAddByDt_Click(object sender, EventArgs e)
+        {
+            this.panelEx1.Add<ReplyModel>(GetDataSource());
         }
 
         int updCount = 0;
@@ -112,7 +134,7 @@ namespace 自定义Panel列表V1
             {
                 DataRow row = dt.NewRow();
                 row[0] = i;
-                row[1] = "【生日】 2014/11/20 生日,敬请关注" + i.ToString();
+                row[1] = "【生日】 2014/11/20 生日,敬请关注" + i.ToString() + txtDate.Text;
                 row[2] = DateTime.Now.AddDays(i).ToString("yyyy-MM-dd HH:mm");
                 row[3] = "超级管理员";
                 dt.Rows.Add(row);

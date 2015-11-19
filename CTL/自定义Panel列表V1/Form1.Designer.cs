@@ -35,8 +35,10 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.panelEx1 = new 自定义Panel列表V1.MyPanelList();
             this.txtDate = new System.Windows.Forms.TextBox();
+            this.btnInsert = new System.Windows.Forms.Button();
+            this.panelEx1 = new 自定义Panel列表V1.MyPanelList();
+            this.btnAddByDt = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtRowCount
@@ -96,11 +98,28 @@
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.richTextBox1.Location = new System.Drawing.Point(5, 92);
+            this.richTextBox1.Location = new System.Drawing.Point(5, 129);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(156, 235);
+            this.richTextBox1.Size = new System.Drawing.Size(156, 198);
             this.richTextBox1.TabIndex = 55;
             this.richTextBox1.Text = "";
+            // 
+            // txtDate
+            // 
+            this.txtDate.Location = new System.Drawing.Point(120, 5);
+            this.txtDate.Name = "txtDate";
+            this.txtDate.Size = new System.Drawing.Size(41, 21);
+            this.txtDate.TabIndex = 56;
+            this.txtDate.Text = "20";
+            // 
+            // btnInsert
+            // 
+            this.btnInsert.Location = new System.Drawing.Point(5, 92);
+            this.btnInsert.Name = "btnInsert";
+            this.btnInsert.Size = new System.Drawing.Size(75, 23);
+            this.btnInsert.TabIndex = 57;
+            this.btnInsert.Text = "插入";
+            this.btnInsert.UseVisualStyleBackColor = true;
             // 
             // panelEx1
             // 
@@ -123,19 +142,22 @@
             this.panelEx1.Size = new System.Drawing.Size(371, 327);
             this.panelEx1.TabIndex = 54;
             // 
-            // txtDate
+            // btnAddByDt
             // 
-            this.txtDate.Location = new System.Drawing.Point(120, 5);
-            this.txtDate.Name = "txtDate";
-            this.txtDate.Size = new System.Drawing.Size(41, 21);
-            this.txtDate.TabIndex = 56;
-            this.txtDate.Text = "20";
+            this.btnAddByDt.Location = new System.Drawing.Point(87, 91);
+            this.btnAddByDt.Name = "btnAddByDt";
+            this.btnAddByDt.Size = new System.Drawing.Size(75, 23);
+            this.btnAddByDt.TabIndex = 58;
+            this.btnAddByDt.Text = "批量增加";
+            this.btnAddByDt.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(537, 327);
+            this.Controls.Add(this.btnAddByDt);
+            this.Controls.Add(this.btnInsert);
             this.Controls.Add(this.txtDate);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.panelEx1);
@@ -163,6 +185,8 @@
         private MyPanelList panelEx1;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.TextBox txtDate;
+        private System.Windows.Forms.Button btnInsert;
+        private System.Windows.Forms.Button btnAddByDt;
     }
 }
 

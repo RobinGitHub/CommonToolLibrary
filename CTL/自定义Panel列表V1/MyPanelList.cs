@@ -288,20 +288,7 @@ namespace 自定义Panel列表V1
             set { groupFieldName = value; }
         }
         #endregion
-
-        #region 排序方式， 默认正序
-        /// <summary>
-        /// 排序方式， 默认正序 只在分组下有效
-        /// </summary>
-        private bool asc = true;
-        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(true), Category("其他"), Description("排序方式， 默认正序 只在分组下有效")]
-        public bool Asc
-        {
-            get { return asc; }
-            set { asc = value; }
-        }
-        #endregion
-
+        
         #region 是否显示更多按钮
         /// <summary>
         /// 是否显示更多按钮
@@ -492,7 +479,7 @@ namespace 自定义Panel列表V1
         #region 添加行数据 AddItem
 
         /// <summary>
-        /// 添加行数据
+        /// 添加行数据，会自动合并到组
         /// </summary>
         /// <param name="item"></param>
         public void Add(PanelItem item)
@@ -512,82 +499,13 @@ namespace 自定义Panel列表V1
             }
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
+            item.RowType = PanelRowType.ContentRow;
             item.RowIndex = itemList.Count;
             item.IsSelected = true;
 
             if (isGroup)
             {
-                ///先将内容进行排序，重新统计分组（更改序号）
-                ///如果这是个新的，同时增加分组统计行
-                ///
-                //插入的位置
-                int rowIndex = itemList.Count;
-                PanelItem find = null;
-                if (asc)
-                {
-                    find = itemList.FirstOrDefault(t => t.RowType == PanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) > DateTime.Parse(item.DataRow[groupFieldName].ToString()));
-                }
-                else
-                {
-                    find = itemList.FirstOrDefault(t => t.RowType == PanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) < DateTime.Parse(item.DataRow[groupFieldName].ToString()));
-                }
-                if (find == null)
-                {//查询组是否存在
-                    List<GroupRowItem> groupItemList = itemList.Where(t => t.RowType == PanelRowType.GroupRow).Cast<GroupRowItem>().ToList();
-                    foreach (GroupRowItem gpItem in groupItemList)
-                    {
-                        if (gpItem.GroupDateTime.ToString("yyyy/MM") == DateTime.Parse(item.DataRow[groupFieldName].ToString()).ToString("yyyy/MM"))
-                        {
-                            find = gpItem;
-                            break;
-                        }
-                    }
-                }
-                if (find == null)
-                {
-                    if (isShowMore)
-                    {
-                        find = itemList.First(t => t.RowType == PanelRowType.LoadMoreRow);
-                        if (find != null)
-                        {
-                            rowIndex = find.RowIndex;
-                            find.RowIndex += 2;
-
-                            item.RowIndex = rowIndex;
-                        }
-                    }
-
-                    InsertItem(rowIndex, item);
-                    //增加统计行
-                    GroupRowItem groupItem = new GroupRowItem()
-                    {
-                        IsSelected = false,
-                        RowIndex = rowIndex + 1,
-                        RowType = PanelRowType.GroupRow,
-                        GroupDateTime = DateTime.Parse(item.DataRow[groupFieldName].ToString()),
-                        RowCount = 1
-                    };
-                    InsertItem(groupItem.RowIndex, groupItem);
-                }
-                else
-                {
-                    rowIndex = find.RowIndex;
-                    //更新所有内容的索引 +1 更新统计+1
-                    item.RowIndex = rowIndex;
-
-                    bool isUpdateTotal = false;
-                    for (int i = rowIndex; i < itemList.Count; i++)
-                    {
-                        itemList[i].RowIndex += 1;
-                        if (itemList[i].RowType == PanelRowType.GroupRow && !isUpdateTotal)
-                        {//找到最近的一个统计行
-                            GroupRowItem groupItem = itemList[i] as GroupRowItem;
-                            groupItem.RowCount += 1;
-                            isUpdateTotal = true;
-                        }
-                    }
-                    InsertItem(rowIndex, item);
-                }
+                AddByGroup(item);
             }
             #region 不分组
             else
@@ -670,16 +588,175 @@ namespace 自定义Panel列表V1
             }
             #endregion
         }
-
+        /// <summary>
+        /// 批量追加数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dt"></param>
         public void Add<T>(DataTable dt)
             where T : PanelItem, new()
         {
+            if (dt == null)
+                throw new Exception("没有数据！");
+            if (isGroup && !dt.Columns.Contains(groupFieldName))
+            {
+                throw new Exception("该DataTable 没有包含" + groupFieldName + " 的列名！");
+            }
+            if (SetItemTemplate == null)
+                throw new Exception("必须启用 SetItemTemplate 事件");
+            
+            if (isGroup)
+            {
+                ///重新统计排序信息
+                ///
+                foreach (DataRow row in dt.Rows)
+                {
+                    PanelItem item = new T()
+                    {
+                        DataRow = row,
+                        IsSelected = false,
+                        RowType = PanelRowType.ContentRow
+                    };
+                    AddByGroup(item);
+                }
+            }
+            else
+            {
+                int rowIndex = itemList.Count;
 
+                if (isShowMore)
+                {
+                    var find = itemList.First(t => t.RowType == PanelRowType.LoadMoreRow);
+                    if (find != null)
+                    {
+                        rowIndex = find.RowIndex;
+                        find.RowIndex += 1;
+                    }
+                }
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    PanelItem item = new T()
+                    {
+                        DataRow = row,
+                        IsSelected = false,
+                        RowIndex = rowIndex,
+                        RowType = PanelRowType.ContentRow
+                    };
+                    InsertItem(rowIndex, item);
+                    rowIndex++;
+                }
+            }
+            RefreshContent();
         }
 
-        public void Insert(int rowIndex, PanelItem item)
-        {//此方法不适合分组
+        private void AddByGroup(PanelItem item)
+        {
+            int rowIndex = itemList.Count;
+            PanelItem find = itemList.FirstOrDefault(t => t.RowType == PanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) > DateTime.Parse(item.DataRow[groupFieldName].ToString()));
+            if (find == null)
+            {//查询组是否存在
+                List<GroupRowItem> groupItemList = itemList.Where(t => t.RowType == PanelRowType.GroupRow).Cast<GroupRowItem>().ToList();
+                foreach (GroupRowItem gpItem in groupItemList)
+                {
+                    if (gpItem.GroupDateTime.ToString("yyyy/MM") == DateTime.Parse(item.DataRow[groupFieldName].ToString()).ToString("yyyy/MM"))
+                    {
+                        find = gpItem;
+                        break;
+                    }
+                }
+            }
+            else if (find == null)
+            {//倒序查询
+                find = itemList.FirstOrDefault(t => t.RowType == PanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) < DateTime.Parse(item.DataRow[groupFieldName].ToString()));
+            }
+            else if (find == null)
+            {//查询组是否存在
+                List<GroupRowItem> groupItemList = itemList.Where(t => t.RowType == PanelRowType.GroupRow).Cast<GroupRowItem>().ToList();
+                foreach (GroupRowItem gpItem in groupItemList)
+                {
+                    if (gpItem.GroupDateTime.ToString("yyyy/MM") == DateTime.Parse(item.DataRow[groupFieldName].ToString()).ToString("yyyy/MM"))
+                    {
+                        find = gpItem;
+                        break;
+                    }
+                }
+            }
+            if (find == null)
+            {
+                if (isShowMore)
+                {
+                    find = itemList.First(t => t.RowType == PanelRowType.LoadMoreRow);
+                    if (find != null)
+                    {
+                        rowIndex = find.RowIndex;
+                        find.RowIndex += 2;
 
+                        item.RowIndex = rowIndex;
+                    }
+                }
+
+                InsertItem(rowIndex, item);
+                //增加统计行
+                GroupRowItem groupItem = new GroupRowItem()
+                {
+                    IsSelected = false,
+                    RowIndex = rowIndex + 1,
+                    RowType = PanelRowType.GroupRow,
+                    GroupDateTime = DateTime.Parse(item.DataRow[groupFieldName].ToString()),
+                    RowCount = 1
+                };
+                InsertItem(groupItem.RowIndex, groupItem);
+            }
+            else
+            {
+                rowIndex = find.RowIndex;
+                //更新所有内容的索引 +1 更新统计+1
+                item.RowIndex = rowIndex;
+
+                bool isUpdateTotal = false;
+                for (int i = rowIndex; i < itemList.Count; i++)
+                {
+                    itemList[i].RowIndex += 1;
+                    if (itemList[i].RowType == PanelRowType.GroupRow && !isUpdateTotal)
+                    {//找到最近的一个统计行
+                        GroupRowItem groupItem = itemList[i] as GroupRowItem;
+                        groupItem.RowCount += 1;
+                        isUpdateTotal = true;
+                    }
+                }
+                InsertItem(rowIndex, item);
+            }
+        }
+
+        /// <summary>
+        /// 插入指定的位置
+        /// 此方法不适用分组的情况
+        /// </summary>
+        /// <param name="rowIndex"></param>
+        /// <param name="item"></param>
+        public void Insert(int rowIndex, PanelItem item)
+        {
+            if (item.DataRow == null)
+                throw new Exception("没有数据！");
+            if (isGroup && !item.DataRow.Table.Columns.Contains(groupFieldName))
+            {
+                throw new Exception("该DataTable 没有包含" + groupFieldName + " 的列名！");
+            }
+            if (SetItemTemplate == null)
+                throw new Exception("必须启用 SetItemTemplate 事件");
+            if (isGroup)
+                throw new Exception("此方法不适用分组的情况！");
+
+            item.RowType = PanelRowType.ContentRow;
+            item.RowIndex = rowIndex;
+            for (int i = rowIndex; i < itemList.Count; i++)
+            {
+                itemList[i].RowIndex += 1;
+            }
+            InsertItem(rowIndex, item);
+            RefreshContent();
+            this.FirstDisplayedScrollingRowIndex = item.RowIndex;
         }
 
         /// <summary>
@@ -1295,22 +1372,7 @@ namespace 自定义Panel列表V1
             }
         }
         #endregion
-
-        #region 重新绑定控件的内容
-        /// <summary>
-        /// 重新绑定控件的内容
-        /// </summary>
-        private void RefreshContent()
-        {
-            this.ContentLengthChange();
-            foreach (var item in controlList)
-            {
-                GetNewInfo(item.Key, item.Key.RowIndex);
-                item.Key.RefreshData();
-            }
-        } 
-        #endregion
-
+        
         #region 内容变化后需调用此方法
         /// <summary>
         /// 内容变化后需调用此方法
@@ -1550,6 +1612,21 @@ namespace 自定义Panel列表V1
         #endregion
 
         #region 私有方法
+
+        #region 重新绑定控件的内容
+        /// <summary>
+        /// 重新绑定控件的内容
+        /// </summary>
+        private void RefreshContent()
+        {
+            this.ContentLengthChange();
+            foreach (var item in controlList)
+            {
+                GetNewInfo(item.Key, item.Key.RowIndex);
+                item.Key.RefreshData();
+            }
+        }
+        #endregion
 
         #region 滚动条滚动
         /// <summary>
