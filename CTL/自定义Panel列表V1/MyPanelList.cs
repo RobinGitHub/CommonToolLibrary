@@ -288,7 +288,7 @@ namespace 自定义Panel列表V1
             set { groupFieldName = value; }
         }
         #endregion
-        
+
         #region 是否显示更多按钮
         /// <summary>
         /// 是否显示更多按钮
@@ -634,13 +634,17 @@ namespace 自定义Panel列表V1
             }
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
-            
+
             if (isGroup)
             {
                 ///重新统计排序信息
                 ///
                 foreach (DataRow row in dt.Rows)
                 {
+                    if (DateTime.Parse(row["Date"].ToString()).ToString("yyyy/MM/dd") == "2015/11/30")
+                    { 
+                    
+                    }
                     PanelItem item = new T()
                     {
                         DataRow = row,
@@ -684,7 +688,14 @@ namespace 自定义Panel列表V1
         {
             int rowIndex = itemList.Count;
             PanelItem find = itemList.FirstOrDefault(t => t.RowType == PanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) > DateTime.Parse(item.DataRow[groupFieldName].ToString()));
-            if (find == null)
+            if (find != null)
+            {
+                rowIndex = find.RowIndex;
+                var tmpFind = itemList.FirstOrDefault(t => t.RowIndex == rowIndex - 1);
+                if (tmpFind != null && tmpFind.RowType == PanelRowType.GroupRow)
+                    rowIndex -= 1;
+            }
+            else if (find == null)
             {//查询组是否存在
                 List<GroupRowItem> groupItemList = itemList.Where(t => t.RowType == PanelRowType.GroupRow).Cast<GroupRowItem>().ToList();
                 foreach (GroupRowItem gpItem in groupItemList)
@@ -692,6 +703,7 @@ namespace 自定义Panel列表V1
                     if (gpItem.GroupDateTime.ToString("yyyy/MM") == DateTime.Parse(item.DataRow[groupFieldName].ToString()).ToString("yyyy/MM"))
                     {
                         find = gpItem;
+                        rowIndex = find.RowIndex;
                         break;
                     }
                 }
@@ -699,6 +711,13 @@ namespace 自定义Panel列表V1
             else if (find == null)
             {//倒序查询
                 find = itemList.FirstOrDefault(t => t.RowType == PanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) < DateTime.Parse(item.DataRow[groupFieldName].ToString()));
+                if (find != null)
+                {
+                    rowIndex = find.RowIndex;
+                    var tmpFind = itemList.FirstOrDefault(t => t.RowIndex == rowIndex + 1);
+                    if (tmpFind != null && tmpFind.RowType == PanelRowType.GroupRow)
+                        rowIndex += 1;
+                }
             }
             else if (find == null)
             {//查询组是否存在
@@ -708,6 +727,7 @@ namespace 自定义Panel列表V1
                     if (gpItem.GroupDateTime.ToString("yyyy/MM") == DateTime.Parse(item.DataRow[groupFieldName].ToString()).ToString("yyyy/MM"))
                     {
                         find = gpItem;
+                        rowIndex = find.RowIndex;
                         break;
                     }
                 }
@@ -740,7 +760,6 @@ namespace 自定义Panel列表V1
             }
             else
             {
-                rowIndex = find.RowIndex;
                 //更新所有内容的索引 +1 更新统计+1
                 item.RowIndex = rowIndex;
 
@@ -1404,7 +1423,7 @@ namespace 自定义Panel列表V1
             }
         }
         #endregion
-        
+
         #region 内容变化后需调用此方法
         /// <summary>
         /// 内容变化后需调用此方法
@@ -1496,8 +1515,6 @@ namespace 自定义Panel列表V1
                     }
                     if (tmpItem != null)
                     {
-                        ClearSelectedItem(tmpItem.RowIndex - 1);
-
                         int searchIndex = tmpItem.RowIndex - 1;
                         KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == searchIndex);
                         while (find.Key != null && find.Key.PanelItem.RowType != PanelRowType.ContentRow)
@@ -1505,6 +1522,7 @@ namespace 自定义Panel列表V1
                             searchIndex--;
                             find = controlList.FirstOrDefault(t => t.Key.RowIndex == searchIndex);
                         }
+                        ClearSelectedItem(searchIndex);
 
                         if (find.Key == null || find.Key.Top < 0 || find.Key.Top > this.Height)
                         {
@@ -1566,8 +1584,6 @@ namespace 自定义Panel列表V1
                     }
                     if (tmpItem != null)
                     {
-                        ClearSelectedItem(tmpItem.RowIndex + 1);
-
                         int searchIndex = tmpItem.RowIndex + 1;
                         KeyValuePair<MyPanelChild, int> find = controlList.FirstOrDefault(t => t.Key.RowIndex == searchIndex);
                         while (find.Key != null && find.Key.PanelItem.RowType != PanelRowType.ContentRow)
@@ -1575,6 +1591,8 @@ namespace 自定义Panel列表V1
                             searchIndex++;
                             find = controlList.FirstOrDefault(t => t.Key.RowIndex == searchIndex);
                         }
+                        if (searchIndex < itemList.Count)//预防最后一行是统计行或查找更多行
+                            ClearSelectedItem(searchIndex);
                         if (find.Key == null || find.Key.Top < 0 || find.Key.Top + tmpItem.Height > this.Height)
                         {
                             int[] indexArr = controlList.Values.OrderBy(t => t).ToArray();
@@ -1976,6 +1994,7 @@ namespace 自定义Panel列表V1
 
     }
 
+    #region 分组对象
     /// <summary>
     /// 分组对象
     /// </summary>
@@ -1989,6 +2008,7 @@ namespace 自定义Panel列表V1
         /// 行数
         /// </summary>
         public int RowCount { get; set; }
-    }
+    } 
+    #endregion
 
 }
