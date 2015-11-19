@@ -25,6 +25,8 @@ namespace 自定义Panel列表V1
 
             this.panelEx1.MinRowHeight = 60;
             this.panelEx1.IsEqualHeight = false;
+
+            dt = GetDataSource();
         }
 
         private void btnInit_Click(object sender, EventArgs e)
@@ -40,16 +42,17 @@ namespace 自定义Panel列表V1
         int count = 0;
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            this.panelEx1.IsShowMore = false;
-            //DataRow row = dt.NewRow();
-            //row[0] = "新" + count;
-            //dt.Rows.Add(row);
+            DataRow row = dt.NewRow();
+            row[0] = dt.Rows.Count;
+            row[1] = "【生日】 2014/11/20 生日,敬请关注" + dt.Rows.Count.ToString();
+            row[2] = DateTime.Now.AddDays(dt.Rows.Count).ToString("yyyy-MM-dd HH:mm");
+            row[3] = "超级管理员";
+            dt.Rows.Add(row);
 
-            //PanelItem item = new PanelItem();
-            //item.DataRow = row;
-            //item.Height = this.panelEx1.MinRowHeight;
-            //this.panelEx1.Add(item);
-            //count++;
+            ReplyModel item = new ReplyModel();
+            item.DataRow = row;
+            this.panelEx1.Add(item);
+            count++;
         }
 
         int updCount = 0;

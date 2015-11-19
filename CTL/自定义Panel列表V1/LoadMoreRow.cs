@@ -29,7 +29,6 @@ namespace 自定义Panel列表V1
         {
             if (LoadMore != null)
                 LoadMore(sender, e);
-            btnLoadMore.Text = "加载更多";
         }
     }
 }

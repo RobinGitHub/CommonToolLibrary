@@ -111,7 +111,6 @@
             this.panelEx1.FirstDisplayedScrollingRowIndex = 0;
             this.panelEx1.GroupFieldName = "Date";
             this.panelEx1.IsEqualHeight = false;
-            this.panelEx1.IsGroup = true;
             this.panelEx1.IsShowMore = true;
             this.panelEx1.Location = new System.Drawing.Point(167, 0);
             this.panelEx1.MinRowHeight = 60;
