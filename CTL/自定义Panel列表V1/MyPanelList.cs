@@ -242,7 +242,8 @@ namespace 自定义Panel列表V1
                 }
                 else
                 {
-                    this.pnlContent.VScrollValue = value * minRowHeight;
+
+                    this.pnlContent.VScrollValue = GetItemHeightByRowIndex(value);
                 }
                 UpdateScrollbar();
                 bool isUp = this.pnlContent.VScrollValue < this.myVScrollBar1.Value;
@@ -511,17 +512,88 @@ namespace 自定义Panel列表V1
             }
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
+            item.RowIndex = itemList.Count;
+            item.IsSelected = true;
+
             if (isGroup)
             {
+                ///先将内容进行排序，重新统计分组（更改序号）
+                ///如果这是个新的，同时增加分组统计行
+                ///
+                //插入的位置
+                int rowIndex = itemList.Count;
+                PanelItem find = null;
+                if (asc)
+                {
+                    find = itemList.FirstOrDefault(t => t.RowType == PanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) > DateTime.Parse(item.DataRow[groupFieldName].ToString()));
+                }
+                else
+                {
+                    find = itemList.FirstOrDefault(t => t.RowType == PanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) < DateTime.Parse(item.DataRow[groupFieldName].ToString()));
+                }
+                if (find == null)
+                {//查询组是否存在
+                    List<GroupRowItem> groupItemList = itemList.Where(t => t.RowType == PanelRowType.GroupRow).Cast<GroupRowItem>().ToList();
+                    foreach (GroupRowItem gpItem in groupItemList)
+                    {
+                        if (gpItem.GroupDateTime.ToString("yyyy/MM") == DateTime.Parse(item.DataRow[groupFieldName].ToString()).ToString("yyyy/MM"))
+                        {
+                            find = gpItem;
+                            break;
+                        }
+                    }
+                }
+                if (find == null)
+                {
+                    if (isShowMore)
+                    {
+                        find = itemList.First(t => t.RowType == PanelRowType.LoadMoreRow);
+                        if (find != null)
+                        {
+                            rowIndex = find.RowIndex;
+                            find.RowIndex += 2;
 
+                            item.RowIndex = rowIndex;
+                        }
+                    }
+
+                    InsertItem(rowIndex, item);
+                    //增加统计行
+                    GroupRowItem groupItem = new GroupRowItem()
+                    {
+                        IsSelected = false,
+                        RowIndex = rowIndex + 1,
+                        RowType = PanelRowType.GroupRow,
+                        GroupDateTime = DateTime.Parse(item.DataRow[groupFieldName].ToString()),
+                        RowCount = 1
+                    };
+                    InsertItem(groupItem.RowIndex, groupItem);
+                }
+                else
+                {
+                    rowIndex = find.RowIndex;
+                    //更新所有内容的索引 +1 更新统计+1
+                    item.RowIndex = rowIndex;
+
+                    bool isUpdateTotal = false;
+                    for (int i = rowIndex; i < itemList.Count; i++)
+                    {
+                        itemList[i].RowIndex += 1;
+                        if (itemList[i].RowType == PanelRowType.GroupRow && !isUpdateTotal)
+                        {//找到最近的一个统计行
+                            GroupRowItem groupItem = itemList[i] as GroupRowItem;
+                            groupItem.RowCount += 1;
+                            isUpdateTotal = true;
+                        }
+                    }
+                    InsertItem(rowIndex, item);
+                }
             }
             #region 不分组
             else
             {
-                item.RowIndex = itemList.Count;
-                item.IsSelected = true;
                 //添加到最后
-                int rowIndex = itemList.Count - 1;
+                int rowIndex = itemList.Count;
                 if (isShowMore)
                 {
                     var find = itemList.First(t => t.RowType == PanelRowType.LoadMoreRow);
@@ -534,6 +606,19 @@ namespace 自定义Panel列表V1
                     }
                 }
 
+                InsertItem(rowIndex, item);
+            }
+            #endregion
+            RefreshContent();
+            this.FirstDisplayedScrollingRowIndex = item.RowIndex;
+            //this.Refresh(item.RowIndex);
+        }
+
+        private void InsertItem(int rowIndex, PanelItem item)
+        {
+            #region ContentRow
+            if (item.RowType == PanelRowType.ContentRow)
+            {
                 if (isEqualHeight)
                 {
                     item.Height = this.minRowHeight;
@@ -564,9 +649,24 @@ namespace 自定义Panel列表V1
                     pnl.Dispose();
                     pnl = null;
                 }
+            }
+            #endregion
+            #region GroupRow
+            else if (item.RowType == PanelRowType.GroupRow)
+            {
+                GroupRowItem groupItem = item as GroupRowItem;
+                MyPanelChild childItem = new GroupRow(groupItem.GroupDateTime, groupItem.RowCount);
+                childItem.PanelItem = groupItem;
+                childItem.RowIndex = item.RowIndex;
+                item.Height = childItem.Height;
+                displayRectangleHeight += item.Height;
 
-                this.ScrollToCaret();
-                this.Refresh(item.RowIndex);
+                itemList.Insert(rowIndex, item);
+
+                if (controlList.Count < maxControlCount)
+                {
+                    AddControl(childItem);
+                }
             }
             #endregion
         }
@@ -578,7 +678,7 @@ namespace 自定义Panel列表V1
         }
 
         public void Insert(int rowIndex, PanelItem item)
-        {
+        {//此方法不适合分组
 
         }
 
@@ -1194,6 +1294,21 @@ namespace 自定义Panel列表V1
                     ContentLengthChange();
             }
         }
+        #endregion
+
+        #region 重新绑定控件的内容
+        /// <summary>
+        /// 重新绑定控件的内容
+        /// </summary>
+        private void RefreshContent()
+        {
+            this.ContentLengthChange();
+            foreach (var item in controlList)
+            {
+                GetNewInfo(item.Key, item.Key.RowIndex);
+                item.Key.RefreshData();
+            }
+        } 
         #endregion
 
         #region 内容变化后需调用此方法

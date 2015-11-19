@@ -31,7 +31,7 @@ namespace 自定义Panel列表V1
 
         private void btnInit_Click(object sender, EventArgs e)
         {
-            this.panelEx1.IsShowMore = true;
+            //this.panelEx1.IsShowMore = true;
             richTextBox1.Clear(); 
             DateTime startTime = DateTime.Now;
             this.panelEx1.DataSource<ReplyModel>(GetDataSource());
@@ -44,8 +44,8 @@ namespace 自定义Panel列表V1
         {
             DataRow row = dt.NewRow();
             row[0] = dt.Rows.Count;
-            row[1] = "【生日】 2014/11/20 生日,敬请关注" + dt.Rows.Count.ToString();
-            row[2] = DateTime.Now.AddDays(dt.Rows.Count).ToString("yyyy-MM-dd HH:mm");
+            row[1] = "【生日】 " + DateTime.Now.AddDays(int.Parse(txtDate.Text)).ToString("yyyy-MM-dd HH:mm") + " 生日,TTTT敬请关注" + dt.Rows.Count.ToString();
+            row[2] = DateTime.Now.AddDays(int.Parse(txtDate.Text)).ToString("yyyy-MM-dd HH:mm");
             row[3] = "超级管理员";
             dt.Rows.Add(row);
 

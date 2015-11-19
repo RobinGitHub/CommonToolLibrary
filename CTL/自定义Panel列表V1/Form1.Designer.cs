@@ -36,6 +36,7 @@
             this.btnInit = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.panelEx1 = new 自定义Panel列表V1.MyPanelList();
+            this.txtDate = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // txtRowCount
@@ -111,6 +112,7 @@
             this.panelEx1.FirstDisplayedScrollingRowIndex = 0;
             this.panelEx1.GroupFieldName = "Date";
             this.panelEx1.IsEqualHeight = false;
+            this.panelEx1.IsGroup = true;
             this.panelEx1.IsShowMore = true;
             this.panelEx1.Location = new System.Drawing.Point(167, 0);
             this.panelEx1.MinRowHeight = 60;
@@ -121,11 +123,20 @@
             this.panelEx1.Size = new System.Drawing.Size(371, 327);
             this.panelEx1.TabIndex = 54;
             // 
+            // txtDate
+            // 
+            this.txtDate.Location = new System.Drawing.Point(120, 5);
+            this.txtDate.Name = "txtDate";
+            this.txtDate.Size = new System.Drawing.Size(41, 21);
+            this.txtDate.TabIndex = 56;
+            this.txtDate.Text = "20";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(537, 327);
+            this.Controls.Add(this.txtDate);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.panelEx1);
             this.Controls.Add(this.txtRowCount);
@@ -151,6 +162,7 @@
         private System.Windows.Forms.Button btnInit;
         private MyPanelList panelEx1;
         private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.TextBox txtDate;
     }
 }
 
