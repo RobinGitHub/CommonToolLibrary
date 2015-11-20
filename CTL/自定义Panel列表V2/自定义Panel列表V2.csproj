@@ -43,17 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UserControl\DataPanelLoadMoreRowControl.cs">
+    <Compile Include="UserControl\DataPanelViewLoadMoreRowControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControl\DataPanelLoadMoreRowControl.Designer.cs">
-      <DependentUpon>DataPanelLoadMoreRowControl.cs</DependentUpon>
+    <Compile Include="UserControl\DataPanelViewLoadMoreRowControl.Designer.cs">
+      <DependentUpon>DataPanelViewLoadMoreRowControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControl\DataPanelGroupRowControl.cs">
+    <Compile Include="UserControl\DataPanelViewGroupRowControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControl\DataPanelGroupRowControl.Designer.cs">
-      <DependentUpon>DataPanelGroupRowControl.cs</DependentUpon>
+    <Compile Include="UserControl\DataPanelViewGroupRowControl.Designer.cs">
+      <DependentUpon>DataPanelViewGroupRowControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControl\DataPanelView.cs">
       <SubType>UserControl</SubType>
@@ -67,12 +67,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\DataPanelRow.cs" />
-    <Compile Include="UserControl\DataPanelRowControl.cs">
+    <Compile Include="Model\DataPanelViewRow.cs" />
+    <Compile Include="UserControl\DataPanelViewRowControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControl\DataPanelRowControl.Designer.cs">
-      <DependentUpon>DataPanelRowControl.cs</DependentUpon>
+    <Compile Include="UserControl\DataPanelViewRowControl.Designer.cs">
+      <DependentUpon>DataPanelViewRowControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserControl\MyVScrollBar.cs">
       <SubType>UserControl</SubType>
@@ -94,14 +94,14 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="UserControl\DataPanelGroupRowControl.resx">
-      <DependentUpon>DataPanelGroupRowControl.cs</DependentUpon>
+    <EmbeddedResource Include="UserControl\DataPanelViewGroupRowControl.resx">
+      <DependentUpon>DataPanelViewGroupRowControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControl\DataPanelLoadMoreRowControl.resx">
-      <DependentUpon>DataPanelLoadMoreRowControl.cs</DependentUpon>
+    <EmbeddedResource Include="UserControl\DataPanelViewLoadMoreRowControl.resx">
+      <DependentUpon>DataPanelViewLoadMoreRowControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControl\DataPanelRowControl.resx">
-      <DependentUpon>DataPanelRowControl.cs</DependentUpon>
+    <EmbeddedResource Include="UserControl\DataPanelViewRowControl.resx">
+      <DependentUpon>DataPanelViewRowControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControl\DataPanelView.resx">
       <DependentUpon>DataPanelView.cs</DependentUpon>

@@ -9,10 +9,10 @@ using System.Windows.Forms;
 
 namespace 自定义Panel列表V2
 {
-    public partial class DataPanelLoadMoreRowControl : DataPanelRowControl
+    public partial class DataPanelViewLoadMoreRowControl : DataPanelViewRowControl
     {
         public event EventHandler LoadMore;
-        public DataPanelLoadMoreRowControl()
+        public DataPanelViewLoadMoreRowControl()
         {
             InitializeComponent();
         }

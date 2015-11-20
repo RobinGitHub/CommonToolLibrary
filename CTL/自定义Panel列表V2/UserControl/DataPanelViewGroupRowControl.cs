@@ -9,13 +9,13 @@ using System.Windows.Forms;
 
 namespace 自定义Panel列表V2
 {
-    public partial class DataPanelGroupRowControl : DataPanelRowControl
+    public partial class DataPanelViewGroupRowControl : DataPanelViewRowControl
     {
-        public DataPanelGroupRowControl()
+        public DataPanelViewGroupRowControl()
         {
             InitializeComponent();
         }
-        public DataPanelGroupRowControl(DateTime dateTime, int rowCount, string dateTimeFormart = "yyyy/MM")
+        public DataPanelViewGroupRowControl(DateTime dateTime, int rowCount, string dateTimeFormart = "yyyy/MM")
             : this()
         {
             SetTitle(dateTime, rowCount, dateTimeFormart);
@@ -30,7 +30,7 @@ namespace 自定义Panel列表V2
         {
             if (base.DataPanelRow != null)
             {
-                DataPanelGroupRow model = base.DataPanelRow as DataPanelGroupRow;
+                DataPanelViewGroupRow model = base.DataPanelRow as DataPanelViewGroupRow;
                 SetTitle(model.GroupDateTime, model.RowCount);
             }
             base.RefreshData();

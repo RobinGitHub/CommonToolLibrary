@@ -9,10 +9,10 @@ namespace 自定义Panel列表V2
     /// <summary>
     /// 用于记录每行数据属性
     /// </summary>
-    public class DataPanelRow
+    public class DataPanelViewRow
     {
         public int RowIndex { get; set; }
-        public object DataRow { get; set; }
+        public DataRow DataRow { get; set; }
         public bool IsSelected { get; set; }
 
         public int Height { get; set; }
@@ -55,7 +55,7 @@ namespace 自定义Panel列表V2
     /// <summary>
     /// 分组对象
     /// </summary>
-    internal class DataPanelGroupRow : DataPanelRow
+    internal class DataPanelViewGroupRow : DataPanelViewRow
     {
         /// <summary>
         /// 分组时间

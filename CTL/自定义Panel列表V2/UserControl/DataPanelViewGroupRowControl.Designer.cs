@@ -1,6 +1,6 @@
 ﻿namespace 自定义Panel列表V2
 {
-    partial class DataPanelGroupRowControl
+    partial class DataPanelViewGroupRowControl
     {
         /// <summary> 
         /// 必需的设计器变量。

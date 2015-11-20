@@ -202,7 +202,7 @@ namespace 自定义Panel列表V1
                 DataRow row = dt.NewRow();
                 row[0] = i;
                 row[1] = "【生日】 2014/11/20 生日,新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生" + i.ToString();
-                row[2] = DateTime.Now.AddDays(i).ToString("yyyy-MM-dd HH:mm");
+                row[2] = DateTime.Now.AddDays(-i).ToString("yyyy-MM-dd HH:mm");
                 row[3] = "超级管理员";
                 dt.Rows.Add(row);
             }
@@ -217,7 +217,7 @@ namespace 自定义Panel列表V1
                 DataRow row = newDt.NewRow();
                 row[0] = i;
                 row[1] = "新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速" + i.ToString();
-                row[2] = DateTime.Now.AddDays(i).ToString("yyyy-MM-dd HH:mm");
+                row[2] = DateTime.Now.AddDays(-i).ToString("yyyy-MM-dd HH:mm");
                 row[3] = "超级管理员";
                 newDt.Rows.Add(row);
             }

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace 自定义Panel列表V2
 {
-    public partial class DataPanelRowControl : UserControl
+    public partial class DataPanelViewRowControl : UserControl
     {
         #region 私有属性
         /// <summary>
@@ -62,7 +62,7 @@ namespace 自定义Panel列表V2
         /// <summary>
         /// 数据源
         /// </summary>
-        public DataPanelRow DataPanelRow { get; set; }
+        public DataPanelViewRow DataPanelRow { get; set; }
         #endregion
 
         #region 默认的背景色
@@ -99,7 +99,7 @@ namespace 自定义Panel列表V2
         #endregion
 
         #endregion
-        public DataPanelRowControl()
+        public DataPanelViewRowControl()
         {
             InitializeComponent();
             base.SetStyle(
@@ -202,7 +202,7 @@ namespace 自定义Panel列表V2
 
         #region 设置控件高度
         /// <summary>
-        /// 设置控件高度
+        /// 设置控件高度,根据显示的内容
         /// </summary>
         public virtual void SetControlHeight()
         {
