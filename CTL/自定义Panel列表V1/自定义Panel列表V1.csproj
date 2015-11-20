@@ -95,6 +95,12 @@
     <Compile Include="ReplyUserControl.Designer.cs">
       <DependentUpon>ReplyUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="WorkBench.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorkBench.Designer.cs">
+      <DependentUpon>WorkBench.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -128,6 +134,9 @@
     </Compile>
     <EmbeddedResource Include="ReplyUserControl.resx">
       <DependentUpon>ReplyUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorkBench.resx">
+      <DependentUpon>WorkBench.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -18,6 +18,7 @@ namespace 自定义Panel列表V1
 
             this.panelEx1.SetItemTemplate += panelEx1_SetItemTemplate;
             this.panelEx1.SelectionChanged += panelEx1_SelectionChanged;
+            this.panelEx1.LoadMore += panelEx1_LoadMore;
 
             this.btnAdd.Click += btnAdd_Click;
             this.btnUpdate.Click += btnUpdate_Click;
@@ -25,12 +26,58 @@ namespace 自定义Panel列表V1
             this.btnInit.Click += btnInit_Click;
             this.btnInsert.Click += btnInsert_Click;
             this.btnAddByDt.Click += btnAddByDt_Click;
+            this.btnClear.Click += btnClear_Click;
+            this.btnGetSelected.Click += btnGetSelected_Click;
+            this.btnLocation.Click += btnLocation_Click;
+
             this.cbxShowMore.CheckedChanged += cbxShowMore_CheckedChanged;
+            this.cbxIsGroup.CheckedChanged += cbxIsGroup_CheckedChanged;
+            this.cbxIsEqualHeight.CheckedChanged += cbxIsEqualHeight_CheckedChanged;
 
             this.panelEx1.MinRowHeight = 60;
             this.panelEx1.IsEqualHeight = false;
 
             dt = GetDataSource();
+        }
+
+        void panelEx1_LoadMore(object sender, EventArgs e)
+        {
+            btnAddByDt.PerformClick();
+        }
+
+        void btnLocation_Click(object sender, EventArgs e)
+        {
+            this.panelEx1.FirstDisplayedScrollingRowIndex = int.Parse(txtLocation.Text);
+        }
+
+        void btnGetSelected_Click(object sender, EventArgs e)
+        {
+            List<PanelItem> itemList = this.panelEx1.SelectedItems();
+            if (itemList.Count == 0)
+                return;
+            richTextBox1.AppendText("\n===SelectedItems===\n");
+            foreach (PanelItem item in itemList)
+            {
+                richTextBox1.AppendText("索引：" + item.RowIndex + "| 标题：" + item.DataRow["Title"].ToString() + "\n");
+            }
+            richTextBox1.AppendText("===SelectedItems===\n\n");
+        }
+
+        void btnClear_Click(object sender, EventArgs e)
+        {
+            this.panelEx1.Clear();
+        }
+
+        void cbxIsEqualHeight_CheckedChanged(object sender, EventArgs e)
+        {
+            this.panelEx1.Clear();
+            this.panelEx1.IsEqualHeight = cbxIsEqualHeight.Checked;
+        }
+
+        void cbxIsGroup_CheckedChanged(object sender, EventArgs e)
+        {
+            this.panelEx1.Clear();
+            this.panelEx1.IsGroup = cbxIsGroup.Checked;
         }
 
         void cbxShowMore_CheckedChanged(object sender, EventArgs e)
@@ -42,46 +89,42 @@ namespace 自定义Panel列表V1
 
         private void btnInit_Click(object sender, EventArgs e)
         {
-            //this.panelEx1.IsShowMore = true;
-            richTextBox1.Clear(); 
+            richTextBox1.Clear();
             DateTime startTime = DateTime.Now;
             this.panelEx1.DataSource<ReplyModel>(GetDataSource());
             richTextBox1.AppendText("总耗时：" + (DateTime.Now - startTime).TotalMilliseconds + "\n");
             richTextBox1.ScrollToCaret();
         }
 
-        int count = 0;
         private void btnAdd_Click(object sender, EventArgs e)
         {
             DataRow row = dt.NewRow();
             row[0] = dt.Rows.Count;
-            row[1] = "【生日】 " + DateTime.Now.AddDays(int.Parse(txtDate.Text)).ToString("yyyy-MM-dd HH:mm") + " 生日,TTTT敬请关注" + dt.Rows.Count.ToString();
-            row[2] = DateTime.Now.AddDays(int.Parse(txtDate.Text)).ToString("yyyy-MM-dd HH:mm");
+            row[1] = " 新增,TTTT" + this.panelEx1.Count;
+            row[2] = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd HH:mm");
             row[3] = "超级管理员";
             dt.Rows.Add(row);
 
             ReplyModel item = new ReplyModel();
             item.DataRow = row;
             this.panelEx1.Add(item);
-            count++;
         }
         void btnInsert_Click(object sender, EventArgs e)
         {
             DataRow row = dt.NewRow();
             row[0] = dt.Rows.Count;
-            row[1] = "【生日】 " + DateTime.Now.AddDays(int.Parse(txtDate.Text)).ToString("yyyy-MM-dd HH:mm") + " 生日,TTTT敬请关注" + dt.Rows.Count.ToString();
-            row[2] = DateTime.Now.AddDays(int.Parse(txtDate.Text)).ToString("yyyy-MM-dd HH:mm");
+            row[1] = " 插入 TTTTTT 生日,TTTT敬请关注" + this.panelEx1.Count;
+            row[2] = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd HH:mm");
             row[3] = "超级管理员";
             dt.Rows.Add(row);
 
             ReplyModel item = new ReplyModel();
             item.DataRow = row;
-            this.panelEx1.Insert(int.Parse(txtDate.Text), item);
-            count++;
+            this.panelEx1.Insert(int.Parse(txtInsertRowIndex.Text), item);
         }
         void btnAddByDt_Click(object sender, EventArgs e)
         {
-            this.panelEx1.Add<ReplyModel>(GetDataSource());
+            this.panelEx1.Add<ReplyModel>(AddByDt());
         }
 
         int updCount = 0;
@@ -90,7 +133,7 @@ namespace 自定义Panel列表V1
             List<PanelItem> selectedItems = this.panelEx1.SelectedItems();
             foreach (PanelItem item in selectedItems)
             {
-                item.DataRow[0] = "更新" + updCount.ToString();
+                item.DataRow["Title"] = "更新" + updCount.ToString();
                 this.panelEx1.Refresh(item.RowIndex);
             }
             updCount++;
@@ -102,22 +145,36 @@ namespace 自定义Panel列表V1
             List<int> indexArr = selectedItems.Select(t => t.RowIndex).ToList();
             this.panelEx1.Remove(indexArr);
         }
-        
+
         MyPanelChild panelEx1_SetItemTemplate(PanelItem item)
         {
+            MyPanelChild control = null;
             DateTime startTime = DateTime.Now;
-            ReplyModel model = item as ReplyModel;
-            model.ReplyData = GetReply(int.Parse(model.DataRow[0].ToString()));
+            if (cbxIsEqualHeight.Checked)
+            {
+                WorkBench pnl = new WorkBench();
+                pnl.PanelItem = item;
+                pnl.DataRow = item.DataRow;
+                pnl.RowIndex = item.RowIndex;
+                pnl.RefreshData();
+                control = pnl;
+            }
+            else
+            {
+                ReplyModel model = item as ReplyModel;
+                model.ReplyData = GetReply(int.Parse(model.DataRow[0].ToString()));
 
-            ReplyUserControl pnl = new ReplyUserControl();
-            pnl.PanelItem = model;
-            pnl.DataRow = item.DataRow;
-            pnl.RowIndex = item.RowIndex;
-            pnl.RefreshData();
-            pnl.SizeChanged += pnl_SizeChanged;
+                ReplyUserControl pnl = new ReplyUserControl();
+                pnl.PanelItem = model;
+                pnl.DataRow = item.DataRow;
+                pnl.RowIndex = item.RowIndex;
+                pnl.RefreshData();
+                pnl.SizeChanged += pnl_SizeChanged;
+                control = pnl;
+            }
             richTextBox1.AppendText((DateTime.Now - startTime).TotalMilliseconds + "\n");
             richTextBox1.ScrollToCaret();
-            return pnl;
+            return control;
         }
 
         void pnl_SizeChanged(object sender, EventArgs e)
@@ -127,6 +184,7 @@ namespace 自定义Panel列表V1
         }
         void panelEx1_SelectionChanged(PanelItem item)
         {
+
         }
 
         private DataTable GetDataSource()
@@ -141,12 +199,27 @@ namespace 自定义Panel列表V1
             {
                 DataRow row = dt.NewRow();
                 row[0] = i;
-                row[1] = "【生日】 2014/11/20 生日,敬请关注" + i.ToString() + txtDate.Text;
+                row[1] = "【生日】 2014/11/20 生日,敬请关注" + i.ToString();
                 row[2] = DateTime.Now.AddDays(i).ToString("yyyy-MM-dd HH:mm");
                 row[3] = "超级管理员";
                 dt.Rows.Add(row);
             }
             return dt;
+        }
+
+        private DataTable AddByDt()
+        {
+            DataTable newDt = dt.Clone();
+            for (int i = 0; i < int.Parse(txtAddRowCount.Text); i++)
+            {
+                DataRow row = newDt.NewRow();
+                row[0] = i;
+                row[1] = "新增生死时速" + i.ToString();
+                row[2] = DateTime.Now.AddDays(i).ToString("yyyy-MM-dd HH:mm");
+                row[3] = "超级管理员";
+                newDt.Rows.Add(row);
+            }
+            return newDt;
         }
 
         private DataTable GetReply(int i)

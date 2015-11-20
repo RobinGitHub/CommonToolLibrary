@@ -250,7 +250,7 @@ namespace 自定义Panel列表V1
                     ScrollItem(isUp);
                 }
                 KeyValuePair<MyPanelChild, int> childItem = controlList.FirstOrDefault(t => t.Key.RowIndex == value);
-                if (childItem.Key != null)
+                if (childItem.Key != null && childItem.Key.PanelItem.RowType == PanelRowType.ContentRow)
                 {
                     item_MouseClick(childItem.Key, null);
                 }
@@ -288,6 +288,17 @@ namespace 自定义Panel列表V1
             get { return groupFieldName; }
             set { groupFieldName = value; }
         }
+        #endregion
+
+        #region 总行数
+        /// <summary>
+        /// 总行数
+        /// </summary>
+        [Browsable(false)]
+        public int Count
+        {
+            get { return itemList.Count; }
+        } 
         #endregion
 
         #region 是否显示更多按钮
@@ -365,8 +376,12 @@ namespace 自定义Panel列表V1
             this.pnlContent.VScrollValue = 0;
             myVScrollBar1.Value = 0;
             UpdateScrollbar();
+
+            this.IsShowMore = isShowMore;
         }
         #endregion
+
+        #region 添加行数据 AddItem
 
         #region 绑定数据 DataSource
 
@@ -488,8 +503,6 @@ namespace 自定义Panel列表V1
         //    }
         //}
         #endregion
-
-        #region 添加行数据 AddItem
 
         /// <summary>
         /// 添加行数据，会自动合并到组
@@ -665,7 +678,14 @@ namespace 自定义Panel列表V1
                     if (find != null)
                     {
                         rowIndex = find.RowIndex;
-                        find.RowIndex += 1;
+                        find.RowIndex += dt.Rows.Count;
+
+                        KeyValuePair<MyPanelChild, int> pnlChild = controlList.FirstOrDefault(t => t.Key.RowIndex == rowIndex);
+                        if (pnlChild.Key != null)
+                        {
+                            controlList[pnlChild.Key] = find.RowIndex;
+                            pnlChild.Key.RowIndex = find.RowIndex;
+                        }
                     }
                 }
 
@@ -748,10 +768,9 @@ namespace 自定义Panel列表V1
                             controlList[pnlChild.Key] = find.RowIndex;
                             pnlChild.Key.RowIndex = find.RowIndex;
                         }
-
-                        item.RowIndex = rowIndex;
                     }
                 }
+                item.RowIndex = rowIndex;
 
                 InsertItem(rowIndex, item);
                 //增加统计行
@@ -813,17 +832,33 @@ namespace 自定义Panel列表V1
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
             if (isGroup)
-                throw new Exception("此方法不适用分组的情况！");
-
-            item.RowType = PanelRowType.ContentRow;
-            item.RowIndex = rowIndex;
-            for (int i = rowIndex; i < itemList.Count; i++)
             {
-                itemList[i].RowIndex += 1;
+                Add(item);
             }
-            InsertItem(rowIndex, item);
-            RefreshContent();
-            this.FirstDisplayedScrollingRowIndex = item.RowIndex;
+            else
+            {
+                item.RowType = PanelRowType.ContentRow;
+                item.RowIndex = rowIndex;
+                for (int i = rowIndex; i < itemList.Count; i++)
+                {
+                    itemList[i].RowIndex += 1;
+                }
+
+                List<MyPanelChild> childList = controlList.Select(t => t.Key).ToList();
+                for (int i = 0; i < controlList.Count; i++)
+                {
+                    MyPanelChild childItem = childList[i];
+                    if (childItem.RowIndex >= rowIndex)
+                    {
+                        childItem.RowIndex += 1;
+                        controlList[childItem] = childItem.RowIndex;
+                    }
+                }
+
+                InsertItem(rowIndex, item);
+                RefreshContent();
+                this.FirstDisplayedScrollingRowIndex = item.RowIndex;
+            }
         }
 
         #region 添加行数据 --del
@@ -1446,26 +1481,26 @@ namespace 自定义Panel列表V1
         /// <summary>
         /// 内容变化后需调用此方法
         /// </summary>
-        public void UpdateScrollbar()
+        private void UpdateScrollbar()
         {
             this.pnlContent.DisplayRectangleHeight = displayRectangleHeight;
             this.myVScrollBar1.UpdateScrollbar();
         }
         #endregion
 
-        #region 滚动到最底部
-        /// <summary>
-        /// 滚动到最底部
-        /// </summary>
-        public void ScrollToCaret()
-        {
-            int value = displayRectangleHeight - this.pnlContent.Height;
-            if (value < 0)
-                value = 0;
-            this.pnlContent.VScrollValue = value;
-            UpdateScrollbar();
-            ScrollItem(false);
-        }
+        #region 滚动到最底部 -del
+        ///// <summary>
+        ///// 滚动到最底部
+        ///// </summary>
+        //public void ScrollToCaret()
+        //{
+        //    int value = displayRectangleHeight - this.pnlContent.Height;
+        //    if (value < 0)
+        //        value = 0;
+        //    this.pnlContent.VScrollValue = value;
+        //    UpdateScrollbar();
+        //    ScrollItem(false);
+        //}
         #endregion
 
         #endregion
