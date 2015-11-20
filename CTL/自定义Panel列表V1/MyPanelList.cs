@@ -458,23 +458,18 @@ namespace 自定义Panel列表V1
                 }
                 rowIndex++;
             }
-
+            this.UpdateScrollbar();
             if (isShowMore)
             {
-                PanelItem loadMoreItem = new PanelItem()
-                {
-                    IsSelected = false,
-                    RowIndex = rowIndex,
-                    RowType = PanelRowType.LoadMoreRow
-                };
-                InsertItem(rowIndex, loadMoreItem);
+                PanelItem loadMoreItem = itemList.First(t => t.RowType == PanelRowType.LoadMoreRow);
+                loadMoreItem.RowIndex = itemList.Count - 1;
+                ScrollItem(null);
             }
 
             if (controlList.Count > 0)
             {
                 item_MouseClick(controlList.First().Key, null);
             }
-            this.UpdateScrollbar();
         }
 
         /// <summary>
@@ -1460,6 +1455,7 @@ namespace 自定义Panel列表V1
                 PanelItem item = itemList.First(t => t.RowIndex == rowIndex);
                 find.Key.DataRow = item.DataRow;
                 find.Key.IsSelected = item.IsSelected;
+                find.Key.RefreshData();
 
                 bool isSizeChange = false;
                 if (item.Height != find.Key.Height)
@@ -1468,7 +1464,6 @@ namespace 自定义Panel列表V1
                 displayRectangleHeight += find.Key.Height - item.Height;
 
                 item.Height = find.Key.Height;
-                find.Key.RefreshData();
                 item_MouseClick(find.Key, null);
 
                 if (isSizeChange)
@@ -1529,7 +1524,7 @@ namespace 自定义Panel列表V1
                 {
                     isActiveMouseEvent = false;
                     ScrollItem(this.myVScrollBar1.IsMoveUp);
-                    ////解决快速移动闪屏问题
+                    //解决快速移动闪屏问题
                     this.Invalidate(true);
                     this.Update();
                     this.pnlContent.Focus();

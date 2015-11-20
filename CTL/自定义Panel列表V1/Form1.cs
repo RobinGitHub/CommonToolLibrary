@@ -234,9 +234,9 @@ namespace 自定义Panel列表V1
             {
                 DataRow row = dt.NewRow();
                 if (j < 3)
-                    row[0] = 0;
+                    row[0] = i;
                 else
-                    row[0] = j;
+                    row[0] = i;
 
                 if (j % 2 == 0)
                     row[1] = "测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试";

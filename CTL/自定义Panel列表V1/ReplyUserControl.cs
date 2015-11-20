@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using 自定义Panel列表V1;
+using System.Threading;
 
 namespace 自定义Panel列表V1
 {
@@ -90,8 +91,8 @@ namespace 自定义Panel列表V1
                 {
                     pnlReplyDetail.Visible = false;
                 }
-                
             }
+            base.RefreshData();
         }
 
         private void AddContent(DataRow item, ref int lastTop)

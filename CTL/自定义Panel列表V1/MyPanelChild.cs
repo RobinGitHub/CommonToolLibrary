@@ -204,7 +204,8 @@ namespace 自定义Panel列表V1
         /// </summary>
         public virtual void RefreshData()
         {
-
+            this.Invalidate(true);
+            this.Update();
         } 
         #endregion
     }
