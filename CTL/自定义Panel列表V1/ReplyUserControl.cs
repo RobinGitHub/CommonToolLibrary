@@ -95,16 +95,30 @@ namespace 自定义Panel列表V1
             base.RefreshData();
         }
 
+        /// <summary>
+        /// 设置控件高度
+        /// </summary>
+        public override void SetControlHeight()
+        {
+            this.RefreshData();
+            int height = 0;
+            height = this.pnlTitle.Height + this.pnlReplyDetail.Height;
+            this.Height = height;
+        }
+
         private void AddContent(DataRow item, ref int lastTop)
         {
+            Font f = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             int oldHeight = pnlReplyDetail.Height;
             Label label1 = new Label();
+            label1.Font = f;
             label1.Top = lastTop;
             label1.Text = item["Date"].ToString() + " " + item["UserName"].ToString();
             label1.Width = this.Width;
             pnlReplyDetail.Controls.Add(label1);
 
             Label label2 = new Label();
+            label2.Font = f;
             label2.Top = label1.Top + label1.Height;
             label2.Text = item["Title"].ToString();
             label2.AutoSize = false;

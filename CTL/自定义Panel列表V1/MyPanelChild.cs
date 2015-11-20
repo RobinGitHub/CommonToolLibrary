@@ -198,6 +198,7 @@ namespace 自定义Panel列表V1
         #endregion
         #endregion
 
+        #region 虚方法
         #region 刷新数据
         /// <summary>
         /// 刷新数据
@@ -206,7 +207,18 @@ namespace 自定义Panel列表V1
         {
             this.Invalidate(true);
             this.Update();
-        } 
+        }
+        #endregion
+
+        #region 设置控件高度
+        /// <summary>
+        /// 设置控件高度
+        /// </summary>
+        public virtual void SetControlHeight()
+        {
+
+        }
+        #endregion 
         #endregion
     }
 }

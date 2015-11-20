@@ -328,7 +328,6 @@ namespace 自定义Panel列表V1
                     };
                     InsertItem(loadMoreItem.RowIndex, loadMoreItem);
                     RefreshContent();
-                    this.FirstDisplayedScrollingRowIndex = loadMoreItem.RowIndex;
                 }
             }
         }
@@ -566,15 +565,14 @@ namespace 自定义Panel列表V1
                     if (controlList.Count < maxControlCount)
                     {
                         MyPanelChild childItem = SetItemTemplate(item);
+                        childItem.Height = item.Height;
                         AddControl(childItem);
                     }
                 }
                 else
                 {
                     MyPanelChild childItem = SetItemTemplate(item);
-
-                    Panel pnl = new Panel();
-                    pnl.Controls.Add(childItem);
+                    childItem.SetControlHeight();
 
                     item.Height = childItem.Height;
                     displayRectangleHeight += item.Height;
@@ -584,8 +582,6 @@ namespace 自定义Panel列表V1
                     {
                         AddControl(childItem);
                     }
-                    pnl.Dispose();
-                    pnl = null;
                 }
             }
             #endregion

@@ -124,7 +124,10 @@ namespace 自定义Panel列表V1
         }
         void btnAddByDt_Click(object sender, EventArgs e)
         {
+            DateTime startTime = DateTime.Now;
             this.panelEx1.Add<ReplyModel>(AddByDt());
+            richTextBox1.AppendText("总耗时：" + (DateTime.Now - startTime).TotalMilliseconds + "\n");
+            richTextBox1.ScrollToCaret();
         }
 
         int updCount = 0;
@@ -168,7 +171,6 @@ namespace 自定义Panel列表V1
                 pnl.PanelItem = model;
                 pnl.DataRow = item.DataRow;
                 pnl.RowIndex = item.RowIndex;
-                pnl.RefreshData();
                 pnl.SizeChanged += pnl_SizeChanged;
                 control = pnl;
             }
@@ -199,7 +201,7 @@ namespace 自定义Panel列表V1
             {
                 DataRow row = dt.NewRow();
                 row[0] = i;
-                row[1] = "【生日】 2014/11/20 生日,敬请关注" + i.ToString();
+                row[1] = "【生日】 2014/11/20 生日,新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生" + i.ToString();
                 row[2] = DateTime.Now.AddDays(i).ToString("yyyy-MM-dd HH:mm");
                 row[3] = "超级管理员";
                 dt.Rows.Add(row);
@@ -214,7 +216,7 @@ namespace 自定义Panel列表V1
             {
                 DataRow row = newDt.NewRow();
                 row[0] = i;
-                row[1] = "新增生死时速" + i.ToString();
+                row[1] = "新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速" + i.ToString();
                 row[2] = DateTime.Now.AddDays(i).ToString("yyyy-MM-dd HH:mm");
                 row[3] = "超级管理员";
                 newDt.Rows.Add(row);
