@@ -219,35 +219,36 @@ namespace 自定义Panel列表V1
             {
                 if (value < 0)
                     throw new Exception("FirstDisplayedScrollingRowIndex 必须大于 0");
-                if (!myVScrollBar1.Visible)
-                    return;
-                //如果最后一行完全显示，推算第一行显示的行号及Top
-                int firstRowIndex = 0;
-                int firstRowTop = 0;
-                for (int i = itemList.Count - 1; i >= 0; i--)
+                if (myVScrollBar1.Visible)
                 {
-                    firstRowTop += itemList[i].Height;
-                    if (this.pnlContent.Height - firstRowTop < 0)
+                    //如果最后一行完全显示，推算第一行显示的行号及Top
+                    int firstRowIndex = 0;
+                    int firstRowTop = 0;
+                    for (int i = itemList.Count - 1; i >= 0; i--)
                     {
-                        firstRowIndex = i;
-                        break;
+                        firstRowTop += itemList[i].Height;
+                        if (this.pnlContent.Height - firstRowTop < 0)
+                        {
+                            firstRowIndex = i;
+                            break;
+                        }
                     }
-                }
-                if (firstRowIndex <= value)
-                { //重新计算滚动条的Value
-                    int tmpValue = displayRectangleHeight - this.pnlContent.Height;
-                    if (tmpValue < 0)
-                        tmpValue = 0;
-                    this.pnlContent.VScrollValue = tmpValue;
-                }
-                else
-                {
+                    if (firstRowIndex <= value)
+                    { //重新计算滚动条的Value
+                        int tmpValue = displayRectangleHeight - this.pnlContent.Height;
+                        if (tmpValue < 0)
+                            tmpValue = 0;
+                        this.pnlContent.VScrollValue = tmpValue;
+                    }
+                    else
+                    {
 
-                    this.pnlContent.VScrollValue = GetItemHeightByRowIndex(value);
+                        this.pnlContent.VScrollValue = GetItemHeightByRowIndex(value);
+                    }
+                    UpdateScrollbar();
+                    bool isUp = this.pnlContent.VScrollValue < this.myVScrollBar1.Value;
+                    ScrollItem(isUp);
                 }
-                UpdateScrollbar();
-                bool isUp = this.pnlContent.VScrollValue < this.myVScrollBar1.Value;
-                ScrollItem(isUp);
                 KeyValuePair<MyPanelChild, int> childItem = controlList.FirstOrDefault(t => t.Key.RowIndex == value);
                 if (childItem.Key != null)
                 {
@@ -541,7 +542,6 @@ namespace 自定义Panel列表V1
             #endregion
             RefreshContent();
             this.FirstDisplayedScrollingRowIndex = item.RowIndex;
-            //this.Refresh(item.RowIndex);
         }
 
         private void InsertItem(int rowIndex, PanelItem item)
@@ -628,6 +628,11 @@ namespace 自定义Panel列表V1
         {
             if (dt == null)
                 throw new Exception("没有数据！");
+            if (isShowMore && itemList.Count == 1)
+            {
+                this.DataSource<T>(dt);
+                return;
+            }
             if (isGroup && !dt.Columns.Contains(groupFieldName))
             {
                 throw new Exception("该DataTable 没有包含" + groupFieldName + " 的列名！");
@@ -641,10 +646,6 @@ namespace 自定义Panel列表V1
                 ///
                 foreach (DataRow row in dt.Rows)
                 {
-                    if (DateTime.Parse(row["Date"].ToString()).ToString("yyyy/MM/dd") == "2015/11/30")
-                    { 
-                    
-                    }
                     PanelItem item = new T()
                     {
                         DataRow = row,
@@ -741,6 +742,12 @@ namespace 自定义Panel列表V1
                     {
                         rowIndex = find.RowIndex;
                         find.RowIndex += 2;
+                        KeyValuePair<MyPanelChild, int> pnlChild = controlList.FirstOrDefault(t => t.Key.RowIndex == rowIndex);
+                        if (pnlChild.Key != null)
+                        {
+                            controlList[pnlChild.Key] = find.RowIndex;
+                            pnlChild.Key.RowIndex = find.RowIndex;
+                        }
 
                         item.RowIndex = rowIndex;
                     }
@@ -774,6 +781,17 @@ namespace 自定义Panel列表V1
                         isUpdateTotal = true;
                     }
                 }
+                List<MyPanelChild> childList = controlList.Select(t => t.Key).ToList();
+                for (int i = 0; i < controlList.Count; i++)
+                {
+                    MyPanelChild childItem = childList[i];
+                    if (childItem.RowIndex >= rowIndex)
+                    {
+                        childItem.RowIndex += 1;
+                        controlList[childItem] = childItem.RowIndex;
+                    }
+                }
+
                 InsertItem(rowIndex, item);
             }
         }
@@ -2008,7 +2026,7 @@ namespace 自定义Panel列表V1
         /// 行数
         /// </summary>
         public int RowCount { get; set; }
-    } 
+    }
     #endregion
 
 }
