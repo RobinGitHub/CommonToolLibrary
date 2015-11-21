@@ -140,6 +140,7 @@ namespace 自定义Panel列表V2
             }
             control.MouseLeave += this.control_MouseLeave; // 当鼠标离开该子控件时判断是否是离开  
             control.MouseEnter += control_MouseEnter;
+            control.MouseMove += Control_MouseMove;
             control.Click += control_Click;
             control.MouseClick += control_MouseClick;
             control.DoubleClick += control_DoubleClick;
@@ -150,6 +151,7 @@ namespace 自定义Panel列表V2
                 OnControlAdded(item);
             }
         }
+
 
         #region 点击事件
         void control_DoubleClick(object sender, EventArgs e)
@@ -169,6 +171,10 @@ namespace 自定义Panel列表V2
         void control_MouseEnter(object sender, EventArgs e)
         {
             base.OnMouseEnter(e);
+        }
+        private void Control_MouseMove(object sender, MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
         }
         /// <summary>  
         /// 子控件鼠标离开时也要做相应的判断  

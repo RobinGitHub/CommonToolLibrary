@@ -209,7 +209,7 @@ namespace 自定义Panel列表V2
             {
                 DataRow row = newDt.NewRow();
                 row[0] = i;
-                row[1] = "新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速" + i.ToString();
+                row[1] = "批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加批量增加" + i.ToString();
                 row[2] = DateTime.Now.AddDays(-i).ToString("yyyy-MM-dd HH:mm");
                 row[3] = "超级管理员";
                 newDt.Rows.Add(row);
@@ -225,7 +225,7 @@ namespace 自定义Panel列表V2
             dt.Columns.Add("Date");
             dt.Columns.Add("UserName");
 
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 1; j++)
             {
                 DataRow row = dt.NewRow();
                 if (j < 3)

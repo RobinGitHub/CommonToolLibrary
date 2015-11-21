@@ -28,21 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.pnlSplitLine = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // DataPanelRowControl
+            // pnlSplitLine
+            // 
+            this.pnlSplitLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(234)))), ((int)(((byte)(234)))), ((int)(((byte)(233)))));
+            this.pnlSplitLine.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlSplitLine.Location = new System.Drawing.Point(0, 59);
+            this.pnlSplitLine.Name = "pnlSplitLine";
+            this.pnlSplitLine.Size = new System.Drawing.Size(300, 1);
+            this.pnlSplitLine.TabIndex = 2;
+            // 
+            // DataPanelViewRowControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pnlSplitLine);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "DataPanelRowControl";
+            this.Name = "DataPanelViewRowControl";
             this.Size = new System.Drawing.Size(300, 60);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel pnlSplitLine;
     }
 }
