@@ -737,7 +737,8 @@ namespace 自定义Panel列表V2
             item.RowType = DataPanelRowType.ContentRow;
             item.RowIndex = itemList.Count;
             item.IsSelected = true;
-
+            //新增的时候会有闪烁
+            this.ClearSelectedItem(item.RowIndex);
             if (isGroup)
             {
                 AddByGroup(item);
@@ -859,6 +860,8 @@ namespace 自定义Panel列表V2
             }
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
+            //新增的时候会有闪烁
+            this.ClearSelectedItem(item.RowIndex);
             if (isGroup)
             {
                 Add(item);
