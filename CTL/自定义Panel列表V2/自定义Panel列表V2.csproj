@@ -43,6 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ReplyModel.cs" />
+    <Compile Include="ReplyUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ReplyUserControl.Designer.cs">
+      <DependentUpon>ReplyUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControl\DataPanelViewLoadMoreRowControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -82,6 +89,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorkBench.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorkBench.Designer.cs">
+      <DependentUpon>WorkBench.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -94,6 +107,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ReplyUserControl.resx">
+      <DependentUpon>ReplyUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControl\DataPanelViewGroupRowControl.resx">
       <DependentUpon>DataPanelViewGroupRowControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -108,6 +124,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControl\MyVScrollBar.resx">
       <DependentUpon>MyVScrollBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorkBench.resx">
+      <DependentUpon>WorkBench.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
