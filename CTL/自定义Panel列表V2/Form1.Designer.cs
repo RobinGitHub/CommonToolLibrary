@@ -49,9 +49,10 @@
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
-            this.panelEx1 = new 自定义Panel列表V2.DataPanelView();
             this.cbxAsc = new System.Windows.Forms.CheckBox();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.panelEx1 = new 自定义Panel列表V2.DataPanelView();
+            this.btnGetTotal = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnLocation
@@ -76,7 +77,7 @@
             // 
             this.btnClear.Location = new System.Drawing.Point(13, 90);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(156, 23);
+            this.btnClear.Size = new System.Drawing.Size(76, 23);
             this.btnClear.TabIndex = 81;
             this.btnClear.Text = "清空";
             this.btnClear.UseVisualStyleBackColor = true;
@@ -243,6 +244,25 @@
             this.btnInit.Text = "绑定数据DataSource";
             this.btnInit.UseVisualStyleBackColor = true;
             // 
+            // cbxAsc
+            // 
+            this.cbxAsc.AutoSize = true;
+            this.cbxAsc.Location = new System.Drawing.Point(97, 33);
+            this.cbxAsc.Name = "cbxAsc";
+            this.cbxAsc.Size = new System.Drawing.Size(48, 16);
+            this.cbxAsc.TabIndex = 85;
+            this.cbxAsc.Text = "倒序";
+            this.cbxAsc.UseVisualStyleBackColor = true;
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker1.Location = new System.Drawing.Point(12, 57);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(157, 21);
+            this.dateTimePicker1.TabIndex = 86;
+            // 
             // panelEx1
             // 
             this.panelEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -263,24 +283,14 @@
             this.panelEx1.Size = new System.Drawing.Size(362, 426);
             this.panelEx1.TabIndex = 84;
             // 
-            // cbxAsc
+            // btnGetTotal
             // 
-            this.cbxAsc.AutoSize = true;
-            this.cbxAsc.Location = new System.Drawing.Point(97, 33);
-            this.cbxAsc.Name = "cbxAsc";
-            this.cbxAsc.Size = new System.Drawing.Size(48, 16);
-            this.cbxAsc.TabIndex = 85;
-            this.cbxAsc.Text = "倒序";
-            this.cbxAsc.UseVisualStyleBackColor = true;
-            // 
-            // dateTimePicker1
-            // 
-            this.dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm:ss";
-            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePicker1.Location = new System.Drawing.Point(12, 57);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(157, 21);
-            this.dateTimePicker1.TabIndex = 86;
+            this.btnGetTotal.Location = new System.Drawing.Point(94, 90);
+            this.btnGetTotal.Name = "btnGetTotal";
+            this.btnGetTotal.Size = new System.Drawing.Size(76, 23);
+            this.btnGetTotal.TabIndex = 81;
+            this.btnGetTotal.Text = "总行数";
+            this.btnGetTotal.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -292,6 +302,7 @@
             this.Controls.Add(this.panelEx1);
             this.Controls.Add(this.btnLocation);
             this.Controls.Add(this.btnGetSelected);
+            this.Controls.Add(this.btnGetTotal);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.cbxIsEqualHeight);
             this.Controls.Add(this.cbxIsGroup);
@@ -344,6 +355,7 @@
         private DataPanelView panelEx1;
         private System.Windows.Forms.CheckBox cbxAsc;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.Button btnGetTotal;
     }
 }
 

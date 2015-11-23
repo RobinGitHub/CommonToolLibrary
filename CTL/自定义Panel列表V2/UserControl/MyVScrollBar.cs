@@ -292,6 +292,7 @@ namespace 自定义Panel列表V2
             {
                 moValue = value;
                 moThumbTop = customScrollInfo.GetScrollOffsetY(value);
+                lastmoThumbTopValue = moThumbTop;
                 if (moThumbTop == 0)
                     moValue = 0;
                 Invalidate();

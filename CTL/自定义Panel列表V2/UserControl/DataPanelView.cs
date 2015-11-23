@@ -401,6 +401,7 @@ namespace 自定义Panel列表V2
         {
             if (this.LoadMore != null)
                 LoadMore(sender, e);
+            this.pnlContent.Focus();
         }
         #endregion
 
@@ -634,7 +635,7 @@ namespace 自定义Panel列表V2
 
             this.IsShowMore = isShowMore;
         }
-        #endregion 
+        #endregion
 
         #region 添加数据
 
@@ -738,7 +739,7 @@ namespace 自定义Panel列表V2
         }
         #endregion
 
-        #region 添加行数据，会自动合并到组 Add 
+        #region 添加行数据，会自动合并到组 Add
         /// <summary>
         /// 添加行数据，会自动合并到组
         /// </summary>
@@ -763,7 +764,7 @@ namespace 自定义Panel列表V2
             item.RowIndex = itemList.Count;
             item.IsSelected = true;
             //新增的时候会有闪烁
-            this.ClearSelectedItem(item.RowIndex);
+            ClearSelectedItem();
             if (isGroup)
             {
                 AddByGroup(item);
@@ -886,7 +887,7 @@ namespace 自定义Panel列表V2
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
             //新增的时候会有闪烁
-            this.ClearSelectedItem(item.RowIndex);
+            ClearSelectedItem();
             if (isGroup)
             {
                 Add(item);
@@ -895,6 +896,7 @@ namespace 自定义Panel列表V2
             {
                 item.RowType = DataPanelRowType.ContentRow;
                 item.RowIndex = rowIndex;
+
                 for (int i = rowIndex; i < itemList.Count; i++)
                 {
                     itemList[i].RowIndex += 1;
@@ -1244,7 +1246,7 @@ namespace 自定义Panel列表V2
             }
             #endregion
         }
-        #endregion 
+        #endregion
 
         #region 添加到组中 AddByGroup
         /// <summary>
@@ -1836,6 +1838,28 @@ namespace 自定义Panel列表V2
                 DataPanelViewRow item = itemList.First(t => t.RowIndex == rowIndex);
                 item.IsSelected = true;
                 item.IsFocus = true;
+            }
+        }
+
+        private void ClearSelectedItem()
+        {
+            foreach (DataPanelViewRowControl item in controlList.Keys)
+            {
+                if (item.IsSelected)
+                {
+                    item.IsSelected = false;
+                    break;
+                }
+            }
+
+            foreach (DataPanelViewRow item in itemList)
+            {
+                if (item.IsSelected)
+                {
+                    item.IsSelected = false;
+                    item.IsFocus = false;
+                    break;
+                }
             }
         }
         #endregion

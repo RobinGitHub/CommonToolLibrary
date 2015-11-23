@@ -29,6 +29,7 @@ namespace 自定义Panel列表V2
             this.btnClear.Click += btnClear_Click;
             this.btnGetSelected.Click += btnGetSelected_Click;
             this.btnLocation.Click += btnLocation_Click;
+            this.btnGetTotal.Click += btnGetTotal_Click;
 
             this.cbxShowMore.CheckedChanged += cbxShowMore_CheckedChanged;
             this.cbxIsGroup.CheckedChanged += cbxIsGroup_CheckedChanged;
@@ -42,6 +43,7 @@ namespace 自定义Panel列表V2
         }
 
 
+
         void panelEx1_LoadMore(object sender, EventArgs e)
         {
             btnAddByDt.PerformClick();
@@ -50,6 +52,11 @@ namespace 自定义Panel列表V2
         void btnLocation_Click(object sender, EventArgs e)
         {
             this.panelEx1.FirstDisplayedScrollingRowIndex = int.Parse(txtLocation.Text);
+        }
+        void btnGetTotal_Click(object sender, EventArgs e)
+        {
+            richTextBox1.AppendText("总行数：" + this.panelEx1.Count + "\n");
+            richTextBox1.ScrollToCaret();
         }
 
         void btnGetSelected_Click(object sender, EventArgs e)
@@ -63,6 +70,7 @@ namespace 自定义Panel列表V2
                 richTextBox1.AppendText("索引：" + item.RowIndex + "| 标题：" + item.DataRow["Title"].ToString() + "\n");
             }
             richTextBox1.AppendText("===SelectedItems===\n\n");
+            richTextBox1.ScrollToCaret();
         }
 
         void btnClear_Click(object sender, EventArgs e)
