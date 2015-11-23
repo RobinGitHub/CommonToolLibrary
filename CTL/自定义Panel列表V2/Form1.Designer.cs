@@ -50,11 +50,13 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
             this.panelEx1 = new 自定义Panel列表V2.DataPanelView();
+            this.cbxAsc = new System.Windows.Forms.CheckBox();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // btnLocation
             // 
-            this.btnLocation.Location = new System.Drawing.Point(94, 225);
+            this.btnLocation.Location = new System.Drawing.Point(94, 259);
             this.btnLocation.Name = "btnLocation";
             this.btnLocation.Size = new System.Drawing.Size(75, 23);
             this.btnLocation.TabIndex = 83;
@@ -63,7 +65,7 @@
             // 
             // btnGetSelected
             // 
-            this.btnGetSelected.Location = new System.Drawing.Point(14, 84);
+            this.btnGetSelected.Location = new System.Drawing.Point(14, 118);
             this.btnGetSelected.Name = "btnGetSelected";
             this.btnGetSelected.Size = new System.Drawing.Size(75, 23);
             this.btnGetSelected.TabIndex = 82;
@@ -72,7 +74,7 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(13, 56);
+            this.btnClear.Location = new System.Drawing.Point(13, 90);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(156, 23);
             this.btnClear.TabIndex = 81;
@@ -111,7 +113,7 @@
             // 
             // btnAddByDt
             // 
-            this.btnAddByDt.Location = new System.Drawing.Point(94, 168);
+            this.btnAddByDt.Location = new System.Drawing.Point(94, 202);
             this.btnAddByDt.Name = "btnAddByDt";
             this.btnAddByDt.Size = new System.Drawing.Size(75, 23);
             this.btnAddByDt.TabIndex = 77;
@@ -120,7 +122,7 @@
             // 
             // btnInsert
             // 
-            this.btnInsert.Location = new System.Drawing.Point(94, 140);
+            this.btnInsert.Location = new System.Drawing.Point(94, 174);
             this.btnInsert.Name = "btnInsert";
             this.btnInsert.Size = new System.Drawing.Size(75, 23);
             this.btnInsert.TabIndex = 76;
@@ -131,15 +133,15 @@
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.richTextBox1.Location = new System.Drawing.Point(13, 254);
+            this.richTextBox1.Location = new System.Drawing.Point(13, 287);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(156, 172);
+            this.richTextBox1.Size = new System.Drawing.Size(156, 139);
             this.richTextBox1.TabIndex = 75;
             this.richTextBox1.Text = "";
             // 
             // txtLocation
             // 
-            this.txtLocation.Location = new System.Drawing.Point(46, 227);
+            this.txtLocation.Location = new System.Drawing.Point(46, 261);
             this.txtLocation.Name = "txtLocation";
             this.txtLocation.Size = new System.Drawing.Size(41, 21);
             this.txtLocation.TabIndex = 74;
@@ -147,7 +149,7 @@
             // 
             // txtAddRowCount
             // 
-            this.txtAddRowCount.Location = new System.Drawing.Point(46, 169);
+            this.txtAddRowCount.Location = new System.Drawing.Point(46, 203);
             this.txtAddRowCount.Name = "txtAddRowCount";
             this.txtAddRowCount.Size = new System.Drawing.Size(41, 21);
             this.txtAddRowCount.TabIndex = 73;
@@ -156,7 +158,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 231);
+            this.label4.Location = new System.Drawing.Point(11, 265);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 12);
             this.label4.TabIndex = 70;
@@ -165,7 +167,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 173);
+            this.label3.Location = new System.Drawing.Point(11, 207);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 12);
             this.label3.TabIndex = 69;
@@ -173,7 +175,7 @@
             // 
             // txtInsertRowIndex
             // 
-            this.txtInsertRowIndex.Location = new System.Drawing.Point(46, 141);
+            this.txtInsertRowIndex.Location = new System.Drawing.Point(46, 175);
             this.txtInsertRowIndex.Name = "txtInsertRowIndex";
             this.txtInsertRowIndex.Size = new System.Drawing.Size(41, 21);
             this.txtInsertRowIndex.TabIndex = 72;
@@ -182,7 +184,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(11, 145);
+            this.label2.Location = new System.Drawing.Point(11, 179);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 12);
             this.label2.TabIndex = 68;
@@ -190,7 +192,7 @@
             // 
             // txtRowCount
             // 
-            this.txtRowCount.Location = new System.Drawing.Point(47, 113);
+            this.txtRowCount.Location = new System.Drawing.Point(47, 147);
             this.txtRowCount.Name = "txtRowCount";
             this.txtRowCount.Size = new System.Drawing.Size(41, 21);
             this.txtRowCount.TabIndex = 71;
@@ -199,7 +201,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 117);
+            this.label1.Location = new System.Drawing.Point(12, 151);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 12);
             this.label1.TabIndex = 67;
@@ -207,7 +209,7 @@
             // 
             // btnDel
             // 
-            this.btnDel.Location = new System.Drawing.Point(12, 196);
+            this.btnDel.Location = new System.Drawing.Point(12, 230);
             this.btnDel.Name = "btnDel";
             this.btnDel.Size = new System.Drawing.Size(75, 23);
             this.btnDel.TabIndex = 66;
@@ -216,7 +218,7 @@
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Location = new System.Drawing.Point(94, 196);
+            this.btnUpdate.Location = new System.Drawing.Point(94, 230);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(75, 23);
             this.btnUpdate.TabIndex = 65;
@@ -225,7 +227,7 @@
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(94, 84);
+            this.btnAdd.Location = new System.Drawing.Point(94, 118);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(75, 23);
             this.btnAdd.TabIndex = 64;
@@ -234,7 +236,7 @@
             // 
             // btnInit
             // 
-            this.btnInit.Location = new System.Drawing.Point(94, 112);
+            this.btnInit.Location = new System.Drawing.Point(94, 146);
             this.btnInit.Name = "btnInit";
             this.btnInit.Size = new System.Drawing.Size(75, 23);
             this.btnInit.TabIndex = 63;
@@ -261,11 +263,32 @@
             this.panelEx1.Size = new System.Drawing.Size(362, 426);
             this.panelEx1.TabIndex = 84;
             // 
+            // cbxAsc
+            // 
+            this.cbxAsc.AutoSize = true;
+            this.cbxAsc.Location = new System.Drawing.Point(97, 33);
+            this.cbxAsc.Name = "cbxAsc";
+            this.cbxAsc.Size = new System.Drawing.Size(48, 16);
+            this.cbxAsc.TabIndex = 85;
+            this.cbxAsc.Text = "倒序";
+            this.cbxAsc.UseVisualStyleBackColor = true;
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePicker1.Location = new System.Drawing.Point(12, 57);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(157, 21);
+            this.dateTimePicker1.TabIndex = 86;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(537, 426);
+            this.Controls.Add(this.dateTimePicker1);
+            this.Controls.Add(this.cbxAsc);
             this.Controls.Add(this.panelEx1);
             this.Controls.Add(this.btnLocation);
             this.Controls.Add(this.btnGetSelected);
@@ -319,6 +342,8 @@
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnInit;
         private DataPanelView panelEx1;
+        private System.Windows.Forms.CheckBox cbxAsc;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
     }
 }
 

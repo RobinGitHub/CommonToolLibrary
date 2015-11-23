@@ -9,13 +9,14 @@ using System.Windows.Forms;
 using System.Threading;
 
 /* 把Item 改成Row
- * 
+ * 关键点是：要保证ItemList中行索引顺序
  */
 
 namespace 自定义Panel列表V2
 {
     /// <summary>
     /// 自定义Panel列表
+    /// 
     /// </summary>
     public partial class DataPanelView : UserControl
     {
@@ -1252,69 +1253,123 @@ namespace 自定义Panel列表V2
         /// <param name="item"></param>
         private void AddByGroup(DataPanelViewRow item)
         {
-            /* 先按顺序查找，找不到，再查询是否有分组
-             * 没有再按倒序查找
+            /* 先判断组是否存在
+             *   存：查找在组中的位置，然后插入内容行，更新索引
+             *   否：查询组应该在的位置，然后插入内容行&组，更新索引
              * 
-             * 这个逻辑有问题：排序方式的不同，直接决定了位置（是插前面还是后面）
              */
-            int rowIndex = itemList.Count;
-            DataPanelViewRow find = null;
-            if (ascending)
+            List<DataPanelViewRow> groupList = itemList.Where(t => t.RowType == DataPanelRowType.GroupRow).ToList();
+            int groupRowIndex = -1;
+            //记录当前是第几个组
+            int groupRowNum = 0;
+            DateTime itemGroupFiled = DateTime.Parse(item.DataRow[groupFieldName].ToString());
+            foreach (DataPanelViewGroupRow row in groupList)
             {
-                find = itemList.FirstOrDefault(t => t.RowType == DataPanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) > DateTime.Parse(item.DataRow[groupFieldName].ToString()));
-
-                if (find != null)
+                if (row.GroupDateTime.ToString("yyyy/MM") == itemGroupFiled.ToString("yyyy/MM"))
                 {
-                    //判断它前面一个是否是分组行，如果是，则插入在分组行的位置
-                    rowIndex = find.RowIndex;
-                    //var tmpFind = itemList.FirstOrDefault(t => t.RowIndex == rowIndex - 1);
-                    //if (tmpFind != null && tmpFind.RowType == DataPanelRowType.GroupRow)
-                    //    rowIndex -= 1;
+                    groupRowIndex = row.RowIndex;
+                    break;
                 }
+                groupRowNum++;
+            }
+            int rowIndex = 0;
+            //是否更新统计信息
+            bool isUpdateTotal = true;
+            if (groupRowIndex == -1)
+            {
+                int tmpGroupRowNum = 0;
+                if (ascending)
+                {
+                    foreach (DataPanelViewGroupRow row in groupList)
+                    {
+                        if (row.GroupDateTime > itemGroupFiled)
+                        {
+                            break;
+                        }
+                        tmpGroupRowNum++;
+                    }
+                }
+                else
+                {
+                    foreach (DataPanelViewGroupRow row in groupList)
+                    {
+                        if (row.GroupDateTime < itemGroupFiled)
+                        {
+                            break;
+                        }
+                        tmpGroupRowNum++;
+                    }
+                }
+                if (tmpGroupRowNum > 0)
+                {
+                    rowIndex = groupList[tmpGroupRowNum - 1].RowIndex + 1;
+                }
+
+                isUpdateTotal = false;
             }
             else
             {
-                //倒序查询
-                find = itemList.FirstOrDefault(t => t.RowType == DataPanelRowType.ContentRow && DateTime.Parse(t.DataRow[groupFieldName].ToString()) < DateTime.Parse(item.DataRow[groupFieldName].ToString()));
-                if (find != null)
-                {//判断它后面一个是否是分组行，如果是，则插入在分组行的位置
-                    rowIndex = find.RowIndex;
-                    //var tmpFind = itemList.FirstOrDefault(t => t.RowIndex == rowIndex + 1);
-                    //if (tmpFind != null && tmpFind.RowType == DataPanelRowType.GroupRow)
-                    //    rowIndex += 1;
-                }
-            }
-            if (find == null)
-            {//查询组是否存在,这里是为了捕获正好在2个极端的情况
-                List<DataPanelViewGroupRow> groupItemList = itemList.Where(t => t.RowType == DataPanelRowType.GroupRow).Cast<DataPanelViewGroupRow>().ToList();
-                foreach (DataPanelViewGroupRow gpItem in groupItemList)
+                int startIndex = 0;
+                if (groupRowNum > 0)
                 {
-                    if (gpItem.GroupDateTime.ToString("yyyy/MM") == DateTime.Parse(item.DataRow[groupFieldName].ToString()).ToString("yyyy/MM"))
-                    {
-                        find = gpItem;
-                        rowIndex = find.RowIndex;
-                        break;
-                    }
+                    startIndex = groupList[groupRowNum - 1].RowIndex + 1;
                 }
-            }
-            if (find == null)
-            {
-                if (isShowMore)
+                int endIndex = groupRowIndex;
+                bool isFind = false;
+                for (int i = startIndex; i < endIndex; i++)
                 {
-                    find = itemList.First(t => t.RowType == DataPanelRowType.LoadMoreRow);
-                    if (find != null)
+                    DateTime tmpGroupFiled = DateTime.Parse(itemList[i].DataRow[groupFieldName].ToString());
+                    if (ascending)
                     {
-                        rowIndex = find.RowIndex;
-                        find.RowIndex += 2;
-                        KeyValuePair<DataPanelViewRowControl, int> pnlChild = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == find.RowIndex);
-                        if (pnlChild.Key != null)
+                        if (tmpGroupFiled > itemGroupFiled)
                         {
-                            controlList[pnlChild.Key] = find.RowIndex;
+                            rowIndex = i;
+                            isFind = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (tmpGroupFiled < itemGroupFiled)
+                        {
+                            rowIndex = i;
+                            isFind = true;
+                            break;
                         }
                     }
                 }
-                item.RowIndex = rowIndex;
+                if (!isFind)
+                    rowIndex = endIndex;
+            }
 
+            for (int i = rowIndex; i < itemList.Count; i++)
+            {
+                if (groupRowIndex == -1)
+                    itemList[i].RowIndex += 2;
+                else
+                    itemList[i].RowIndex += 1;
+
+                if (itemList[i].RowType == DataPanelRowType.GroupRow && isUpdateTotal)
+                {//找到最近的一个统计行
+                    DataPanelViewGroupRow groupItem = itemList[i] as DataPanelViewGroupRow;
+                    groupItem.RowCount += 1;
+                    isUpdateTotal = false;
+                }
+            }
+            //注意这里类的引用关系， 控件不需要在更改索引
+            List<DataPanelViewRowControl> childList = controlList.Select(t => t.Key).ToList();
+            for (int i = 0; i < controlList.Count; i++)
+            {
+                DataPanelViewRowControl childItem = childList[i];
+                if (childItem.DataPanelRow.RowIndex >= rowIndex)
+                {
+                    controlList[childItem] = childItem.DataPanelRow.RowIndex;
+                }
+            }
+
+            item.RowIndex = rowIndex;
+            if (groupRowIndex == -1)
+            {
                 InsertItem(rowIndex, item);
                 //增加统计行
                 DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
@@ -1329,31 +1384,6 @@ namespace 自定义Panel列表V2
             }
             else
             {
-                //更新所有内容的索引 +1 更新统计+1
-                item.RowIndex = rowIndex;
-
-                bool isUpdateTotal = false;
-                for (int i = rowIndex; i < itemList.Count; i++)
-                {
-                    itemList[i].RowIndex += 1;
-                    if (itemList[i].RowType == DataPanelRowType.GroupRow && !isUpdateTotal)
-                    {//找到最近的一个统计行
-                        DataPanelViewGroupRow groupItem = itemList[i] as DataPanelViewGroupRow;
-                        groupItem.RowCount += 1;
-                        isUpdateTotal = true;
-                    }
-                }
-                //注意这里类的引用关系， 控件不需要在更改索引
-                List<DataPanelViewRowControl> childList = controlList.Select(t => t.Key).ToList();
-                for (int i = 0; i < controlList.Count; i++)
-                {
-                    DataPanelViewRowControl childItem = childList[i];
-                    if (childItem.DataPanelRow.RowIndex >= rowIndex)
-                    {
-                        controlList[childItem] = childItem.DataPanelRow.RowIndex;
-                    }
-                }
-
                 InsertItem(rowIndex, item);
             }
         }

@@ -33,12 +33,14 @@ namespace 自定义Panel列表V2
             this.cbxShowMore.CheckedChanged += cbxShowMore_CheckedChanged;
             this.cbxIsGroup.CheckedChanged += cbxIsGroup_CheckedChanged;
             this.cbxIsEqualHeight.CheckedChanged += cbxIsEqualHeight_CheckedChanged;
+            this.cbxAsc.CheckedChanged += cbxAsc_CheckedChanged;
 
             this.panelEx1.MinRowHeight = 60;
             this.panelEx1.IsEqualHeight = false;
 
             dt = GetDataSource();
         }
+
 
         void panelEx1_LoadMore(object sender, EventArgs e)
         {
@@ -73,6 +75,10 @@ namespace 自定义Panel列表V2
             this.panelEx1.Clear();
             this.panelEx1.IsEqualHeight = cbxIsEqualHeight.Checked;
         }
+        void cbxAsc_CheckedChanged(object sender, EventArgs e)
+        {
+            this.panelEx1.Ascending = !cbxAsc.Checked;
+        }
 
         void cbxIsGroup_CheckedChanged(object sender, EventArgs e)
         {
@@ -99,7 +105,7 @@ namespace 自定义Panel列表V2
             DataRow row = dt.NewRow();
             row[0] = dt.Rows.Count;
             row[1] = " 新增,TTTT" + this.panelEx1.Count;
-            row[2] = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd HH:mm");
+            row[2] = dateTimePicker1.Value.ToString("yyyy-MM-dd HH:mm");
             row[3] = "超级管理员";
             dt.Rows.Add(row);
 
@@ -112,7 +118,7 @@ namespace 自定义Panel列表V2
             DataRow row = dt.NewRow();
             row[0] = dt.Rows.Count;
             row[1] = " 插入 TTTTTT 生日,TTTT敬请关注" + this.panelEx1.Count;
-            row[2] = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd HH:mm");
+            row[2] = dateTimePicker1.Value.ToString("yyyy-MM-dd HH:mm");
             row[3] = "超级管理员";
             dt.Rows.Add(row);
 
