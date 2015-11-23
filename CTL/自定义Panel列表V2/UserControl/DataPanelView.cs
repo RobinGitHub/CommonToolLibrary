@@ -502,13 +502,10 @@ namespace 自定义Panel列表V2
                 #region Down
                 case Keys.Down://向下滚动
                     isActiveMouseEvent = false;
-                    if (itemList[itemList.Count - 1].IsFocus)
-                    {
-                        this.myVScrollBar1.Value = displayRectangleHeight - this.pnlContent.Height;
-                        this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
-                        ScrollItem(false);
-                        return true;
-                    }
+                    //判断最后一行是否是 加载更多
+                    //判断最后一行是否是统计行
+                    //判断第一点&第二点
+                    //判断当前行后面没有内容行
 
                     //找到最后一次点击的控件
                     tmpItem = null;
@@ -522,6 +519,25 @@ namespace 自定义Panel列表V2
                     }
                     if (tmpItem != null)
                     {
+                        int tmpRowIndex = tmpItem.RowIndex + 1;
+                        bool isHasContentRow = false;
+                        while (tmpRowIndex < itemList.Count)
+                        {
+                            if (itemList[tmpRowIndex].RowType == DataPanelRowType.ContentRow)
+                            {
+                                isHasContentRow = true;
+                                break;
+                            }
+                            tmpRowIndex++;
+                        }
+                        if (!isHasContentRow)
+                        {
+                            this.myVScrollBar1.Value = displayRectangleHeight - this.pnlContent.Height;
+                            this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                            ScrollItem(false);
+                            return true;
+                        }
+
                         int searchIndex = tmpItem.RowIndex + 1;
                         KeyValuePair<DataPanelViewRowControl, int> find = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == searchIndex);
                         while (find.Key != null && find.Key.DataPanelRow.RowType != DataPanelRowType.ContentRow)
@@ -703,12 +719,20 @@ namespace 自定义Panel列表V2
             {
                 DataPanelViewRow loadMoreItem = itemList.First(t => t.RowType == DataPanelRowType.LoadMoreRow);
                 loadMoreItem.RowIndex = itemList.Count - 1;
+
+                KeyValuePair<DataPanelViewRowControl, int> pnlChild = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == loadMoreItem.RowIndex);
+                if (pnlChild.Key != null)
+                {
+                    controlList[pnlChild.Key] = loadMoreItem.RowIndex;
+                }
+                //调整位置
                 ScrollItem(null);
             }
 
             if (controlList.Count > 0)
             {
-                item_MouseClick(controlList.First().Key, null);
+                DataPanelViewRowControl dpvrc = controlList.First(t => t.Key.DataPanelRow.RowIndex == 0).Key;
+                item_MouseClick(dpvrc, null);
             }
         }
         #endregion
@@ -818,7 +842,7 @@ namespace 自定义Panel列表V2
                         rowIndex = find.RowIndex;
                         find.RowIndex += dt.Rows.Count;
 
-                        KeyValuePair<DataPanelViewRowControl, int> pnlChild = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == rowIndex);
+                        KeyValuePair<DataPanelViewRowControl, int> pnlChild = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == find.RowIndex);
                         if (pnlChild.Key != null)
                         {
                             controlList[pnlChild.Key] = find.RowIndex;
@@ -1162,6 +1186,7 @@ namespace 自定义Panel列表V2
                     if (controlList.Count < maxControlCount)
                     {
                         DataPanelViewRowControl dpvrc = SetItemTemplate(dpvRow);
+                        dpvrc.RefreshData();
                         dpvrc.Height = dpvRow.Height;
                         AddControl(dpvrc);
                     }
@@ -1169,6 +1194,7 @@ namespace 自定义Panel列表V2
                 else
                 {
                     DataPanelViewRowControl dpvrc = SetItemTemplate(dpvRow);
+                    dpvrc.RefreshData();
                     dpvrc.SetControlHeight();
 
                     dpvRow.Height = dpvrc.Height;
@@ -1280,7 +1306,7 @@ namespace 自定义Panel列表V2
                     {
                         rowIndex = find.RowIndex;
                         find.RowIndex += 2;
-                        KeyValuePair<DataPanelViewRowControl, int> pnlChild = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == rowIndex);
+                        KeyValuePair<DataPanelViewRowControl, int> pnlChild = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == find.RowIndex);
                         if (pnlChild.Key != null)
                         {
                             controlList[pnlChild.Key] = find.RowIndex;
@@ -1513,8 +1539,7 @@ namespace 自定义Panel列表V2
             tmpItem = itemList.First(t => t.RowIndex == dpvrc.DataPanelRow.RowIndex);
             if (SelectionChanged != null && isFocus != tmpItem.IsFocus)
             {
-                DataPanelViewRow pnlItem = itemList.First(t => t.RowIndex == dpvrc.DataPanelRow.RowIndex);
-                SelectionChanged(pnlItem);
+                SelectionChanged(tmpItem);
             }
         }
 
@@ -1645,6 +1670,8 @@ namespace 自定义Panel列表V2
                 if (item.RowType == DataPanelRowType.ContentRow)
                 {
                     DataPanelViewRowControl newItem = this.SetItemTemplate(item);
+                    newItem.RefreshData();
+                    newItem.Height = item.Height;
                     newItem.IsSelected = item.IsSelected;
                     this.AddControl(newItem, false);
                     childItem = newItem;
@@ -1654,6 +1681,7 @@ namespace 自定义Panel列表V2
                     DataPanelViewGroupRow groupItem = item as DataPanelViewGroupRow;
                     DataPanelViewRowControl newItem = new DataPanelViewGroupRowControl(groupItem.GroupDateTime, groupItem.RowCount);
                     newItem.DataPanelRow = groupItem;
+                    newItem.RefreshData();
                     this.AddControl(newItem, false);
                     childItem = newItem;
                 }

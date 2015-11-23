@@ -194,7 +194,7 @@ namespace 自定义Panel列表V2
             {
                 DataRow row = dt.NewRow();
                 row[0] = i;
-                row[1] = "【生日】 2014/11/20 生日,新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生" + i.ToString();
+                row[1] = "【生日】 " + DateTime.Now.AddDays(-i).ToString("yyyy-MM-dd") + " 生日,新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生死时速新增生" + i.ToString();
                 row[2] = DateTime.Now.AddDays(-i).ToString("yyyy-MM-dd HH:mm");
                 row[3] = "超级管理员";
                 dt.Rows.Add(row);

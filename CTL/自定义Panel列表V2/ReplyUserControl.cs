@@ -100,7 +100,6 @@ namespace 自定义Panel列表V2
         /// </summary>
         public override void SetControlHeight()
         {
-            this.RefreshData();
             int height = 0;
             height = this.pnlTitle.Height + this.pnlReplyDetail.Height;
             this.Height = height;
