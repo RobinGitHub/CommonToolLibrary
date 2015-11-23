@@ -33,13 +33,6 @@ namespace 自定义Panel列表V2
 
         #region 公布属性
 
-        //#region 行号
-        ///// <summary>
-        ///// 行号
-        ///// </summary>
-        //public int RowIndex { get; set; }
-        //#endregion
-
         #region 是否选中
         /// <summary>
         /// 是否选中
@@ -98,7 +91,20 @@ namespace 自定义Panel列表V2
         }
         #endregion
 
+        #region 是否显示底部的分割线
+        /// <summary>
+        /// 是否显示底部的分割线
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(true), Description("是否显示底部的分割线")]
+        public bool IsShowBottomLine
+        {
+            get { return pnlSplitLine.Visible; }
+            set { pnlSplitLine.Visible = value; }
+        }
         #endregion
+        #endregion
+
+        #region 构造方法
         public DataPanelViewRowControl()
         {
             InitializeComponent();
@@ -108,7 +114,8 @@ namespace 自定义Panel列表V2
                 ControlStyles.AllPaintingInWmPaint |
                 ControlStyles.ResizeRedraw, true);
             base.UpdateStyles();
-        }
+        } 
+        #endregion
 
         #region override
         protected override void OnControlAdded(ControlEventArgs e)

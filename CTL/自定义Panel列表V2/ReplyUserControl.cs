@@ -11,6 +11,10 @@ using System.Threading;
 
 namespace 自定义Panel列表V2
 {
+    /* 实现 RefreshData SetControlHeight
+     * 当窗体大小改变时，需调用 SetControlHeight
+     * 窗体不要自动大小
+     */
     public partial class ReplyUserControl : DataPanelViewRowControl
     {
         public new EventHandler SizeChanged;
@@ -61,8 +65,7 @@ namespace 自定义Panel列表V2
                 AddContent(row, ref lastTop);
 
                 txtReplyContent.Text = "";
-                if (SizeChanged != null)
-                    SizeChanged(this, null);
+                SetControlHeight();
             }
         }
 
@@ -102,6 +105,8 @@ namespace 自定义Panel列表V2
         {
             int height = 0;
             height = this.pnlTitle.Height + this.pnlReplyDetail.Height;
+            if (this.pnlReplyContent.Visible)
+                height += pnlReplyContent.Height;
             this.Height = height;
         }
 

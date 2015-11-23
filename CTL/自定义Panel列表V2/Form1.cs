@@ -19,6 +19,7 @@ namespace 自定义Panel列表V2
             this.panelEx1.SetItemTemplate += panelEx1_SetItemTemplate;
             this.panelEx1.SelectionChanged += panelEx1_SelectionChanged;
             this.panelEx1.LoadMore += panelEx1_LoadMore;
+            this.panelEx1.ItemHeightChanged += panelEx1_ItemHeightChanged;
 
             this.btnAdd.Click += btnAdd_Click;
             this.btnUpdate.Click += btnUpdate_Click;
@@ -41,9 +42,7 @@ namespace 自定义Panel列表V2
 
             dt = GetDataSource();
         }
-
-
-
+        
         void panelEx1_LoadMore(object sender, EventArgs e)
         {
             btnAddByDt.PerformClick();
@@ -178,7 +177,7 @@ namespace 自定义Panel列表V2
                 model.ReplyData = GetReply(int.Parse(model.DataRow[0].ToString()));
                 ReplyUserControl pnl = new ReplyUserControl();
                 pnl.DataPanelRow = model;
-                pnl.SizeChanged += pnl_SizeChanged;
+                //pnl.SizeChanged += pnl_SizeChanged;
                 control = pnl;
             }
             richTextBox1.AppendText((DateTime.Now - startTime).TotalMilliseconds + "\n");
@@ -186,6 +185,11 @@ namespace 自定义Panel列表V2
             return control;
         }
 
+        void panelEx1_ItemHeightChanged(object sender, EventArgs e)
+        {
+            //DataPanelViewRowControl pnl = sender as DataPanelViewRowControl;
+            //this.panelEx1.Refresh(pnl.DataPanelRow.RowIndex);
+        }
         void pnl_SizeChanged(object sender, EventArgs e)
         {
             DataPanelViewRowControl pnl = sender as DataPanelViewRowControl;

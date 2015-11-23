@@ -41,6 +41,14 @@ namespace 自定义Panel列表V2
         /// 加载更多
         /// </summary>
         public event EventHandler LoadMore;
+        /// <summary>
+        /// 双击内容项
+        /// </summary>
+        public event EventHandler ItemDoubleClick;
+        /// <summary>
+        /// 内容项大小改变
+        /// </summary>
+        public event EventHandler ItemHeightChanged;
         #endregion
 
         #region 私有属性
@@ -1149,6 +1157,7 @@ namespace 自定义Panel列表V2
                 find.Key.DataPanelRow = item;
                 find.Key.IsSelected = item.IsSelected;
                 find.Key.RefreshData();
+                find.Key.SetControlHeight();
 
                 bool isSizeChange = false;
                 if (item.Height != find.Key.Height)
@@ -1426,7 +1435,32 @@ namespace 自定义Panel列表V2
                 item.MouseEnter += Item_MouseEnter;
                 item.MouseLeave += Item_MouseLeave;
                 item.MouseMove += Item_MouseMove;
+                item.DoubleClick += item_DoubleClick;
+                item.SizeChanged += item_SizeChanged;
             }
+        }
+
+        void item_SizeChanged(object sender, EventArgs e)
+        {
+            if (ItemHeightChanged != null)
+            {
+                DataPanelViewRowControl control = sender as DataPanelViewRowControl;
+                DataPanelViewRow dpvr = itemList.First(t => t.RowIndex == control.DataPanelRow.RowIndex);
+                if (dpvr.Height != control.Height)
+                {
+                    control.SetControlHeight();
+                    displayRectangleHeight += control.Height - dpvr.Height;
+                    dpvr.Height = control.Height;
+                    ContentLengthChange();
+                    ItemHeightChanged(sender, e);
+                }
+            }
+        }
+
+        void item_DoubleClick(object sender, EventArgs e)
+        {
+            if (ItemDoubleClick != null)
+                ItemDoubleClick(sender, e);
         }
         private void Item_MouseMove(object sender, MouseEventArgs e)
         {
