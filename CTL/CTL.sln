@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "自定义Panel列表V1", "�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "自定义Panel列表V2", "自定义Panel列表V2\自定义Panel列表V2.csproj", "{116C445F-D370-46B0-B95D-2152798DF065}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QQ截图", "QQ截图\QQ截图.csproj", "{82B5E3DE-BC6B-4D4A-A142-E58F3178AD1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{116C445F-D370-46B0-B95D-2152798DF065}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{116C445F-D370-46B0-B95D-2152798DF065}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{116C445F-D370-46B0-B95D-2152798DF065}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82B5E3DE-BC6B-4D4A-A142-E58F3178AD1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82B5E3DE-BC6B-4D4A-A142-E58F3178AD1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82B5E3DE-BC6B-4D4A-A142-E58F3178AD1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82B5E3DE-BC6B-4D4A-A142-E58F3178AD1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
