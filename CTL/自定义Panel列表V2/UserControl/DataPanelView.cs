@@ -7,7 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+<<<<<<< HEAD
 using System.Runtime.InteropServices;
+=======
+>>>>>>> origin/master
 
 /* 把Item 改成Row
  * 关键点是：要保证ItemList中行索引顺序
