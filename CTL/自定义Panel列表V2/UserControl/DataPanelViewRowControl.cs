@@ -6,11 +6,19 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace 自定义Panel列表V2
 {
     public partial class DataPanelViewRowControl : UserControl
     {
+        #region API
+        [DllImport("user32.dll")]
+
+        private static extern IntPtr GetForegroundWindow();
+
+        #endregion
+
         #region 私有属性
         /// <summary>
         /// 是否选中
@@ -183,6 +191,7 @@ namespace 自定义Panel列表V2
         {
             base.OnMouseMove(e);
         }
+
         /// <summary>  
         /// 子控件鼠标离开时也要做相应的判断  
         /// </summary>  
@@ -190,8 +199,15 @@ namespace 自定义Panel列表V2
         /// <param name="e"></param>  
         void control_MouseLeave(Object sender, EventArgs e)
         {
+            Control ctl = sender as Control;
+            bool isActive = false;
+            if (ctl.TopLevelControl.Handle == GetForegroundWindow())
+            {
+                isActive = true;
+            }
+
             //判断鼠标是否还在本控件的矩形区域内  
-            if (!this.RectangleToScreen(this.DisplayRectangle).Contains(Control.MousePosition))
+            if (!isActive || !this.RectangleToScreen(this.DisplayRectangle).Contains(Control.MousePosition))
             {
                 base.OnMouseLeave(e);
             }
