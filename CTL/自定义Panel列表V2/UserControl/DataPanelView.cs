@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 /* 把Item 改成Row
  * 关键点是：要保证ItemList中行索引顺序
@@ -20,6 +21,13 @@ namespace 自定义Panel列表V2
     /// </summary>
     public partial class DataPanelView : UserControl
     {
+        #region API
+        [DllImport("user32.dll")]
+
+        private static extern IntPtr GetForegroundWindow();
+
+        #endregion
+
         #region 事件
         /// <summary>
         /// 设置控件内容样式
@@ -1477,6 +1485,10 @@ namespace 自定义Panel列表V2
         private void Item_MouseEnter(object sender, EventArgs e)
         {
             DataPanelViewRowControl dpvrc = sender as DataPanelViewRowControl;
+            if (dpvrc.TopLevelControl.Handle == GetForegroundWindow())
+            {
+                dpvrc.Parent.Focus();
+            }
             if (isActiveMouseEvent && !dpvrc.IsSelected)
                 dpvrc.BackColor = mouseEnterColor;
         }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using System.Runtime.InteropServices;
 
 namespace 自定义Panel列表V2
 {
@@ -333,6 +334,13 @@ namespace 自定义Panel列表V2
         }
         #endregion
 
+        #region API
+        [DllImport("user32.dll")]
+
+        private static extern IntPtr GetForegroundWindow();
+
+        #endregion
+
         #region InitializeComponent
         /// <summary>
         /// 初始化
@@ -360,7 +368,12 @@ namespace 自定义Panel列表V2
         void MyVScrollBar_MouseEnter(object sender, EventArgs e)
         {
             if (this.moControl != null)
-                this.moControl.Focus();
+            {
+                if (moControl.TopLevelControl.Handle == GetForegroundWindow())
+                {
+                    this.moControl.Focus();
+                }
+            }
         }
         #endregion
         #endregion
