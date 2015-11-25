@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{82B5E3DE-BC6B-4D4A-A142-E58F3178AD1D}</ProjectGuid>
+    <ProjectGuid>{FF8A2014-39B4-49CF-A6AF-456558925FCF}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QQ截图</RootNamespace>
-    <AssemblyName>QQ截图</AssemblyName>
+    <RootNamespace>无边框窗体边框阴影效果与拖动</RootNamespace>
+    <AssemblyName>无边框窗体边框阴影效果与拖动</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

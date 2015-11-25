@@ -1,4 +1,4 @@
-﻿namespace QQ截图
+﻿namespace 无边框窗体边框阴影效果与拖动
 {
     partial class Form1
     {
@@ -28,35 +28,26 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnScreenCut = new System.Windows.Forms.Button();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.pnlTitle = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // btnScreenCut
+            // pnlTitle
             // 
-            this.btnScreenCut.Location = new System.Drawing.Point(13, 13);
-            this.btnScreenCut.Name = "btnScreenCut";
-            this.btnScreenCut.Size = new System.Drawing.Size(75, 23);
-            this.btnScreenCut.TabIndex = 0;
-            this.btnScreenCut.Text = "截图";
-            this.btnScreenCut.UseVisualStyleBackColor = true;
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.richTextBox1.Location = new System.Drawing.Point(94, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(605, 461);
-            this.richTextBox1.TabIndex = 1;
-            this.richTextBox1.Text = "";
+            this.pnlTitle.BackColor = System.Drawing.Color.White;
+            this.pnlTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlTitle.Location = new System.Drawing.Point(0, 0);
+            this.pnlTitle.Name = "pnlTitle";
+            this.pnlTitle.Size = new System.Drawing.Size(398, 37);
+            this.pnlTitle.TabIndex = 0;
+            this.pnlTitle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlTitle_MouseDown);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(699, 461);
-            this.Controls.Add(this.richTextBox1);
-            this.Controls.Add(this.btnScreenCut);
+            this.ClientSize = new System.Drawing.Size(398, 308);
+            this.Controls.Add(this.pnlTitle);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -65,8 +56,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnScreenCut;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Panel pnlTitle;
     }
 }
 

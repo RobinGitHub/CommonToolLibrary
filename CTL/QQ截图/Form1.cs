@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+
+
+
 namespace QQ截图
 {
     public partial class Form1 : Form
@@ -14,6 +17,12 @@ namespace QQ截图
         public Form1()
         {
             InitializeComponent();
+            this.btnScreenCut.Click += btnScreenCut_Click;
+        }
+
+        void btnScreenCut_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }
