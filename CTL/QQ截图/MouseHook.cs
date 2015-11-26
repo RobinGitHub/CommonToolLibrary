@@ -10,6 +10,7 @@ namespace QQ截图
     public class MouseHook
     {
         #region Win32
+
         [DllImport("user32.dll")]   //设置钩子  第二个参数为回调函数指针
         public static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hmod, int dwThreadid);
         [DllImport("user32.dll")]   //传递到下一个钩子
@@ -51,6 +52,7 @@ namespace QQ截图
         {
             get { return hHook; }
         }
+
         GCHandle gc;
         //Hook回调函数
         private int MouseHookProcedure(int nCode, IntPtr wParam, IntPtr lParam)
@@ -100,8 +102,6 @@ namespace QQ截图
             return false;
         }
     }
-
-
     //鼠标状态枚举值
     public enum ButtonStatus { LeftDown, LeftUp, RightDown, RightUp, None }
     //事件参数
@@ -132,6 +132,4 @@ namespace QQ截图
             this.y = cy;
         }
     }
-
-
 }

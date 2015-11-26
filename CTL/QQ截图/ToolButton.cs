@@ -1,38 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
 
 using System.Windows.Forms.Design;
 using System.Drawing;
+using System.ComponentModel;
 using System.Windows.Forms;
 using QQ截图.Properties;
-
 
 namespace QQ截图
 {
     [Designer(typeof(ToolButtonDesigner))]
     public partial class ToolButton : Control
     {
-        #region 属性
+        public ToolButton()
+        {
+            InitializeComponent();
+        }
+
         private Image btnImage;
         public Image BtnImage
         {
             get { return btnImage; }
-            set { btnImage = value; }
-        }
-
-        private bool isSingleSelectedBtn;
-        public bool IsSingleSelectedBtn
-        {
-            get { return isSingleSelectedBtn; }
             set
             {
-                isSingleSelectedBtn = value;
-                if (isSingleSelectedBtn)
-                    this.isSelectedBtn = true;
+                btnImage = value;
+                this.Invalidate();
             }
         }
 
@@ -43,8 +36,18 @@ namespace QQ截图
             set
             {
                 isSelectedBtn = value;
-                if (!isSelectedBtn)
-                    this.isSingleSelectedBtn = false;
+                if (!isSelectedBtn) this.isSingleSelectedBtn = false;
+            }
+        }
+
+        private bool isSingleSelectedBtn;
+        public bool IsSingleSelectedBtn
+        {
+            get { return isSingleSelectedBtn; }
+            set
+            {
+                isSingleSelectedBtn = value;
+                if (isSingleSelectedBtn) this.isSelectedBtn = true;
             }
         }
 
@@ -54,24 +57,29 @@ namespace QQ截图
             get { return isSelected; }
             set
             {
-                if (value == isSelected)
-                    return;
+                //if (!this.isSelectedBtn) return;
+                if (value == isSelected) return;
                 isSelected = value;
                 this.Invalidate();
             }
         }
 
-        #endregion
-
-        #region 构造函数
-        public ToolButton()
+        public override string Text
         {
-            InitializeComponent();
+            get
+            {
+                return base.Text;
+            }
+            set
+            {
+                base.Text = value;
+                Size se = TextRenderer.MeasureText(this.Text, this.Font);
+                this.Width = se.Width + 21;
+            }
         }
-        #endregion
 
-        #region override
         private bool m_bMouseEnter;
+
         protected override void OnMouseEnter(EventArgs e)
         {
             m_bMouseEnter = true;
@@ -100,17 +108,13 @@ namespace QQ截图
                 }
                 else
                 {
-                    this.isSelected = true;
-                    this.Invalidate();
-                    int len = this.Parent.Controls.Count;
-                    for (int i = 0; i < len; i++)
+                    this.isSelected = true; this.Invalidate();
+                    for (int i = 0, len = this.Parent.Controls.Count; i < len; i++)
                     {
                         if (this.Parent.Controls[i] is ToolButton && this.Parent.Controls[i] != this)
                         {
-                            if (((ToolButton)(this.Parent.Controls)[i]).isSelected)
-                            {
+                            if (((ToolButton)(this.Parent.Controls[i])).isSelected)
                                 ((ToolButton)(this.Parent.Controls[i])).IsSelected = false;
-                            }
                         }
                     }
                 }
@@ -134,18 +138,13 @@ namespace QQ截图
                 g.DrawRectangle(Pens.DarkCyan, new Rectangle(0, 0, this.Width - 1, this.Height - 1));
             }
             if (this.btnImage == null)
-            {
                 g.DrawImage(Resources.none, new Rectangle(2, 2, 17, 17));
-            }
             else
-            {
                 g.DrawImage(this.btnImage, new Rectangle(2, 2, 17, 17));
-            }
             g.DrawString(this.Text, this.Font, Brushes.Black, 21, (this.Height - this.Font.Height) / 2);
             if (this.isSelected)
-            {
                 g.DrawRectangle(Pens.DarkCyan, new Rectangle(0, 0, this.Width - 1, this.Height - 1));
-            }
+
             base.OnPaint(e);
         }
 
@@ -153,8 +152,6 @@ namespace QQ截图
         {
             base.SetBoundsCore(x, y, TextRenderer.MeasureText(this.Text, this.Font).Width + 21, 21, specified);
         }
-        #endregion
-
     }
 
     public class ToolButtonDesigner : ControlDesigner
@@ -165,7 +162,6 @@ namespace QQ截图
             p.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
             pe.Graphics.DrawRectangle(p, 0, 0, pe.ClipRectangle.Width - 1, 20);
             p.Dispose();
-
             base.OnPaintAdornments(pe);
         }
 
@@ -177,4 +173,5 @@ namespace QQ截图
             }
         }
     }
+
 }
