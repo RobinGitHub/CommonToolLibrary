@@ -70,7 +70,7 @@
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Location = new System.Drawing.Point(25, 40);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(284, 25);
+            this.panel1.Size = new System.Drawing.Size(255, 25);
             this.panel1.TabIndex = 2;
             // 
             // pictureBox2
@@ -168,9 +168,8 @@
             this.tBtn_Finish.IsSingleSelectedBtn = false;
             this.tBtn_Finish.Location = new System.Drawing.Point(233, 3);
             this.tBtn_Finish.Name = "tBtn_Finish";
-            this.tBtn_Finish.Size = new System.Drawing.Size(50, 21);
+            this.tBtn_Finish.Size = new System.Drawing.Size(21, 21);
             this.tBtn_Finish.TabIndex = 11;
-            this.tBtn_Finish.Text = "完成";
             this.tBtn_Finish.Click += new System.EventHandler(this.tBtn_Finish_Click);
             // 
             // tBtn_Close
