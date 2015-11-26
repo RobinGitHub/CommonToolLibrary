@@ -1,6 +1,6 @@
 ﻿namespace QQ截图
 {
-    partial class ToolButton
+    partial class ColorBox
     {
         /// <summary>
         /// 必需的设计器变量。
