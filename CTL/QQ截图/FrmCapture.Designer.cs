@@ -29,11 +29,18 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.imageProcessBox1 = new QQ截图.ImageProcessBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.colorBox1 = new QQ截图.ColorBox();
+            this.toolButton3 = new QQ截图.ToolButton();
+            this.toolButton2 = new QQ截图.ToolButton();
+            this.toolButton1 = new QQ截图.ToolButton();
             this.tBtn_Finish = new QQ截图.ToolButton();
             this.tBtn_Close = new QQ截图.ToolButton();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.tBtn_Save = new QQ截图.ToolButton();
             this.tBtn_Cancel = new QQ截图.ToolButton();
             this.tBtn_Text = new QQ截图.ToolButton();
@@ -41,38 +48,12 @@
             this.tBtn_Arrow = new QQ截图.ToolButton();
             this.tBtn_Ellipse = new QQ截图.ToolButton();
             this.tBtn_Rect = new QQ截图.ToolButton();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.colorBox1 = new QQ截图.ColorBox();
-            this.toolButton3 = new QQ截图.ToolButton();
-            this.toolButton2 = new QQ截图.ToolButton();
-            this.toolButton1 = new QQ截图.ToolButton();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.imageProcessBox1 = new QQ截图.ImageProcessBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // imageProcessBox1
-            // 
-            this.imageProcessBox1.BackColor = System.Drawing.Color.Black;
-            this.imageProcessBox1.BaseImage = null;
-            this.imageProcessBox1.CanReset = true;
-            this.imageProcessBox1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.imageProcessBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.imageProcessBox1.ForeColor = System.Drawing.Color.White;
-            this.imageProcessBox1.Location = new System.Drawing.Point(0, 0);
-            this.imageProcessBox1.Name = "imageProcessBox1";
-            this.imageProcessBox1.Size = new System.Drawing.Size(363, 247);
-            this.imageProcessBox1.TabIndex = 0;
-            this.imageProcessBox1.Text = "imageProcessBox1";
-            this.imageProcessBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.imageProcessBox1_Paint);
-            this.imageProcessBox1.DoubleClick += new System.EventHandler(this.imageProcessBox1_DoubleClick);
-            this.imageProcessBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.imageProcessBox1_MouseDown);
-            this.imageProcessBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.imageProcessBox1_MouseMove);
-            this.imageProcessBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.imageProcessBox1_MouseUp);
             // 
             // panel1
             // 
@@ -91,6 +72,93 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(284, 25);
             this.panel1.TabIndex = 2;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Image = global::QQ截图.Properties.Resources.separator;
+            this.pictureBox2.Location = new System.Drawing.Point(199, 5);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(1, 17);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox2.TabIndex = 10;
+            this.pictureBox2.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::QQ截图.Properties.Resources.separator;
+            this.pictureBox1.Location = new System.Drawing.Point(138, 5);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(1, 17);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 9;
+            this.pictureBox1.TabStop = false;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.colorBox1);
+            this.panel2.Controls.Add(this.toolButton3);
+            this.panel2.Controls.Add(this.toolButton2);
+            this.panel2.Controls.Add(this.toolButton1);
+            this.panel2.Location = new System.Drawing.Point(25, 71);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(250, 32);
+            this.panel2.TabIndex = 3;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(25, 12);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 19);
+            this.textBox1.TabIndex = 4;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.Resize += new System.EventHandler(this.textBox1_Resize);
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // colorBox1
+            // 
+            this.colorBox1.Location = new System.Drawing.Point(85, -2);
+            this.colorBox1.Name = "colorBox1";
+            this.colorBox1.Size = new System.Drawing.Size(165, 35);
+            this.colorBox1.TabIndex = 4;
+            this.colorBox1.Text = "colorBox1";
+            // 
+            // toolButton3
+            // 
+            this.toolButton3.BtnImage = global::QQ截图.Properties.Resources.large;
+            this.toolButton3.IsSelected = false;
+            this.toolButton3.IsSelectedBtn = true;
+            this.toolButton3.IsSingleSelectedBtn = false;
+            this.toolButton3.Location = new System.Drawing.Point(57, 6);
+            this.toolButton3.Name = "toolButton3";
+            this.toolButton3.Size = new System.Drawing.Size(21, 21);
+            this.toolButton3.TabIndex = 3;
+            // 
+            // toolButton2
+            // 
+            this.toolButton2.BtnImage = global::QQ截图.Properties.Resources.middle;
+            this.toolButton2.IsSelected = false;
+            this.toolButton2.IsSelectedBtn = true;
+            this.toolButton2.IsSingleSelectedBtn = false;
+            this.toolButton2.Location = new System.Drawing.Point(30, 6);
+            this.toolButton2.Name = "toolButton2";
+            this.toolButton2.Size = new System.Drawing.Size(21, 21);
+            this.toolButton2.TabIndex = 2;
+            // 
+            // toolButton1
+            // 
+            this.toolButton1.BtnImage = global::QQ截图.Properties.Resources.small;
+            this.toolButton1.IsSelected = false;
+            this.toolButton1.IsSelectedBtn = true;
+            this.toolButton1.IsSingleSelectedBtn = false;
+            this.toolButton1.Location = new System.Drawing.Point(3, 6);
+            this.toolButton1.Name = "toolButton1";
+            this.toolButton1.Size = new System.Drawing.Size(21, 21);
+            this.toolButton1.TabIndex = 1;
             // 
             // tBtn_Finish
             // 
@@ -115,16 +183,6 @@
             this.tBtn_Close.Name = "tBtn_Close";
             this.tBtn_Close.Size = new System.Drawing.Size(21, 21);
             this.tBtn_Close.TabIndex = 7;
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = global::QQ截图.Properties.Resources.separator;
-            this.pictureBox2.Location = new System.Drawing.Point(199, 5);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(1, 17);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox2.TabIndex = 10;
-            this.pictureBox2.TabStop = false;
             // 
             // tBtn_Save
             // 
@@ -205,82 +263,24 @@
             this.tBtn_Rect.Size = new System.Drawing.Size(21, 21);
             this.tBtn_Rect.TabIndex = 0;
             // 
-            // pictureBox1
+            // imageProcessBox1
             // 
-            this.pictureBox1.Image = global::QQ截图.Properties.Resources.separator;
-            this.pictureBox1.Location = new System.Drawing.Point(138, 5);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1, 17);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 9;
-            this.pictureBox1.TabStop = false;
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.colorBox1);
-            this.panel2.Controls.Add(this.toolButton3);
-            this.panel2.Controls.Add(this.toolButton2);
-            this.panel2.Controls.Add(this.toolButton1);
-            this.panel2.Location = new System.Drawing.Point(25, 71);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(250, 32);
-            this.panel2.TabIndex = 3;
-            // 
-            // colorBox1
-            // 
-            this.colorBox1.Location = new System.Drawing.Point(85, -2);
-            this.colorBox1.Name = "colorBox1";
-            this.colorBox1.Size = new System.Drawing.Size(165, 35);
-            this.colorBox1.TabIndex = 4;
-            this.colorBox1.Text = "colorBox1";
-            // 
-            // toolButton3
-            // 
-            this.toolButton3.BtnImage = global::QQ截图.Properties.Resources.large;
-            this.toolButton3.IsSelected = false;
-            this.toolButton3.IsSelectedBtn = true;
-            this.toolButton3.IsSingleSelectedBtn = false;
-            this.toolButton3.Location = new System.Drawing.Point(57, 6);
-            this.toolButton3.Name = "toolButton3";
-            this.toolButton3.Size = new System.Drawing.Size(21, 21);
-            this.toolButton3.TabIndex = 3;
-            // 
-            // toolButton2
-            // 
-            this.toolButton2.BtnImage = global::QQ截图.Properties.Resources.middle;
-            this.toolButton2.IsSelected = false;
-            this.toolButton2.IsSelectedBtn = true;
-            this.toolButton2.IsSingleSelectedBtn = false;
-            this.toolButton2.Location = new System.Drawing.Point(30, 6);
-            this.toolButton2.Name = "toolButton2";
-            this.toolButton2.Size = new System.Drawing.Size(21, 21);
-            this.toolButton2.TabIndex = 2;
-            // 
-            // toolButton1
-            // 
-            this.toolButton1.BtnImage = global::QQ截图.Properties.Resources.small;
-            this.toolButton1.IsSelected = false;
-            this.toolButton1.IsSelectedBtn = true;
-            this.toolButton1.IsSingleSelectedBtn = false;
-            this.toolButton1.Location = new System.Drawing.Point(3, 6);
-            this.toolButton1.Name = "toolButton1";
-            this.toolButton1.Size = new System.Drawing.Size(21, 21);
-            this.toolButton1.TabIndex = 1;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(25, 12);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 19);
-            this.textBox1.TabIndex = 4;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            this.textBox1.Resize += new System.EventHandler(this.textBox1_Resize);
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.imageProcessBox1.BackColor = System.Drawing.Color.Black;
+            this.imageProcessBox1.BaseImage = null;
+            this.imageProcessBox1.CanReset = true;
+            this.imageProcessBox1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.imageProcessBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.imageProcessBox1.ForeColor = System.Drawing.Color.White;
+            this.imageProcessBox1.Location = new System.Drawing.Point(0, 0);
+            this.imageProcessBox1.Name = "imageProcessBox1";
+            this.imageProcessBox1.Size = new System.Drawing.Size(363, 247);
+            this.imageProcessBox1.TabIndex = 0;
+            this.imageProcessBox1.Text = "imageProcessBox1";
+            this.imageProcessBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.imageProcessBox1_Paint);
+            this.imageProcessBox1.DoubleClick += new System.EventHandler(this.imageProcessBox1_DoubleClick);
+            this.imageProcessBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.imageProcessBox1_MouseDown);
+            this.imageProcessBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.imageProcessBox1_MouseMove);
+            this.imageProcessBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.imageProcessBox1_MouseUp);
             // 
             // FrmCapture
             // 

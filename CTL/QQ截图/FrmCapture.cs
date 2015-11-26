@@ -197,6 +197,33 @@ namespace QQ截图
             #endregion
 
         }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            switch (keyData)
+            {
+                #region 按 Escape 退出
+                case Keys.Escape:
+                    this.BeginInvoke(new MethodInvoker(() => this.Close()));
+                    //有绘制的情况 情况继续禁用窗体
+                    this.Enabled = true;
+                    imageProcessBox1.ClearDraw();
+                    imageProcessBox1.CanReset = true;
+                    imageProcessBox1.IsDrawOperationDot = false;
+                    m_layer.Clear();    //清空历史记录
+                    m_bmpLayerCurrent = null;
+                    m_bmpLayerShow = null;
+                    ClearToolBarBtnSelected();
+                    panel1.Visible = false;
+                    panel2.Visible = false;
+                    return true; 
+                #endregion
+                default:
+                    return base.ProcessCmdKey(ref msg, keyData);
+            }
+
+        }
+
         //工具条前五个按钮绑定的公共事件
         private void selectToolButton_Click(object sender, EventArgs e)
         {
