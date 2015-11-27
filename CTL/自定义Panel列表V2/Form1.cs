@@ -25,17 +25,21 @@ namespace 自定义Panel列表V2
             this.btnUpdate.Click += btnUpdate_Click;
             this.btnDel.Click += btnDel_Click;
             this.btnInit.Click += btnInit_Click;
+            this.btnInit1.Click += btnInit1_Click;
             this.btnInsert.Click += btnInsert_Click;
             this.btnAddByDt.Click += btnAddByDt_Click;
             this.btnClear.Click += btnClear_Click;
             this.btnGetSelected.Click += btnGetSelected_Click;
             this.btnLocation.Click += btnLocation_Click;
             this.btnGetTotal.Click += btnGetTotal_Click;
+            this.btnAddByDt1.Click += btnAddByDt1_Click;
 
             this.cbxShowMore.CheckedChanged += cbxShowMore_CheckedChanged;
             this.cbxIsGroup.CheckedChanged += cbxIsGroup_CheckedChanged;
             this.cbxIsEqualHeight.CheckedChanged += cbxIsEqualHeight_CheckedChanged;
             this.cbxAsc.CheckedChanged += cbxAsc_CheckedChanged;
+            this.cbxGroupIsTop.CheckedChanged += cbxGroupIsTop_CheckedChanged;
+            this.cbxShowGroupTotal.CheckedChanged += cbxShowGroupTotal_CheckedChanged;      
 
             this.panelEx1.MinRowHeight = 60;
             this.panelEx1.IsEqualHeight = false;
@@ -82,10 +86,6 @@ namespace 自定义Panel列表V2
             this.panelEx1.Clear();
             this.panelEx1.IsEqualHeight = cbxIsEqualHeight.Checked;
         }
-        void cbxAsc_CheckedChanged(object sender, EventArgs e)
-        {
-            this.panelEx1.Ascending = !cbxAsc.Checked;
-        }
 
         void cbxIsGroup_CheckedChanged(object sender, EventArgs e)
         {
@@ -96,6 +96,44 @@ namespace 自定义Panel列表V2
         void cbxShowMore_CheckedChanged(object sender, EventArgs e)
         {
             this.panelEx1.IsShowMore = cbxShowMore.Checked;
+        }
+
+        void cbxShowGroupTotal_CheckedChanged(object sender, EventArgs e)
+        {
+            this.panelEx1.IsShowGroupTotal = cbxShowGroupTotal.Checked;
+        }
+
+        void cbxGroupIsTop_CheckedChanged(object sender, EventArgs e)
+        {
+            this.panelEx1.GroupRowIsTop = cbxGroupIsTop.Checked;
+        }
+
+        void cbxAsc_CheckedChanged(object sender, EventArgs e)
+        {
+            this.panelEx1.Ascending = cbxAsc.Checked;
+        }
+
+
+        void btnInit1_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Clear();
+            DateTime startTime = DateTime.Now;
+            DataTable dtSource = GetDataSource();
+
+            List<ReplyModel> itemList = new List<ReplyModel>();
+            foreach (DataRow item in dtSource.Rows)
+            {
+                ReplyModel model = new ReplyModel();
+                model.DataRow = item;
+                model.GroupDispalyText = txtGroupDispalyText.Text;
+                model.GroupValue = txtGroupValue.Text;
+                model.GroupValueIndex = dtSource.Rows.IndexOf(item);
+                itemList.Add(model);
+            }
+            this.panelEx1.DataSource<ReplyModel>(itemList);
+
+            richTextBox1.AppendText("总耗时：" + (DateTime.Now - startTime).TotalMilliseconds + "\n");
+            richTextBox1.ScrollToCaret();
         }
         
         private void btnInit_Click(object sender, EventArgs e)
@@ -118,6 +156,12 @@ namespace 自定义Panel列表V2
 
             ReplyModel item = new ReplyModel();
             item.DataRow = row;
+            if (cbxIsGroup.Checked)
+            {
+                item.GroupDispalyText = txtGroupDispalyText.Text;
+                item.GroupValue = txtGroupValue.Text;
+                item.GroupValueIndex = int.Parse(txtGroupValueIndex.Text);
+            }
             this.panelEx1.Add(item);
         }
         void btnInsert_Click(object sender, EventArgs e)
@@ -132,6 +176,25 @@ namespace 自定义Panel列表V2
             ReplyModel item = new ReplyModel();
             item.DataRow = row;
             this.panelEx1.Insert(int.Parse(txtInsertRowIndex.Text), item);
+        }
+        void btnAddByDt1_Click(object sender, EventArgs e)
+        {
+            DateTime startTime = DateTime.Now;
+            DataTable dtSource = AddByDt();
+            List<ReplyModel> itemList = new List<ReplyModel>();
+            foreach (DataRow item in dtSource.Rows)
+            {
+                ReplyModel model = new ReplyModel();
+                model.DataRow = item;
+                model.GroupDispalyText = txtGroupDispalyText.Text;
+                model.GroupValue = txtGroupValue.Text;
+                model.GroupValueIndex = dtSource.Rows.IndexOf(item);
+                itemList.Add(model);
+            }
+            this.panelEx1.Add<ReplyModel>(itemList);
+            richTextBox1.AppendText("总耗时：" + (DateTime.Now - startTime).TotalMilliseconds + "\n");
+            richTextBox1.ScrollToCaret();
+
         }
         void btnAddByDt_Click(object sender, EventArgs e)
         {
@@ -177,7 +240,6 @@ namespace 自定义Panel列表V2
                 model.ReplyData = GetReply(int.Parse(model.DataRow[0].ToString()));
                 ReplyUserControl pnl = new ReplyUserControl();
                 pnl.DataPanelRow = model;
-                //pnl.SizeChanged += pnl_SizeChanged;
                 control = pnl;
             }
             richTextBox1.AppendText((DateTime.Now - startTime).TotalMilliseconds + "\n");
@@ -190,11 +252,7 @@ namespace 自定义Panel列表V2
             //DataPanelViewRowControl pnl = sender as DataPanelViewRowControl;
             //this.panelEx1.Refresh(pnl.DataPanelRow.RowIndex);
         }
-        void pnl_SizeChanged(object sender, EventArgs e)
-        {
-            DataPanelViewRowControl pnl = sender as DataPanelViewRowControl;
-            this.panelEx1.Refresh(pnl.DataPanelRow.RowIndex);
-        }
+
         void panelEx1_SelectionChanged(DataPanelViewRow item)
         {
 

@@ -31,6 +31,18 @@ namespace 自定义Panel列表V2
             get { return rowType; }
             set { rowType = value; }
         }
+        /// <summary>
+        /// 分组内容
+        /// </summary>
+        public string GroupValue { get; set; }
+        /// <summary>
+        /// 组内排序
+        /// </summary>
+        public int GroupValueIndex { get; set; }
+        /// <summary>
+        /// 分组统计要显示的内容，不包含统计信息
+        /// </summary>
+        public string GroupDispalyText { get; set; }
     }
     /// <summary>
     /// 内容行类别
@@ -57,10 +69,11 @@ namespace 自定义Panel列表V2
     /// </summary>
     internal class DataPanelViewGroupRow : DataPanelViewRow
     {
-        /// <summary>
-        /// 分组时间
-        /// </summary>
-        public DateTime GroupDateTime { get; set; }
+        ///// <summary>
+        ///// 分组时间
+        ///// </summary>
+        //public DateTime GroupDateTime { get; set; }
+
         /// <summary>
         /// 行数
         /// </summary>

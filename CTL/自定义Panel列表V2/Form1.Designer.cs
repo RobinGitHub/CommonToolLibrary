@@ -49,15 +49,22 @@
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
-            this.cbxAsc = new System.Windows.Forms.CheckBox();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.panelEx1 = new 自定义Panel列表V2.DataPanelView();
             this.btnGetTotal = new System.Windows.Forms.Button();
+            this.btnInit1 = new System.Windows.Forms.Button();
+            this.cbxAsc = new System.Windows.Forms.CheckBox();
+            this.cbxGroupIsTop = new System.Windows.Forms.CheckBox();
+            this.cbxShowGroupTotal = new System.Windows.Forms.CheckBox();
+            this.txtGroupValue = new System.Windows.Forms.TextBox();
+            this.btnAddByDt1 = new System.Windows.Forms.Button();
+            this.txtGroupDispalyText = new System.Windows.Forms.TextBox();
+            this.txtGroupValueIndex = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnLocation
             // 
-            this.btnLocation.Location = new System.Drawing.Point(94, 259);
+            this.btnLocation.Location = new System.Drawing.Point(94, 287);
             this.btnLocation.Name = "btnLocation";
             this.btnLocation.Size = new System.Drawing.Size(75, 23);
             this.btnLocation.TabIndex = 83;
@@ -66,7 +73,7 @@
             // 
             // btnGetSelected
             // 
-            this.btnGetSelected.Location = new System.Drawing.Point(14, 118);
+            this.btnGetSelected.Location = new System.Drawing.Point(14, 147);
             this.btnGetSelected.Name = "btnGetSelected";
             this.btnGetSelected.Size = new System.Drawing.Size(75, 23);
             this.btnGetSelected.TabIndex = 82;
@@ -75,7 +82,7 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(13, 90);
+            this.btnClear.Location = new System.Drawing.Point(13, 119);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(76, 23);
             this.btnClear.TabIndex = 81;
@@ -114,7 +121,7 @@
             // 
             // btnAddByDt
             // 
-            this.btnAddByDt.Location = new System.Drawing.Point(94, 202);
+            this.btnAddByDt.Location = new System.Drawing.Point(94, 230);
             this.btnAddByDt.Name = "btnAddByDt";
             this.btnAddByDt.Size = new System.Drawing.Size(75, 23);
             this.btnAddByDt.TabIndex = 77;
@@ -123,7 +130,7 @@
             // 
             // btnInsert
             // 
-            this.btnInsert.Location = new System.Drawing.Point(94, 174);
+            this.btnInsert.Location = new System.Drawing.Point(94, 202);
             this.btnInsert.Name = "btnInsert";
             this.btnInsert.Size = new System.Drawing.Size(75, 23);
             this.btnInsert.TabIndex = 76;
@@ -134,15 +141,15 @@
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.richTextBox1.Location = new System.Drawing.Point(13, 287);
+            this.richTextBox1.Location = new System.Drawing.Point(13, 378);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(156, 139);
+            this.richTextBox1.Size = new System.Drawing.Size(156, 160);
             this.richTextBox1.TabIndex = 75;
             this.richTextBox1.Text = "";
             // 
             // txtLocation
             // 
-            this.txtLocation.Location = new System.Drawing.Point(46, 261);
+            this.txtLocation.Location = new System.Drawing.Point(46, 289);
             this.txtLocation.Name = "txtLocation";
             this.txtLocation.Size = new System.Drawing.Size(41, 21);
             this.txtLocation.TabIndex = 74;
@@ -150,7 +157,7 @@
             // 
             // txtAddRowCount
             // 
-            this.txtAddRowCount.Location = new System.Drawing.Point(46, 203);
+            this.txtAddRowCount.Location = new System.Drawing.Point(46, 231);
             this.txtAddRowCount.Name = "txtAddRowCount";
             this.txtAddRowCount.Size = new System.Drawing.Size(41, 21);
             this.txtAddRowCount.TabIndex = 73;
@@ -159,7 +166,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 265);
+            this.label4.Location = new System.Drawing.Point(11, 293);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 12);
             this.label4.TabIndex = 70;
@@ -168,7 +175,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 207);
+            this.label3.Location = new System.Drawing.Point(11, 235);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 12);
             this.label3.TabIndex = 69;
@@ -176,7 +183,7 @@
             // 
             // txtInsertRowIndex
             // 
-            this.txtInsertRowIndex.Location = new System.Drawing.Point(46, 175);
+            this.txtInsertRowIndex.Location = new System.Drawing.Point(46, 203);
             this.txtInsertRowIndex.Name = "txtInsertRowIndex";
             this.txtInsertRowIndex.Size = new System.Drawing.Size(41, 21);
             this.txtInsertRowIndex.TabIndex = 72;
@@ -185,7 +192,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(11, 179);
+            this.label2.Location = new System.Drawing.Point(11, 207);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 12);
             this.label2.TabIndex = 68;
@@ -193,7 +200,7 @@
             // 
             // txtRowCount
             // 
-            this.txtRowCount.Location = new System.Drawing.Point(47, 147);
+            this.txtRowCount.Location = new System.Drawing.Point(47, 176);
             this.txtRowCount.Name = "txtRowCount";
             this.txtRowCount.Size = new System.Drawing.Size(41, 21);
             this.txtRowCount.TabIndex = 71;
@@ -202,7 +209,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 151);
+            this.label1.Location = new System.Drawing.Point(12, 180);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 12);
             this.label1.TabIndex = 67;
@@ -210,7 +217,7 @@
             // 
             // btnDel
             // 
-            this.btnDel.Location = new System.Drawing.Point(12, 230);
+            this.btnDel.Location = new System.Drawing.Point(12, 258);
             this.btnDel.Name = "btnDel";
             this.btnDel.Size = new System.Drawing.Size(75, 23);
             this.btnDel.TabIndex = 66;
@@ -219,7 +226,7 @@
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Location = new System.Drawing.Point(94, 230);
+            this.btnUpdate.Location = new System.Drawing.Point(94, 258);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(75, 23);
             this.btnUpdate.TabIndex = 65;
@@ -228,7 +235,7 @@
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(94, 118);
+            this.btnAdd.Location = new System.Drawing.Point(94, 147);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(75, 23);
             this.btnAdd.TabIndex = 64;
@@ -237,28 +244,18 @@
             // 
             // btnInit
             // 
-            this.btnInit.Location = new System.Drawing.Point(94, 146);
+            this.btnInit.Location = new System.Drawing.Point(94, 175);
             this.btnInit.Name = "btnInit";
             this.btnInit.Size = new System.Drawing.Size(75, 23);
             this.btnInit.TabIndex = 63;
             this.btnInit.Text = "绑定数据DataSource";
             this.btnInit.UseVisualStyleBackColor = true;
             // 
-            // cbxAsc
-            // 
-            this.cbxAsc.AutoSize = true;
-            this.cbxAsc.Location = new System.Drawing.Point(97, 33);
-            this.cbxAsc.Name = "cbxAsc";
-            this.cbxAsc.Size = new System.Drawing.Size(48, 16);
-            this.cbxAsc.TabIndex = 85;
-            this.cbxAsc.Text = "倒序";
-            this.cbxAsc.UseVisualStyleBackColor = true;
-            // 
             // dateTimePicker1
             // 
             this.dateTimePicker1.CustomFormat = "yyyy/MM/dd HH:mm:ss";
             this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePicker1.Location = new System.Drawing.Point(12, 57);
+            this.dateTimePicker1.Location = new System.Drawing.Point(12, 56);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(157, 21);
             this.dateTimePicker1.TabIndex = 86;
@@ -268,37 +265,116 @@
             this.panelEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelEx1.Ascending = false;
             this.panelEx1.BackColor = System.Drawing.Color.White;
             this.panelEx1.DefaultColor = System.Drawing.Color.White;
             this.panelEx1.FirstDisplayedScrollingRowIndex = 0;
             this.panelEx1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.panelEx1.GroupFieldName = "Date";
-            this.panelEx1.Location = new System.Drawing.Point(175, 0);
+            this.panelEx1.IsShowGroupTotal = true;
+            this.panelEx1.Location = new System.Drawing.Point(344, 0);
             this.panelEx1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panelEx1.MinRowHeight = 60;
             this.panelEx1.MouseEnterColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(240)))), ((int)(((byte)(193)))));
             this.panelEx1.Name = "panelEx1";
             this.panelEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
-            this.panelEx1.Size = new System.Drawing.Size(362, 426);
+            this.panelEx1.Size = new System.Drawing.Size(296, 538);
             this.panelEx1.TabIndex = 84;
             // 
             // btnGetTotal
             // 
-            this.btnGetTotal.Location = new System.Drawing.Point(94, 90);
+            this.btnGetTotal.Location = new System.Drawing.Point(94, 119);
             this.btnGetTotal.Name = "btnGetTotal";
             this.btnGetTotal.Size = new System.Drawing.Size(76, 23);
             this.btnGetTotal.TabIndex = 81;
             this.btnGetTotal.Text = "总行数";
             this.btnGetTotal.UseVisualStyleBackColor = true;
             // 
+            // btnInit1
+            // 
+            this.btnInit1.Location = new System.Drawing.Point(175, 176);
+            this.btnInit1.Name = "btnInit1";
+            this.btnInit1.Size = new System.Drawing.Size(75, 23);
+            this.btnInit1.TabIndex = 87;
+            this.btnInit1.Text = "绑定数据1";
+            this.btnInit1.UseVisualStyleBackColor = true;
+            // 
+            // cbxAsc
+            // 
+            this.cbxAsc.AutoSize = true;
+            this.cbxAsc.Checked = true;
+            this.cbxAsc.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbxAsc.Location = new System.Drawing.Point(97, 34);
+            this.cbxAsc.Name = "cbxAsc";
+            this.cbxAsc.Size = new System.Drawing.Size(48, 16);
+            this.cbxAsc.TabIndex = 88;
+            this.cbxAsc.Text = "正序";
+            this.cbxAsc.UseVisualStyleBackColor = true;
+            // 
+            // cbxGroupIsTop
+            // 
+            this.cbxGroupIsTop.AutoSize = true;
+            this.cbxGroupIsTop.Location = new System.Drawing.Point(188, 12);
+            this.cbxGroupIsTop.Name = "cbxGroupIsTop";
+            this.cbxGroupIsTop.Size = new System.Drawing.Size(72, 16);
+            this.cbxGroupIsTop.TabIndex = 89;
+            this.cbxGroupIsTop.Text = "组在上方";
+            this.cbxGroupIsTop.UseVisualStyleBackColor = true;
+            // 
+            // cbxShowGroupTotal
+            // 
+            this.cbxShowGroupTotal.AutoSize = true;
+            this.cbxShowGroupTotal.Checked = true;
+            this.cbxShowGroupTotal.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbxShowGroupTotal.Location = new System.Drawing.Point(188, 34);
+            this.cbxShowGroupTotal.Name = "cbxShowGroupTotal";
+            this.cbxShowGroupTotal.Size = new System.Drawing.Size(84, 16);
+            this.cbxShowGroupTotal.TabIndex = 90;
+            this.cbxShowGroupTotal.Text = "显示组统计";
+            this.cbxShowGroupTotal.UseVisualStyleBackColor = true;
+            // 
+            // txtGroupValue
+            // 
+            this.txtGroupValue.Location = new System.Drawing.Point(12, 83);
+            this.txtGroupValue.Name = "txtGroupValue";
+            this.txtGroupValue.Size = new System.Drawing.Size(85, 21);
+            this.txtGroupValue.TabIndex = 91;
+            // 
+            // btnAddByDt1
+            // 
+            this.btnAddByDt1.Location = new System.Drawing.Point(175, 230);
+            this.btnAddByDt1.Name = "btnAddByDt1";
+            this.btnAddByDt1.Size = new System.Drawing.Size(75, 23);
+            this.btnAddByDt1.TabIndex = 92;
+            this.btnAddByDt1.Text = "批量增加1";
+            this.btnAddByDt1.UseVisualStyleBackColor = true;
+            // 
+            // txtGroupDispalyText
+            // 
+            this.txtGroupDispalyText.Location = new System.Drawing.Point(103, 83);
+            this.txtGroupDispalyText.Name = "txtGroupDispalyText";
+            this.txtGroupDispalyText.Size = new System.Drawing.Size(66, 21);
+            this.txtGroupDispalyText.TabIndex = 93;
+            // 
+            // txtGroupValueIndex
+            // 
+            this.txtGroupValueIndex.Location = new System.Drawing.Point(175, 83);
+            this.txtGroupValueIndex.Name = "txtGroupValueIndex";
+            this.txtGroupValueIndex.Size = new System.Drawing.Size(66, 21);
+            this.txtGroupValueIndex.TabIndex = 94;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(537, 426);
-            this.Controls.Add(this.dateTimePicker1);
+            this.ClientSize = new System.Drawing.Size(640, 538);
+            this.Controls.Add(this.txtGroupValueIndex);
+            this.Controls.Add(this.txtGroupDispalyText);
+            this.Controls.Add(this.btnAddByDt1);
+            this.Controls.Add(this.txtGroupValue);
+            this.Controls.Add(this.cbxShowGroupTotal);
+            this.Controls.Add(this.cbxGroupIsTop);
             this.Controls.Add(this.cbxAsc);
+            this.Controls.Add(this.btnInit1);
+            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.panelEx1);
             this.Controls.Add(this.btnLocation);
             this.Controls.Add(this.btnGetSelected);
@@ -353,9 +429,16 @@
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnInit;
         private DataPanelView panelEx1;
-        private System.Windows.Forms.CheckBox cbxAsc;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Button btnGetTotal;
+        private System.Windows.Forms.Button btnInit1;
+        private System.Windows.Forms.CheckBox cbxAsc;
+        private System.Windows.Forms.CheckBox cbxGroupIsTop;
+        private System.Windows.Forms.CheckBox cbxShowGroupTotal;
+        private System.Windows.Forms.TextBox txtGroupValue;
+        private System.Windows.Forms.Button btnAddByDt1;
+        private System.Windows.Forms.TextBox txtGroupDispalyText;
+        private System.Windows.Forms.TextBox txtGroupValueIndex;
     }
 }
 

@@ -296,19 +296,35 @@ namespace 自定义Panel列表V2
         }
         #endregion
 
-        #region 分组字段名称
+        #region 组的位置
         /// <summary>
-        /// 分组字段名称
+        /// 组的位置
+        /// 上 = true 下= false
+        /// 默认是下
         /// </summary>
-        public string groupFieldName = "";
+        private bool groupRowIsTop = false;
         /// <summary>
-        /// 分组字段名称
+        /// 组的位置
+        /// 上 = true 下= false
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(false), Category("其他"), Description("分组字段名称, 只有显示分组才会有效")]
-        public string GroupFieldName
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(false), Category("其他"), Description("组的位置 上 = true 下= false")]
+        public bool GroupRowIsTop
         {
-            get { return groupFieldName; }
-            set { groupFieldName = value; }
+            get { return groupRowIsTop; }
+            set { groupRowIsTop = value; }
+        }
+        #endregion
+
+        #region 在分组行最后是否显示组统计
+        /// <summary>
+        /// 在分组行最后是否显示组统计
+        /// </summary>
+        private bool isShowGroupTotal = true;
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(false), Category("其他"), Description("在分组行最后是否显示组统计")]
+        public bool IsShowGroupTotal
+        {
+            get { return isShowGroupTotal; }
+            set { isShowGroupTotal = value; }
         }
         #endregion
 
@@ -318,7 +334,7 @@ namespace 自定义Panel列表V2
         /// 默认正序
         /// </summary>
         private bool ascending = true;
-        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(true), Category("其他"), Description("分组字段名称, 分组排序方式")]
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(true), Category("其他"), Description("分组排序方式")]
         public bool Ascending
         {
             get { return ascending; }
@@ -369,6 +385,31 @@ namespace 自定义Panel列表V2
         }
         #endregion
 
+        #region 分组统计要显示的内容 位置
+        /// <summary>
+        /// 分组统计要显示的内容 位置
+        /// </summary>
+        private ContentAlignment groupTitleTextAlign = ContentAlignment.MiddleCenter;
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(typeof(ContentAlignment), "MiddleCenter"), Category("其他"), Description("分组统计要显示的内容 位置")]
+        public ContentAlignment GroupTitleTextAlign
+        {
+            get { return groupTitleTextAlign; }
+            set { groupTitleTextAlign = value; }
+        } 
+        #endregion
+
+        #region 分组统计要显示的内容 左边距
+        /// <summary>
+        /// 分组统计要显示的内容 左边距
+        /// </summary>
+        private int groupTitleLeft = 0;
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(0), Category("其他"), Description("分组统计要显示的内容 左边距")]
+        public int GroupTitleLeft
+        {
+            get { return groupTitleLeft; }
+            set { groupTitleLeft = value; }
+        } 
+        #endregion
         #endregion
 
         #region 构造函数
@@ -655,81 +696,30 @@ namespace 自定义Panel列表V2
 
         #region 添加数据
 
-        #region 数据源 DataSource
+        #region 数据源 该方法不适用分组 DataSource
         /// <summary>
-        /// 数据源
+        /// 数据源 该方法不适用分组
         /// </summary>
         public void DataSource<T>(DataTable dt)
             where T : DataPanelViewRow, new()
         {
             this.Clear();
-            if (isGroup && !dt.Columns.Contains(groupFieldName))
+            if (dt == null)
+                return;
+            if (isGroup)
             {
-                throw new Exception("该DataTable 没有包含" + groupFieldName + " 的列名！");
+                throw new Exception("该方法不适用分组！");
             }
-            //行数
-            int rowCount = 0;
-            //日期值
-            string lastDateValue = "";
             int rowIndex = 0;
             foreach (DataRow row in dt.Rows)
             {
-                #region 增加统计数据
-                if (isGroup)
+                DataPanelViewRow item = new T()
                 {
-                    string date = DateTime.Parse(row[groupFieldName].ToString()).ToString("yyyy/MM");
-                    if (!string.IsNullOrEmpty(lastDateValue) && lastDateValue != date)
-                    {
-                        DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
-                        {
-                            IsSelected = false,
-                            RowIndex = rowIndex,
-                            RowType = DataPanelRowType.GroupRow,
-                            GroupDateTime = DateTime.Parse(lastDateValue),
-                            RowCount = rowCount
-                        };
-                        InsertItem(rowIndex, groupItem);
-                        rowCount = 0;
-                        rowIndex++;
-                    }
-
-                    DataPanelViewRow item = new T()
-                    {
-                        DataRow = row,
-                        IsSelected = false,
-                        RowIndex = rowIndex
-                    };
-                    InsertItem(rowIndex, item);
-
-                    //最后一行
-                    if (dt.Rows.IndexOf(row) == dt.Rows.Count - 1)
-                    {
-                        rowIndex++;
-                        DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
-                        {
-                            IsSelected = false,
-                            RowIndex = rowIndex,
-                            RowType = DataPanelRowType.GroupRow,
-                            GroupDateTime = DateTime.Parse(lastDateValue),
-                            RowCount = rowCount + 1
-                        };
-                        InsertItem(rowIndex, groupItem);
-                        rowCount = 0;
-                    }
-                    rowCount++;
-                    lastDateValue = date;
-                }
-                #endregion
-                else
-                {
-                    DataPanelViewRow item = new T()
-                    {
-                        DataRow = row,
-                        IsSelected = false,
-                        RowIndex = rowIndex
-                    };
-                    InsertItem(rowIndex, item);
-                }
+                    DataRow = row,
+                    IsSelected = false,
+                    RowIndex = rowIndex
+                };
+                InsertItem(rowIndex, item);
                 rowIndex++;
             }
             this.UpdateScrollbar();
@@ -755,8 +745,155 @@ namespace 自定义Panel列表V2
         }
         #endregion
 
+        #region 数据源 支持分组 DataSource
+        /// <summary>
+        /// 数据源 支持分组
+        /// </summary>
+        /// <param name="dpvrList"></param>
+        public void DataSource<T>(List<T> dpvrList)
+            where T : DataPanelViewRow, new()
+        {
+            this.Clear();
+            if (dpvrList == null || dpvrList.Count == 0)
+                return;
+            if (isGroup)
+            {
+                string lastValue = "";
+                //行数
+                int rowCount = 0;
+                int rowIndex = 0;
+                List<T> tmpList = null;
+                if (ascending)
+                    tmpList = dpvrList.OrderBy(t => t.GroupValue).ThenBy(t => t.GroupValueIndex).ToList();
+                else
+                    tmpList = dpvrList.OrderByDescending(t => t.GroupValue).ThenByDescending(t => t.GroupValueIndex).ToList();
 
+                #region 统计行在上方
+                if (groupRowIsTop)
+                {//统计行在上方
+                    var groupList = dpvrList.GroupBy(t => t.GroupValue).Select(g => new { g.Key, Count = g.Count() });
 
+                    foreach (var item in tmpList)
+                    {
+                        if (lastValue != item.GroupValue)
+                        {
+                            DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
+                            {
+                                IsSelected = false,
+                                RowIndex = rowIndex,
+                                RowType = DataPanelRowType.GroupRow,
+                                GroupDispalyText = item.GroupDispalyText,
+                                GroupValue = item.GroupValue
+                            };
+                            groupItem.RowCount = groupList.First(t => t.Key == item.GroupValue).Count;
+                            InsertItem(rowIndex, groupItem);
+                            rowIndex++;
+                        }
+
+                        item.RowType = DataPanelRowType.ContentRow;
+                        item.IsSelected = false;
+                        item.RowIndex = rowIndex;
+                        InsertItem(rowIndex, item);
+
+                        rowIndex++;
+                        lastValue = item.GroupValue;
+                    }
+                }
+                #endregion
+
+                #region 统计行在下方
+                else
+                {
+                    foreach (var item in tmpList)
+                    {
+                        if (!string.IsNullOrEmpty(lastValue) && lastValue != item.GroupValue)
+                        {
+                            DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
+                            {
+                                IsSelected = false,
+                                RowIndex = rowIndex,
+                                RowType = DataPanelRowType.GroupRow,
+                                GroupDispalyText = item.GroupDispalyText,
+                                GroupValue = item.GroupValue,
+                                RowCount = rowCount
+                            };
+                            InsertItem(rowIndex, groupItem);
+                            rowCount = 0;
+                            rowIndex++;
+                        }
+
+                        item.RowType = DataPanelRowType.ContentRow;
+                        item.IsSelected = false;
+                        item.RowIndex = dpvrList.IndexOf(item);
+                        InsertItem(rowIndex, item);
+
+                        //最后一行
+                        if (tmpList.IndexOf(item) == tmpList.Count - 1)
+                        {
+                            rowIndex++;
+                            DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
+                            {
+                                IsSelected = false,
+                                RowIndex = rowIndex,
+                                RowType = DataPanelRowType.GroupRow,
+                                GroupDispalyText = item.GroupDispalyText,
+                                GroupValue = item.GroupValue,
+                                RowCount = rowCount + 1
+                            };
+                            InsertItem(rowIndex, groupItem);
+                            rowCount = 0;
+                        }
+
+                        rowCount++;
+                        rowIndex++;
+                        lastValue = item.GroupValue;
+                    }
+                }
+                #endregion
+            }
+            else
+            {
+                foreach (var item in dpvrList)
+                {
+                    item.RowType = DataPanelRowType.ContentRow;
+                    item.IsSelected = false;
+                    item.RowIndex = dpvrList.IndexOf(item);
+                    InsertItem(item.RowIndex, item);
+                }
+            }
+            this.UpdateScrollbar();
+            if (isShowMore)
+            {
+                DataPanelViewRow loadMoreItem = itemList.First(t => t.RowType == DataPanelRowType.LoadMoreRow);
+                loadMoreItem.RowIndex = itemList.Count - 1;
+
+                KeyValuePair<DataPanelViewRowControl, int> pnlChild = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == loadMoreItem.RowIndex);
+                if (pnlChild.Key != null)
+                {
+                    controlList[pnlChild.Key] = loadMoreItem.RowIndex;
+                }
+                //调整位置
+                ScrollItem(null);
+            }
+
+            if (controlList.Count > 0)
+            {
+                DataPanelViewRowControl dpvrc = controlList.First(t => t.Key.DataPanelRow.RowIndex == 0).Key;
+                //有可能第一行不是内容行
+                int tmpRowIndex = 0;
+                while (dpvrc.DataPanelRow.RowType != DataPanelRowType.ContentRow)
+                {
+                    tmpRowIndex++;
+                    if (tmpRowIndex > controlList.Count)
+                    {
+                        break;
+                    }
+                    dpvrc = controlList.First(t => t.Key.DataPanelRow.RowIndex == tmpRowIndex).Key;
+                }
+                item_MouseClick(dpvrc, null);
+            }
+        }
+        #endregion
 
         #region 添加行数据，会自动合并到组 Add
         /// <summary>
@@ -773,14 +910,9 @@ namespace 自定义Panel列表V2
              */
             if (item.DataRow == null)
                 throw new Exception("没有数据！");
-            if (isGroup && !item.DataRow.Table.Columns.Contains(groupFieldName))
-            {
-                throw new Exception("该DataTable 没有包含" + groupFieldName + " 的列名！");
-            }
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
             item.RowType = DataPanelRowType.ContentRow;
-            item.RowIndex = itemList.Count;
             item.IsSelected = true;
             //新增的时候会有闪烁
             ClearSelectedItem();
@@ -791,6 +923,7 @@ namespace 自定义Panel列表V2
             #region 不分组
             else
             {
+                item.RowIndex = itemList.Count;
                 //添加到最后
                 int rowIndex = itemList.Count;
                 if (isShowMore)
@@ -800,6 +933,12 @@ namespace 自定义Panel列表V2
                     {
                         rowIndex = find.RowIndex;
                         find.RowIndex += 1;
+
+                        KeyValuePair<DataPanelViewRowControl, int> pnlChild = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == find.RowIndex);
+                        if (pnlChild.Key != null)
+                        {
+                            controlList[pnlChild.Key] = find.RowIndex;
+                        }
 
                         item.RowIndex = rowIndex;
                     }
@@ -813,9 +952,9 @@ namespace 自定义Panel列表V2
         }
         #endregion
 
-        #region 批量追加数据 Add<T>
+        #region 批量追加数据 该方法不适用分组 Add<T>
         /// <summary>
-        /// 批量追加数据
+        /// 批量追加数据 该方法不适用分组
         /// </summary>
         /// <typeparam name="T">必须是继承DataPanelRow的</typeparam>
         /// <param name="dt">数据源</param>
@@ -824,32 +963,17 @@ namespace 自定义Panel列表V2
         {
             if (dt == null)
                 throw new Exception("没有数据！");
-            if (isShowMore && itemList.Count == 1)
+            if ((isShowMore && itemList.Count == 1) || (!isShowMore && itemList.Count == 0))
             {
                 this.DataSource<T>(dt);
                 return;
-            }
-            if (isGroup && !dt.Columns.Contains(groupFieldName))
-            {
-                throw new Exception("该DataTable 没有包含" + groupFieldName + " 的列名！");
             }
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
 
             if (isGroup)
             {
-                ///重新统计排序信息
-                ///
-                foreach (DataRow row in dt.Rows)
-                {
-                    DataPanelViewRow item = new T()
-                    {
-                        DataRow = row,
-                        IsSelected = false,
-                        RowType = DataPanelRowType.ContentRow
-                    };
-                    AddByGroup(item);
-                }
+                throw new Exception("该方法不适用分组！");
             }
             else
             {
@@ -888,6 +1012,71 @@ namespace 自定义Panel列表V2
         }
         #endregion
 
+        #region 批量追加数据 支持分组
+        /// <summary>
+        /// 批量追加数据 支持分组 Add<T>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dpvrList"></param>
+        public void Add<T>(List<T> dpvrList)
+            where T : DataPanelViewRow, new()
+        {
+            if (dpvrList == null || dpvrList.Count == 0)
+                throw new Exception("没有数据！");
+
+            if ((isShowMore && itemList.Count == 1) || (!isShowMore && itemList.Count == 0))
+            {
+                this.DataSource<T>(dpvrList);
+                return;
+            }
+            if (SetItemTemplate == null)
+                throw new Exception("必须启用 SetItemTemplate 事件");
+
+            if (isGroup)
+            {
+                //重新统计排序信息
+                foreach (var item in dpvrList)
+                {
+                    item.IsSelected = false;
+                    item.RowType = DataPanelRowType.ContentRow;
+                    AddByGroup(item);
+                }
+            }
+            #region 不分组
+            else
+            {
+                int rowIndex = itemList.Count;
+
+                if (isShowMore)
+                {
+                    var find = itemList.First(t => t.RowType == DataPanelRowType.LoadMoreRow);
+                    if (find != null)
+                    {
+                        rowIndex = find.RowIndex;
+                        find.RowIndex += itemList.Count;
+
+                        KeyValuePair<DataPanelViewRowControl, int> pnlChild = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == find.RowIndex);
+                        if (pnlChild.Key != null)
+                        {
+                            controlList[pnlChild.Key] = find.RowIndex;
+                        }
+                    }
+                }
+
+                foreach (var item in dpvrList)
+                {
+                    item.IsSelected = false;
+                    item.RowIndex = rowIndex;
+                    item.RowType = DataPanelRowType.ContentRow;
+                    InsertItem(rowIndex, item);
+                    rowIndex++;
+                }
+            }
+            #endregion
+            RefreshContent();
+        }
+        #endregion
+
         #region 插入指定的位置 Insert
         /// <summary>
         /// 插入指定的位置
@@ -899,10 +1088,6 @@ namespace 自定义Panel列表V2
         {
             if (item.DataRow == null)
                 throw new Exception("没有数据！");
-            if (isGroup && !item.DataRow.Table.Columns.Contains(groupFieldName))
-            {
-                throw new Exception("该DataTable 没有包含" + groupFieldName + " 的列名！");
-            }
             if (SetItemTemplate == null)
                 throw new Exception("必须启用 SetItemTemplate 事件");
             //新增的时候会有闪烁
@@ -1030,30 +1215,28 @@ namespace 自定义Panel列表V2
             {
                 //某个分组删一部分(更新统计信息)或全删(则要删除统计行)
                 //行数
-                int rowCount = 0;
                 int rowIndex = 0;
+
+                var groupList = itemList.Where(t => t.RowType == DataPanelRowType.ContentRow).GroupBy(t => t.GroupValue).Select(g => new { g.Key, Count = g.Count() });
+
                 List<DataPanelViewRow> delList = new List<DataPanelViewRow>();
 
                 for (int i = 0; i < itemList.Count; i++)
                 {
                     DataPanelViewRow item = itemList[i];
-                    if (item.RowType == DataPanelRowType.ContentRow)
+                    if (item.RowType == DataPanelRowType.GroupRow)
                     {
-                        rowCount++;
-                    }
-                    else if (item.RowType == DataPanelRowType.GroupRow)
-                    {
-                        DataPanelViewGroupRow groupItem = item as DataPanelViewGroupRow;
-                        if (rowCount > 0)
-                        {
-                            groupItem.RowCount = rowCount;
-                        }
-                        else
+                        var find = groupList.First(t => t.Key == item.GroupValue);
+                        if (find == null)
                         {
                             rowIndex -= 1;
                             delList.Add(item);
                         }
-                        rowCount = 0;
+                        else
+                        {
+                            DataPanelViewGroupRow groupItem = item as DataPanelViewGroupRow;
+                            groupItem.RowCount = find.Count;
+                        }
                     }
                     item.RowIndex = rowIndex;
                     rowIndex++;
@@ -1235,7 +1418,7 @@ namespace 自定义Panel列表V2
             else if (dpvRow.RowType == DataPanelRowType.GroupRow)
             {
                 DataPanelViewGroupRow dpvgr = dpvRow as DataPanelViewGroupRow;
-                DataPanelViewRowControl dpvrc = new DataPanelViewGroupRowControl(dpvgr.GroupDateTime, dpvgr.RowCount);
+                DataPanelViewRowControl dpvrc = new DataPanelViewGroupRowControl(dpvgr.GroupDispalyText, dpvgr.RowCount, isShowGroupTotal, groupTitleTextAlign, groupTitleLeft);
                 dpvrc.DataPanelRow = dpvgr;
                 dpvRow.Height = dpvrc.Height;
                 displayRectangleHeight += dpvRow.Height;
@@ -1284,10 +1467,9 @@ namespace 自定义Panel列表V2
             int groupRowIndex = -1;
             //记录当前是第几个组
             int groupRowNum = 0;
-            DateTime itemGroupFiled = DateTime.Parse(item.DataRow[groupFieldName].ToString());
             foreach (DataPanelViewGroupRow row in groupList)
             {
-                if (row.GroupDateTime.ToString("yyyy/MM") == itemGroupFiled.ToString("yyyy/MM"))
+                if (row.GroupValue == item.GroupValue)
                 {
                     groupRowIndex = row.RowIndex;
                     break;
@@ -1299,65 +1481,69 @@ namespace 自定义Panel列表V2
             bool isUpdateTotal = true;
             if (groupRowIndex == -1)
             {
-                int tmpGroupRowNum = 0;
+                List<DataPanelViewRow> tmpGroupList = new List<DataPanelViewRow>();
+                tmpGroupList.AddRange(groupList);
+                tmpGroupList.Add(item);
+
                 if (ascending)
-                {
-                    foreach (DataPanelViewGroupRow row in groupList)
-                    {
-                        if (row.GroupDateTime > itemGroupFiled)
-                        {
-                            break;
-                        }
-                        tmpGroupRowNum++;
-                    }
-                }
+                    tmpGroupList = tmpGroupList.OrderBy(t => t.GroupValue).ThenBy(t => t.GroupValueIndex).ToList();
                 else
-                {
-                    foreach (DataPanelViewGroupRow row in groupList)
-                    {
-                        if (row.GroupDateTime < itemGroupFiled)
-                        {
-                            break;
-                        }
-                        tmpGroupRowNum++;
-                    }
-                }
+                    tmpGroupList = tmpGroupList.OrderByDescending(t => t.GroupValue).ThenByDescending(t => t.GroupValueIndex).ToList();
+
+
+                int tmpGroupRowNum = tmpGroupList.IndexOf(item);
                 if (tmpGroupRowNum > 0)
                 {
-                    rowIndex = groupList[tmpGroupRowNum - 1].RowIndex + 1;
+                    if (groupRowIsTop)
+                    {
+                        if (tmpGroupRowNum >= groupList.Count)
+                        {
+                            rowIndex = itemList.Count - 1;
+                        }
+                        else
+                            rowIndex = groupList[tmpGroupRowNum].RowIndex;
+                    }
+                    else
+                    {
+                        rowIndex = groupList[tmpGroupRowNum - 1].RowIndex + 1;
+                    }
                 }
-
                 isUpdateTotal = false;
             }
             else
             {
                 int startIndex = 0;
-                if (groupRowNum > 0)
+                int endIndex = 0;
+                if (groupRowIsTop)
                 {
-                    startIndex = groupList[groupRowNum - 1].RowIndex + 1;
+                    startIndex = groupList[groupRowNum].RowIndex + 1;
+                    if (groupRowNum == groupList.Count - 1)
+                    {
+                        endIndex = itemList.Count;
+                        if (isShowMore)
+                            endIndex -= 1;
+                    }
+                    else
+                        endIndex = groupList[groupRowNum + 1].RowIndex;
                 }
-                int endIndex = groupRowIndex;
+                else
+                {
+                    if (groupRowNum > 0)
+                    {
+                        startIndex = groupList[groupRowNum - 1].RowIndex + 1;
+                    }
+                    endIndex = groupRowIndex;
+                }
+
+
                 bool isFind = false;
                 for (int i = startIndex; i < endIndex; i++)
                 {
-                    DateTime tmpGroupFiled = DateTime.Parse(itemList[i].DataRow[groupFieldName].ToString());
-                    if (ascending)
+                    if (item.GroupValueIndex < itemList[i].GroupValueIndex)
                     {
-                        if (tmpGroupFiled > itemGroupFiled)
-                        {
-                            rowIndex = i;
-                            isFind = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        if (tmpGroupFiled < itemGroupFiled)
-                        {
-                            rowIndex = i;
-                            isFind = true;
-                            break;
-                        }
+                        rowIndex = i;
+                        isFind = true;
+                        break;
                     }
                 }
                 if (!isFind)
@@ -1371,11 +1557,29 @@ namespace 自定义Panel列表V2
                 else
                     itemList[i].RowIndex += 1;
 
-                if (itemList[i].RowType == DataPanelRowType.GroupRow && isUpdateTotal)
-                {//找到最近的一个统计行
-                    DataPanelViewGroupRow groupItem = itemList[i] as DataPanelViewGroupRow;
-                    groupItem.RowCount += 1;
-                    isUpdateTotal = false;
+                if (groupRowIsTop)
+                {//往上找
+                    int pervRowIndex = i;
+                    while (isUpdateTotal && pervRowIndex >= 0 && itemList[pervRowIndex].RowType != DataPanelRowType.GroupRow)
+                    {
+                        pervRowIndex--;
+                        if (itemList[pervRowIndex].RowType == DataPanelRowType.GroupRow)
+                        {//找到最近的一个统计行
+                            DataPanelViewGroupRow groupItem = itemList[pervRowIndex] as DataPanelViewGroupRow;
+                            groupItem.RowCount += 1;
+                            isUpdateTotal = false;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (itemList[i].RowType == DataPanelRowType.GroupRow && isUpdateTotal)
+                    {//找到最近的一个统计行
+                        DataPanelViewGroupRow groupItem = itemList[i] as DataPanelViewGroupRow;
+                        groupItem.RowCount += 1;
+                        isUpdateTotal = false;
+                    }
                 }
             }
             //注意这里类的引用关系， 控件不需要在更改索引
@@ -1389,23 +1593,46 @@ namespace 自定义Panel列表V2
                 }
             }
 
-            item.RowIndex = rowIndex;
             if (groupRowIndex == -1)
             {
-                InsertItem(rowIndex, item);
-                //增加统计行
-                DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
+                if (groupRowIsTop)
                 {
-                    IsSelected = false,
-                    RowIndex = rowIndex + 1,
-                    RowType = DataPanelRowType.GroupRow,
-                    GroupDateTime = DateTime.Parse(item.DataRow[groupFieldName].ToString()),
-                    RowCount = 1
-                };
-                InsertItem(groupItem.RowIndex, groupItem);
+                    //增加统计行
+                    DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
+                    {
+                        IsSelected = false,
+                        RowIndex = rowIndex,
+                        RowType = DataPanelRowType.GroupRow,
+                        GroupDispalyText = item.GroupDispalyText,
+                        GroupValue = item.GroupValue,
+                        RowCount = 1
+                    };
+                    InsertItem(groupItem.RowIndex, groupItem);
+
+
+                    item.RowIndex = rowIndex + 1;
+                    InsertItem(item.RowIndex, item);
+                }
+                else
+                {
+                    item.RowIndex = rowIndex;
+                    InsertItem(rowIndex, item);
+                    //增加统计行
+                    DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
+                    {
+                        IsSelected = false,
+                        RowIndex = rowIndex + 1,
+                        RowType = DataPanelRowType.GroupRow,
+                        GroupDispalyText = item.GroupDispalyText,
+                        GroupValue = item.GroupValue,
+                        RowCount = 1
+                    };
+                    InsertItem(groupItem.RowIndex, groupItem);
+                }
             }
             else
             {
+                item.RowIndex = rowIndex;
                 InsertItem(rowIndex, item);
             }
         }
@@ -1760,7 +1987,7 @@ namespace 自定义Panel列表V2
                 else if (item.RowType == DataPanelRowType.GroupRow)
                 {
                     DataPanelViewGroupRow groupItem = item as DataPanelViewGroupRow;
-                    DataPanelViewRowControl newItem = new DataPanelViewGroupRowControl(groupItem.GroupDateTime, groupItem.RowCount);
+                    DataPanelViewRowControl newItem = new DataPanelViewGroupRowControl(groupItem.GroupDispalyText, groupItem.RowCount, isShowGroupTotal, groupTitleTextAlign, groupTitleLeft);
                     newItem.DataPanelRow = groupItem;
                     newItem.RefreshData();
                     this.AddControl(newItem, false);

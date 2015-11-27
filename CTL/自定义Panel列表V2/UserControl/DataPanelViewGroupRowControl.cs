@@ -11,19 +11,28 @@ namespace 自定义Panel列表V2
 {
     public partial class DataPanelViewGroupRowControl : DataPanelViewRowControl
     {
+        /// <summary>
+        /// 是否显示统计
+        /// </summary>
+        private bool isShowGroupTotal = true;
         public DataPanelViewGroupRowControl()
         {
             InitializeComponent();
         }
-        public DataPanelViewGroupRowControl(DateTime dateTime, int rowCount, string dateTimeFormart = "yyyy/MM")
+        public DataPanelViewGroupRowControl(string title, int rowCount, bool isShowGroupTotal, ContentAlignment textAlign, int left)
             : this()
         {
-            SetTitle(dateTime, rowCount, dateTimeFormart);
+            this.isShowGroupTotal = isShowGroupTotal;
+            SetTitle(title, rowCount);
+            lblTitle.Left = left;
+            lblTitle.TextAlign = textAlign;
         }
 
-        private void SetTitle(DateTime dateTime, int rowCount, string dateTimeFormart = "yyyy/MM")
+        private void SetTitle(string title, int rowCount)
         {
-            lblTitle.Text = string.Format("以上为{0}月的数据，共{1}行", dateTime.ToString(dateTimeFormart), rowCount);
+            lblTitle.Text = string.Format("{0}", title);
+            if (isShowGroupTotal)
+                lblTitle.Text += string.Format("，共{0}行", rowCount);
         }
 
         public override void RefreshData()
@@ -31,7 +40,7 @@ namespace 自定义Panel列表V2
             if (base.DataPanelRow != null)
             {
                 DataPanelViewGroupRow model = base.DataPanelRow as DataPanelViewGroupRow;
-                SetTitle(model.GroupDateTime, model.RowCount);
+                SetTitle(model.GroupDispalyText, model.RowCount);
             }
             base.RefreshData();
         }
