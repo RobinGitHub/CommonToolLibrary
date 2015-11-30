@@ -1511,7 +1511,7 @@ namespace 自定义Panel列表V2
                         if (tmpGroupRowNum >= groupList.Count)
                         {
                             if (isShowMore)
-                                rowIndex = itemList.Count - 1;
+                            rowIndex = itemList.Count - 1;
                             else
                                 rowIndex = itemList.Count;
                         }
@@ -1573,15 +1573,15 @@ namespace 自定义Panel列表V2
                 else
                     itemList[i].RowIndex += 1;
                 if (!groupRowIsTop)
-                {
+                    {
                     if (itemList[i].RowType == DataPanelRowType.GroupRow && isUpdateTotal)
-                    {//找到最近的一个统计行
+                        {//找到最近的一个统计行
                         DataPanelViewGroupRow groupItem = itemList[i] as DataPanelViewGroupRow;
-                        groupItem.RowCount += 1;
-                        isUpdateTotal = false;
+                            groupItem.RowCount += 1;
+                            isUpdateTotal = false;
+                        }
                     }
                 }
-            }
 
             if (groupRowIsTop)
             {//往上找
