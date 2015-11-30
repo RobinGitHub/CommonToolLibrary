@@ -50,7 +50,6 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.panelEx1 = new 自定义Panel列表V2.DataPanelView();
             this.btnGetTotal = new System.Windows.Forms.Button();
             this.btnInit1 = new System.Windows.Forms.Button();
             this.cbxAsc = new System.Windows.Forms.CheckBox();
@@ -63,6 +62,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.panelEx1 = new 自定义Panel列表V2.DataPanelView();
             this.SuspendLayout();
             // 
             // btnLocation
@@ -263,25 +263,6 @@
             this.dateTimePicker1.Size = new System.Drawing.Size(157, 21);
             this.dateTimePicker1.TabIndex = 86;
             // 
-            // panelEx1
-            // 
-            this.panelEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelEx1.BackColor = System.Drawing.Color.White;
-            this.panelEx1.DefaultColor = System.Drawing.Color.White;
-            this.panelEx1.FirstDisplayedScrollingRowIndex = 0;
-            this.panelEx1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.panelEx1.IsShowGroupTotal = true;
-            this.panelEx1.Location = new System.Drawing.Point(278, 0);
-            this.panelEx1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.panelEx1.MinRowHeight = 60;
-            this.panelEx1.MouseEnterColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(240)))), ((int)(((byte)(193)))));
-            this.panelEx1.Name = "panelEx1";
-            this.panelEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
-            this.panelEx1.Size = new System.Drawing.Size(466, 538);
-            this.panelEx1.TabIndex = 84;
-            // 
             // btnGetTotal
             // 
             this.btnGetTotal.Location = new System.Drawing.Point(94, 122);
@@ -390,6 +371,27 @@
             this.label7.Size = new System.Drawing.Size(65, 12);
             this.label7.TabIndex = 95;
             this.label7.Text = "组内容索引";
+            // 
+            // panelEx1
+            // 
+            this.panelEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelEx1.BackColor = System.Drawing.Color.White;
+            this.panelEx1.DefaultColor = System.Drawing.Color.White;
+            this.panelEx1.FirstDisplayedScrollingRowIndex = 0;
+            this.panelEx1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.panelEx1.GroupTitleLeft = 20;
+            this.panelEx1.GroupTitleTextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.panelEx1.IsShowGroupTotal = true;
+            this.panelEx1.Location = new System.Drawing.Point(278, 0);
+            this.panelEx1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panelEx1.MinRowHeight = 60;
+            this.panelEx1.MouseEnterColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(240)))), ((int)(((byte)(193)))));
+            this.panelEx1.Name = "panelEx1";
+            this.panelEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
+            this.panelEx1.Size = new System.Drawing.Size(466, 538);
+            this.panelEx1.TabIndex = 84;
             // 
             // Form1
             // 

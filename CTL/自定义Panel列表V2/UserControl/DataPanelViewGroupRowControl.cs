@@ -24,7 +24,7 @@ namespace 自定义Panel列表V2
         {
             this.isShowGroupTotal = isShowGroupTotal;
             SetTitle(title, rowCount);
-            lblTitle.Left = left;
+            lblTitle.Padding = new Padding(left, 0 ,0 ,0);
             lblTitle.TextAlign = textAlign;
         }
 
