@@ -491,14 +491,6 @@ namespace 自定义Panel列表V2
                 #region Up
                 case Keys.Up://向上滚动
                     isActiveMouseEvent = false;
-                    //清除所有选中项，选中Focus=true的上一个
-                    if (itemList[0].IsFocus)
-                    {
-                        this.myVScrollBar1.Value = 0;
-                        this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
-                        ScrollItem(true);
-                        return true;
-                    }
 
                     //找到最后一次点击的控件
                     DataPanelViewRow tmpItem = null;
@@ -512,6 +504,26 @@ namespace 自定义Panel列表V2
                     }
                     if (tmpItem != null)
                     {
+                        //清除所有选中项，选中Focus=true的上一个
+                        int tmpRowIndex = tmpItem.RowIndex - 1;
+                        bool isHasContentRow = false;
+                        while (tmpRowIndex >= 0)
+                        {
+                            if (itemList[tmpRowIndex].RowType == DataPanelRowType.ContentRow)
+                            {
+                                isHasContentRow = true;
+                                break;
+                            }
+                            tmpRowIndex--;
+                        }
+                        if (!isHasContentRow)
+                        {
+                            this.myVScrollBar1.Value = 0;
+                            this.pnlContent.VScrollValue = this.myVScrollBar1.Value;
+                            ScrollItem(true);
+                            return true;
+                        }
+
                         int searchIndex = tmpItem.RowIndex - 1;
                         KeyValuePair<DataPanelViewRowControl, int> find = controlList.FirstOrDefault(t => t.Key.DataPanelRow.RowIndex == searchIndex);
                         while (find.Key != null && find.Key.DataPanelRow.RowType != DataPanelRowType.ContentRow)
@@ -1226,7 +1238,7 @@ namespace 自定义Panel列表V2
                     DataPanelViewRow item = itemList[i];
                     if (item.RowType == DataPanelRowType.GroupRow)
                     {
-                        var find = groupList.First(t => t.Key == item.GroupValue);
+                        var find = groupList.FirstOrDefault(t => t.Key == item.GroupValue);
                         if (find == null)
                         {
                             rowIndex -= 1;
@@ -1498,7 +1510,10 @@ namespace 自定义Panel列表V2
                     {
                         if (tmpGroupRowNum >= groupList.Count)
                         {
-                            rowIndex = itemList.Count - 1;
+                            if (isShowMore)
+                                rowIndex = itemList.Count - 1;
+                            else
+                                rowIndex = itemList.Count;
                         }
                         else
                             rowIndex = groupList[tmpGroupRowNum].RowIndex;
@@ -1550,29 +1565,14 @@ namespace 自定义Panel列表V2
                     rowIndex = endIndex;
             }
 
+            #region 更新索引&统计
             for (int i = rowIndex; i < itemList.Count; i++)
             {
                 if (groupRowIndex == -1)
                     itemList[i].RowIndex += 2;
                 else
                     itemList[i].RowIndex += 1;
-
-                if (groupRowIsTop)
-                {//往上找
-                    int pervRowIndex = i;
-                    while (isUpdateTotal && pervRowIndex >= 0 && itemList[pervRowIndex].RowType != DataPanelRowType.GroupRow)
-                    {
-                        pervRowIndex--;
-                        if (itemList[pervRowIndex].RowType == DataPanelRowType.GroupRow)
-                        {//找到最近的一个统计行
-                            DataPanelViewGroupRow groupItem = itemList[pervRowIndex] as DataPanelViewGroupRow;
-                            groupItem.RowCount += 1;
-                            isUpdateTotal = false;
-                            break;
-                        }
-                    }
-                }
-                else
+                if (!groupRowIsTop)
                 {
                     if (itemList[i].RowType == DataPanelRowType.GroupRow && isUpdateTotal)
                     {//找到最近的一个统计行
@@ -1582,6 +1582,26 @@ namespace 自定义Panel列表V2
                     }
                 }
             }
+
+            if (groupRowIsTop)
+            {//往上找
+                int pervRowIndex = rowIndex;
+                if (rowIndex == itemList.Count)
+                    pervRowIndex = itemList.Count - 1;
+                while (isUpdateTotal && pervRowIndex >= 0)
+                {
+                    pervRowIndex--;
+                    if (pervRowIndex >= 0 && itemList[pervRowIndex].RowType == DataPanelRowType.GroupRow)
+                    {//找到最近的一个统计行
+                        DataPanelViewGroupRow groupItem = itemList[pervRowIndex] as DataPanelViewGroupRow;
+                        groupItem.RowCount += 1;
+                        isUpdateTotal = false;
+                        break;
+                    }
+                }
+            }
+
+            #endregion
             //注意这里类的引用关系， 控件不需要在更改索引
             List<DataPanelViewRowControl> childList = controlList.Select(t => t.Key).ToList();
             for (int i = 0; i < controlList.Count; i++)
