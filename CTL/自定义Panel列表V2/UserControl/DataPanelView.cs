@@ -50,6 +50,10 @@ namespace 自定义Panel列表V2
         /// </summary>
         public event EventHandler LoadMore;
         /// <summary>
+        /// 单击
+        /// </summary>
+        public event EventHandler ItemClick;
+        /// <summary>
         /// 双击内容项
         /// </summary>
         public event EventHandler ItemDoubleClick;
@@ -1694,8 +1698,14 @@ namespace 自定义Panel列表V2
                 item.MouseLeave += Item_MouseLeave;
                 item.MouseMove += Item_MouseMove;
                 item.DoubleClick += item_DoubleClick;
+                item.Click += item_Click;
                 item.SizeChanged += item_SizeChanged;
             }
+        }
+        void item_Click(object sender, EventArgs e)
+        {
+            if (ItemClick != null)
+                ItemClick(sender, e);
         }
 
         void item_SizeChanged(object sender, EventArgs e)
