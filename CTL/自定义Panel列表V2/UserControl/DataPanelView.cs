@@ -768,8 +768,8 @@ namespace 自定义Panel列表V2
             this.Clear();
             if (dpvrList == null || dpvrList.Count == 0)
                 return;
-            if (isGroup)
-            {
+                if (isGroup)
+                {
                 string lastValue = "";
                 //行数
                 int rowCount = 0;
@@ -789,18 +789,18 @@ namespace 自定义Panel列表V2
                     {
                         if (lastValue != item.GroupValue)
                         {
-                            DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
-                            {
-                                IsSelected = false,
-                                RowIndex = rowIndex,
-                                RowType = DataPanelRowType.GroupRow,
+                        DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
+                        {
+                            IsSelected = false,
+                            RowIndex = rowIndex,
+                            RowType = DataPanelRowType.GroupRow,
                                 GroupDispalyText = item.GroupDispalyText,
                                 GroupValue = item.GroupValue
-                            };
+                        };
                             groupItem.RowCount = groupList.First(t => t.Key == item.GroupValue).Count;
-                            InsertItem(rowIndex, groupItem);
-                            rowIndex++;
-                        }
+                        InsertItem(rowIndex, groupItem);
+                        rowIndex++;
+                    }
 
                         item.RowType = DataPanelRowType.ContentRow;
                         item.IsSelected = false;
@@ -821,14 +821,14 @@ namespace 自定义Panel列表V2
                         if (!string.IsNullOrEmpty(lastValue) && lastValue != item.GroupValue)
                         {
                             DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
-                            {
-                                IsSelected = false,
+                    {
+                        IsSelected = false,
                                 RowIndex = rowIndex,
                                 RowType = DataPanelRowType.GroupRow,
                                 GroupDispalyText = item.GroupDispalyText,
                                 GroupValue = item.GroupValue,
                                 RowCount = rowCount
-                            };
+                    };
                             InsertItem(rowIndex, groupItem);
                             rowCount = 0;
                             rowIndex++;
@@ -837,36 +837,36 @@ namespace 自定义Panel列表V2
                         item.RowType = DataPanelRowType.ContentRow;
                         item.IsSelected = false;
                         item.RowIndex = dpvrList.IndexOf(item);
-                        InsertItem(rowIndex, item);
+                    InsertItem(rowIndex, item);
 
-                        //最后一行
+                    //最后一行
                         if (tmpList.IndexOf(item) == tmpList.Count - 1)
+                    {
+                        rowIndex++;
+                        DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
                         {
-                            rowIndex++;
-                            DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
-                            {
-                                IsSelected = false,
-                                RowIndex = rowIndex,
-                                RowType = DataPanelRowType.GroupRow,
+                            IsSelected = false,
+                            RowIndex = rowIndex,
+                            RowType = DataPanelRowType.GroupRow,
                                 GroupDispalyText = item.GroupDispalyText,
                                 GroupValue = item.GroupValue,
-                                RowCount = rowCount + 1
-                            };
-                            InsertItem(rowIndex, groupItem);
-                            rowCount = 0;
-                        }
+                            RowCount = rowCount + 1
+                        };
+                        InsertItem(rowIndex, groupItem);
+                        rowCount = 0;
+                    }
 
-                        rowCount++;
+                    rowCount++;
                         rowIndex++;
                         lastValue = item.GroupValue;
                     }
                 }
                 #endregion
             }
-            else
-            {
-                foreach (var item in dpvrList)
+                else
                 {
+                foreach (var item in dpvrList)
+                    {
                     item.RowType = DataPanelRowType.ContentRow;
                     item.IsSelected = false;
                     item.RowIndex = dpvrList.IndexOf(item);
@@ -1240,7 +1240,7 @@ namespace 自定义Panel列表V2
                     {
                         var find = groupList.FirstOrDefault(t => t.Key == item.GroupValue);
                         if (find == null)
-                        {
+                    {
                             rowIndex -= 1;
                             delList.Add(item);
                         }
@@ -1514,17 +1514,17 @@ namespace 自定义Panel列表V2
                             rowIndex = itemList.Count - 1;
                             else
                                 rowIndex = itemList.Count;
-                        }
+                    }
                         else
                             rowIndex = groupList[tmpGroupRowNum].RowIndex;
-                    }
-                    else
-                    {
-                        rowIndex = groupList[tmpGroupRowNum - 1].RowIndex + 1;
-                    }
                 }
+                else
+                {
+                        rowIndex = groupList[tmpGroupRowNum - 1].RowIndex + 1;
+                        }
+                    }
                 isUpdateTotal = false;
-            }
+                }
             else
             {
                 int startIndex = 0;
@@ -1533,20 +1533,20 @@ namespace 自定义Panel列表V2
                 {
                     startIndex = groupList[groupRowNum].RowIndex + 1;
                     if (groupRowNum == groupList.Count - 1)
-                    {
+                {
                         endIndex = itemList.Count;
                         if (isShowMore)
                             endIndex -= 1;
-                    }
+                }
                     else
                         endIndex = groupList[groupRowNum + 1].RowIndex;
-                }
-                else
+            }
+            else
+            {
+                if (groupRowNum > 0)
                 {
-                    if (groupRowNum > 0)
-                    {
-                        startIndex = groupList[groupRowNum - 1].RowIndex + 1;
-                    }
+                    startIndex = groupList[groupRowNum - 1].RowIndex + 1;
+                }
                     endIndex = groupRowIndex;
                 }
 
@@ -1555,12 +1555,12 @@ namespace 自定义Panel列表V2
                 for (int i = startIndex; i < endIndex; i++)
                 {
                     if (item.GroupValueIndex < itemList[i].GroupValueIndex)
-                    {
-                        rowIndex = i;
-                        isFind = true;
-                        break;
+                        {
+                            rowIndex = i;
+                            isFind = true;
+                            break;
+                        }
                     }
-                }
                 if (!isFind)
                     rowIndex = endIndex;
             }
@@ -1574,11 +1574,11 @@ namespace 自定义Panel列表V2
                     itemList[i].RowIndex += 1;
                 if (!groupRowIsTop)
                     {
-                    if (itemList[i].RowType == DataPanelRowType.GroupRow && isUpdateTotal)
-                        {//找到最近的一个统计行
-                        DataPanelViewGroupRow groupItem = itemList[i] as DataPanelViewGroupRow;
-                            groupItem.RowCount += 1;
-                            isUpdateTotal = false;
+                if (itemList[i].RowType == DataPanelRowType.GroupRow && isUpdateTotal)
+                {//找到最近的一个统计行
+                    DataPanelViewGroupRow groupItem = itemList[i] as DataPanelViewGroupRow;
+                    groupItem.RowCount += 1;
+                    isUpdateTotal = false;
                         }
                     }
                 }
@@ -1636,19 +1636,19 @@ namespace 自定义Panel列表V2
                 else
                 {
                     item.RowIndex = rowIndex;
-                    InsertItem(rowIndex, item);
-                    //增加统计行
-                    DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
-                    {
-                        IsSelected = false,
-                        RowIndex = rowIndex + 1,
-                        RowType = DataPanelRowType.GroupRow,
+                InsertItem(rowIndex, item);
+                //增加统计行
+                DataPanelViewGroupRow groupItem = new DataPanelViewGroupRow()
+                {
+                    IsSelected = false,
+                    RowIndex = rowIndex + 1,
+                    RowType = DataPanelRowType.GroupRow,
                         GroupDispalyText = item.GroupDispalyText,
                         GroupValue = item.GroupValue,
-                        RowCount = 1
-                    };
-                    InsertItem(groupItem.RowIndex, groupItem);
-                }
+                    RowCount = 1
+                };
+                InsertItem(groupItem.RowIndex, groupItem);
+            }
             }
             else
             {
