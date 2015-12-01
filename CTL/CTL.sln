@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QQ截图", "QQ截图\QQ截�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "无边框窗体边框阴影效果与拖动", "无边框窗体边框阴影效果与拖动\无边框窗体边框阴影效果与拖动.csproj", "{FF8A2014-39B4-49CF-A6AF-456558925FCF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "右上角带数字", "右上角带数字\右上角带数字.csproj", "{C5C9A1D0-13EF-4B4B-9C0E-FDEC883D3E32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FF8A2014-39B4-49CF-A6AF-456558925FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF8A2014-39B4-49CF-A6AF-456558925FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF8A2014-39B4-49CF-A6AF-456558925FCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5C9A1D0-13EF-4B4B-9C0E-FDEC883D3E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5C9A1D0-13EF-4B4B-9C0E-FDEC883D3E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5C9A1D0-13EF-4B4B-9C0E-FDEC883D3E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5C9A1D0-13EF-4B4B-9C0E-FDEC883D3E32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

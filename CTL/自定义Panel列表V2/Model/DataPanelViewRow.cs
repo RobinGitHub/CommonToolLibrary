@@ -11,6 +11,10 @@ namespace 自定义Panel列表V2
     /// </summary>
     public class DataPanelViewRow
     {
+        /// <summary>
+        /// 预留字段
+        /// </summary>
+        public string Key { get; set; }
         public int RowIndex { get; set; }
         public DataRow DataRow { get; set; }
         public bool IsSelected { get; set; }

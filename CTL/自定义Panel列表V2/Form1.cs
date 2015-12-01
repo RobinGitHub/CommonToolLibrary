@@ -64,7 +64,7 @@ namespace 自定义Panel列表V2
 
         void btnGetSelected_Click(object sender, EventArgs e)
         {
-            List<DataPanelViewRow> itemList = this.panelEx1.SelectedRows();
+            List<DataPanelViewRow> itemList = this.panelEx1.SelectedRows;
             if (itemList.Count == 0)
                 return;
             richTextBox1.AppendText("\n===SelectedItems===\n");
@@ -207,7 +207,7 @@ namespace 自定义Panel列表V2
         int updCount = 0;
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            List<DataPanelViewRow> selectedItems = this.panelEx1.SelectedRows();
+            List<DataPanelViewRow> selectedItems = this.panelEx1.SelectedRows;
             foreach (DataPanelViewRow item in selectedItems)
             {
                 item.DataRow["Title"] = "更新" + updCount.ToString();
@@ -218,7 +218,7 @@ namespace 自定义Panel列表V2
 
         private void btnDel_Click(object sender, EventArgs e)
         {
-            List<DataPanelViewRow> selectedItems = this.panelEx1.SelectedRows();
+            List<DataPanelViewRow> selectedItems = this.panelEx1.SelectedRows;
             List<int> indexArr = selectedItems.Select(t => t.RowIndex).ToList();
             this.panelEx1.Remove(indexArr);
         }
@@ -247,7 +247,7 @@ namespace 自定义Panel列表V2
             return control;
         }
 
-        void panelEx1_ItemHeightChanged(object sender, EventArgs e)
+        void panelEx1_ItemHeightChanged(DataPanelViewRow item)
         {
             //DataPanelViewRowControl pnl = sender as DataPanelViewRowControl;
             //this.panelEx1.Refresh(pnl.DataPanelRow.RowIndex);
