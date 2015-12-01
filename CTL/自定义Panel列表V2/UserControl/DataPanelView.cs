@@ -52,11 +52,11 @@ namespace 自定义Panel列表V2
         /// <summary>
         /// 双击内容项
         /// </summary>
-        public event EventHandler ItemDoubleClick;
+        public event SelectionChangedDeletegate ItemDoubleClick;
         /// <summary>
         /// 内容项大小改变
         /// </summary>
-        public event EventHandler ItemHeightChanged;
+        public event SelectionChangedDeletegate ItemHeightChanged;
         #endregion
 
         #region 私有属性
@@ -165,7 +165,7 @@ namespace 自定义Panel列表V2
         /// 最小行高
         /// 如果内容等高，这个就是行高
         /// </summary>
-        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(60), Category("其他"), Description("最小行高 如果内容等高，这个就是行高")]
         public int MinRowHeight
         {
             get { return minRowHeight; }
@@ -350,6 +350,17 @@ namespace 自定义Panel列表V2
         public int Count
         {
             get { return itemList.Count; }
+        }
+        #endregion
+
+        #region 所有行
+        /// <summary>
+        /// 所有行
+        /// </summary>
+        [Browsable(false)]
+        public List<DataPanelViewRow> Rows
+        {
+            get { return itemList; }
         }
         #endregion
 
@@ -1334,18 +1345,21 @@ namespace 自定义Panel列表V2
         /// 返回选中的数据
         /// </summary>
         /// <returns></returns>
-        public List<DataPanelViewRow> SelectedRows()
+        public List<DataPanelViewRow> SelectedRows
         {
-            List<DataPanelViewRow> items = new List<DataPanelViewRow>();
-
-            foreach (DataPanelViewRow item in itemList)
+            get
             {
-                if (item.IsSelected)
+                List<DataPanelViewRow> items = new List<DataPanelViewRow>();
+
+                foreach (DataPanelViewRow item in itemList)
                 {
-                    items.Add(item);
+                    if (item.IsSelected)
+                    {
+                        items.Add(item);
+                    }
                 }
+                return items;
             }
-            return items;
         }
         #endregion
 
@@ -1710,15 +1724,16 @@ namespace 自定义Panel列表V2
                     displayRectangleHeight += control.Height - dpvr.Height;
                     dpvr.Height = control.Height;
                     ContentLengthChange();
-                    ItemHeightChanged(sender, e);
+                    ItemHeightChanged(dpvr);
                 }
             }
         }
 
         void item_DoubleClick(object sender, EventArgs e)
         {
+            DataPanelViewRowControl item = sender as DataPanelViewRowControl;
             if (ItemDoubleClick != null)
-                ItemDoubleClick(sender, e);
+                ItemDoubleClick(item.DataPanelRow);
         }
         private void Item_MouseMove(object sender, MouseEventArgs e)
         {
@@ -1747,8 +1762,11 @@ namespace 自定义Panel列表V2
         {
             DataPanelViewRowControl dpvrc = sender as DataPanelViewRowControl;
             DataPanelViewRow tmpItem = itemList.First(t => t.RowIndex == dpvrc.DataPanelRow.RowIndex);
-            bool isFocus = tmpItem.IsFocus;
-            dpvrc.Parent.Focus();//只有点击的才是Focus,Focus永远只有一个
+            if (tmpItem == null)//这里会出现当前控件上有个按钮，点击后删除了该控件，但是还是会进入这个方法
+                return;
+            bool isFocus = tmpItem.IsFocus; 
+            if (dpvrc.Parent != null)
+                dpvrc.Parent.Focus();//只有点击的才是Focus,Focus永远只有一个
 
             #region Control + 鼠标
             if (multiSelect && (Control.ModifierKeys & Keys.Control) == Keys.Control)// CTRL is pressed    
