@@ -44,7 +44,7 @@ namespace 右上角带数字
 
         private static Image GetNumberBack(int len)
         {
-            Bitmap bmp = new Bitmap((len + 1) * 10, 15);
+            Bitmap bmp = new Bitmap((len + 1) * 10, 20);
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.DrawImage(_imgNumbers, new Rectangle(0, 0, 10, 20), new RectangleF(0, 20, 10, 20), GraphicsUnit.Pixel);
