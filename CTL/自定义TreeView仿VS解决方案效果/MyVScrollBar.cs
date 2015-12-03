@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Runtime.InteropServices;
 
-namespace 自定义Panel列表V2
+namespace 自定义TreeView仿VS解决方案效果
 {
     //http://blog.csdn.net/tdgx2004/article/details/5864784
     [Designer(typeof(ScrollbarControlDesigner))]
@@ -106,19 +106,13 @@ namespace 自定义Panel列表V2
                 this.moControl = value;
                 if (value != null)
                 {
-                    if (value.GetType() == typeof(DataPanelContainer))
-                    {
-                        value.MouseWheel += pnl_MouseWheel;
-                        //value.SizeChanged += pnl_SizeChanged;
-                        value.Click += pnl_Click;
-                    }
-                    else if (value.GetType() == typeof(DataGridView))
+                    if (value.GetType() == typeof(DataGridView))
                     {
                         DataGridView dgv = value as DataGridView;
                         dgv.RowStateChanged += dgv_RowStateChanged;
                         dgv.SizeChanged += dgv_SizeChanged;
                     }
-                    else if (value.GetType() == typeof(TreeView))
+                    else if (value.GetType() == typeof(TreeViewEx))
                     {
                         value.MouseWheel += tv_MouseWheel;
                         value.SizeChanged += tv_SizeChanged;
@@ -128,41 +122,26 @@ namespace 自定义Panel列表V2
             }
         }
 
-        
+
         #endregion
         #region TreeView
         void tv_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            TreeViewEx tv = sender as TreeViewEx;
+            this.Value = tv.VerticalScrollValue;
         }
 
         void tv_SizeChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            TreeViewEx tv = sender as TreeViewEx;
+
+            UpdateScrollbar(tv.Scrollable, tv.Height, tv.ItemHeight * (tv.GetNodeCount(true)), tv.VerticalScrollValue, tv.ItemHeight * 3, tv.ItemHeight);
         }
 
         void tv_MouseWheel(object sender, MouseEventArgs e)
         {
-            TreeView tv = sender as TreeView;
-            //this.Value = 
-        }
-        #endregion
-        #region Panel 的点击事件
-        void pnl_Click(object sender, EventArgs e)
-        {
-            DataPanelContainer pnl = sender as DataPanelContainer;
-            this.Value = pnl.VScrollValue;
-        }
-
-        void pnl_SizeChanged(object sender, EventArgs e)
-        {
-            DataPanelContainer pnl = sender as DataPanelContainer;
-            UpdateScrollbar(pnl.VScrollVisible, pnl.Height, pnl.DisplayRectangleHeight, pnl.VScrollValue, pnl.LargeChange, pnl.SmallChange);
-        }
-
-        void pnl_MouseWheel(object sender, MouseEventArgs e)
-        {
-            MoveThumbMouseWheel(e.Delta > 0);
+            TreeViewEx tv = sender as TreeViewEx;
+            this.Value = tv.VerticalScrollValue;
         }
         #endregion
 
@@ -271,12 +250,7 @@ namespace 自定义Panel列表V2
         {
             if (this.moControl == null)
                 return;
-            if (this.moControl.GetType() == typeof(DataPanelContainer))
-            {
-                DataPanelContainer control = this.moControl as DataPanelContainer;
-                UpdateScrollbar(control.VScrollVisible, control.Height, control.DisplayRectangleHeight, control.VScrollValue, control.LargeChange, control.SmallChange);
-            }
-            else if (this.moControl.GetType() == typeof(DataGridView))
+            if (this.moControl.GetType() == typeof(DataGridView))
             {
                 DataGridView control = this.moControl as DataGridView;
                 int rowHeight = 0;
@@ -289,6 +263,12 @@ namespace 自定义Panel列表V2
                 }
                 bool isVisible = control.DisplayedRowCount(false) != control.RowCount;
                 this.UpdateScrollbar(isVisible, control.Height, totalRowHeight, control.VerticalScrollingOffset, rowHeight * 3, rowHeight);
+            }
+            else if (this.moControl.GetType() == typeof(TreeViewEx))
+            {
+                TreeViewEx control = this.moControl as TreeViewEx;
+
+                UpdateScrollbar(control.Scrollable, control.Height, control.ItemHeight * (control.GetNodeCount(true)), control.VerticalScrollValue, control.ItemHeight * 3, control.ItemHeight);
             }
         }
         #endregion
@@ -628,10 +608,10 @@ namespace 自定义Panel列表V2
                     DataGridView dgv = this.moControl as DataGridView;
                     dgv.FirstDisplayedScrollingRowIndex = CalcRowIndex(dgv, moValue);
                 }
-                else if (this.moControl.GetType() == typeof(DataPanelContainer))
+                else if (this.moControl.GetType() == typeof(TreeViewEx))
                 {
-                    DataPanelContainer pnl = this.moControl as DataPanelContainer;
-                    pnl.VScrollValue = moValue;
+                    TreeViewEx pnl = this.moControl as TreeViewEx;
+                    pnl.VerticalScrollValue = moValue;
                 }
             }
             #endregion

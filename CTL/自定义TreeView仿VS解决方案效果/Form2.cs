@@ -10,25 +10,18 @@ using System.Xml;
 
 namespace 自定义TreeView仿VS解决方案效果
 {
-    public partial class Form1 : Form
+    public partial class Form2 : Form
     {
-        public Form1()
+        public Form2()
         {
             InitializeComponent();
-            this.treeViewMenu.MouseWheel += treeViewMenu_MouseWheel;
+            this.myVScrollBar1.BindControl = this.treeViewEx1;
         }
 
-        void treeViewMenu_MouseWheel(object sender, MouseEventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            richTextBox1.AppendText(this.treeViewMenu.VerticalScrollValue.ToString() + "\n");
-            richTextBox1.ScrollToCaret();
-        }
-
-        private void btnLoad_Click(object sender, EventArgs e)
-        {
-            richTextBox1.Clear();
             Deserialize(treeViewEx1, "tree.xml");
-            Deserialize(treeViewMenu, "tree.xml");
+            this.myVScrollBar1.UpdateScrollbar();
         }
 
         public void Deserialize(TreeView tv, string fn)
@@ -58,20 +51,15 @@ namespace 自定义TreeView仿VS解决方案效果
             }
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
-        {
-            treeViewMenu.SelectedNode.Text = "asdf";
-            treeViewEx1.SelectedNode.Text = "asdf";
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            this.treeViewMenu.VerticalScrollValue = int.Parse(txtPos.Text);
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
-            richTextBox1.AppendText(this.treeViewMenu.VerticalScrollValue.ToString() + "\n");
+            richTextBox1.AppendText(this.treeViewEx1.VerticalScrollVisible.ToString() + "\n");
+            richTextBox1.ScrollToCaret();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            richTextBox1.AppendText(this.treeViewEx1.HorizontalScrollVisible.ToString() + "\n");
             richTextBox1.ScrollToCaret();
         }
     }
