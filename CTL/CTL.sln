@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "无边框窗体边框阴影
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "右上角带数字", "右上角带数字\右上角带数字.csproj", "{C5C9A1D0-13EF-4B4B-9C0E-FDEC883D3E32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "自定义TreeView仿VS解决方案效果", "自定义TreeView仿VS解决方案效果\自定义TreeView仿VS解决方案效果.csproj", "{9D5C11DA-E69C-472A-A6C4-FF8310E75EDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{C5C9A1D0-13EF-4B4B-9C0E-FDEC883D3E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5C9A1D0-13EF-4B4B-9C0E-FDEC883D3E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5C9A1D0-13EF-4B4B-9C0E-FDEC883D3E32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D5C11DA-E69C-472A-A6C4-FF8310E75EDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D5C11DA-E69C-472A-A6C4-FF8310E75EDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D5C11DA-E69C-472A-A6C4-FF8310E75EDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D5C11DA-E69C-472A-A6C4-FF8310E75EDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

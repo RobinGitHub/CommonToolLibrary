@@ -33,6 +33,8 @@ namespace 右上角带数字
                 {
                     Image numberImage = GetNumberImage(number);
                     Image backImage = GetNumberBack(len);
+
+                    //在指定的位置使用原始物理大小绘制指定的 Image。
                     g.DrawImage(Resources.T, new Point(0, 10));
                     g.DrawImage(backImage, new Point(8, 0));
                     g.DrawImage(numberImage, new Point(13, 0));
@@ -47,6 +49,13 @@ namespace 右上角带数字
             Bitmap bmp = new Bitmap((len + 1) * 10, 20);
             using (Graphics g = Graphics.FromImage(bmp))
             {
+                //在指定位置并且按指定大小绘制指定的 Image 的指定部分。
+
+                //四个参数的意思
+                //要绘制的 Image
+                //它指定所绘制图像的位置和大小。将图像进行缩放以适合该矩形。
+                //它指定 image 对象中要绘制的部分。
+                //枚举的成员，它指定 srcRect 参数所用的度量单位。
                 g.DrawImage(_imgNumbers, new Rectangle(0, 0, 10, 20), new RectangleF(0, 20, 10, 20), GraphicsUnit.Pixel);
                 g.DrawImage(_imgNumbers, new Rectangle(10, 0, (len - 1) * 10, 20), new Rectangle(10, 20, 80, 20), GraphicsUnit.Pixel);
                 g.DrawImage(_imgNumbers, new Rectangle(len * 10, 0, 10, 20), new Rectangle(90, 20, 10, 20), GraphicsUnit.Pixel);
@@ -69,6 +78,7 @@ namespace 右上角带数字
                         Image img = _imgNumberDict[single];
                         if (img != null)
                         {
+                            //在指定位置并且按指定大小绘制指定的 Image。
                             g.DrawImage(img, new Rectangle(10 * (len - 1 - i), -1, img.Width, img.Height));
                         }
                     }
@@ -83,8 +93,10 @@ namespace 右上角带数字
             if (number >= 0 && number < 10)
             {
                 Bitmap bmp = new Bitmap(10, 20);
+                //从指定的 Image 创建新的 Graphics。
                 using (Graphics g = Graphics.FromImage(bmp))
                 {
+                    //在指定的位置使用原始物理大小绘制指定的 Image。
                     g.DrawImage(_imgNumbers, new Point(-number * 10, 0));
                 }
                 return bmp;
