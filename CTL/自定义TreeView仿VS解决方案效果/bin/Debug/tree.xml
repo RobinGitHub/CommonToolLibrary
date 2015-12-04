@@ -11,6 +11,48 @@
       <References Text="References" IsExpanded="False" />
       <File Text="$File$" IsExpanded="False" />
       <File Text="$File$" IsExpanded="False" />
+      <Project Text="$Name:  $$Name: " IsExpanded="True">
+        <Properties Text="Properties" IsExpanded="False" />
+        <References Text="References" IsExpanded="False" />
+        <File Text="$File$" IsExpanded="False" />
+        <File Text="$File$" IsExpanded="False" />
+      </Project>
+    </Project>
+    <Project Text="$Name:  $$Name: " IsExpanded="True">
+      <Properties Text="Properties" IsExpanded="False" />
+      <References Text="References" IsExpanded="False" />
+      <File Text="$File$" IsExpanded="False" />
+      <File Text="$File$" IsExpanded="False" />
+      <Project Text="$Name:  $$Name: " IsExpanded="True">
+        <Properties Text="Properties" IsExpanded="False" />
+        <References Text="References" IsExpanded="False" />
+        <File Text="$File$" IsExpanded="False" />
+        <File Text="$File$" IsExpanded="False" />
+      </Project>
+    </Project>
+    <Project Text="$Name:  $$Name: " IsExpanded="True">
+      <Properties Text="Properties" IsExpanded="False" />
+      <References Text="References" IsExpanded="False" />
+      <File Text="$File$" IsExpanded="False" />
+      <File Text="$File$" IsExpanded="False" />
+      <Project Text="$Name:  $$Name: " IsExpanded="True">
+        <Properties Text="Properties" IsExpanded="False" />
+        <References Text="References" IsExpanded="False" />
+        <File Text="$File$" IsExpanded="False" />
+        <File Text="$File$" IsExpanded="False" />
+      </Project>
+    </Project>
+    <Project Text="$Name:  $$Name: " IsExpanded="True">
+      <Properties Text="Properties" IsExpanded="False" />
+      <References Text="References" IsExpanded="False" />
+      <File Text="$File$" IsExpanded="False" />
+      <File Text="$File$" IsExpanded="False" />
+      <Project Text="$Name:  $$Name: " IsExpanded="True">
+        <Properties Text="Properties" IsExpanded="False" />
+        <References Text="References" IsExpanded="False" />
+        <File Text="$File$" IsExpanded="False" />
+        <File Text="$File$" IsExpanded="False" />
+      </Project>
     </Project>
   </Solution>
 </XTree>

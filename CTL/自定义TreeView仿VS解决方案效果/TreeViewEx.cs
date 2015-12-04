@@ -208,7 +208,7 @@ namespace 自定义TreeView仿VS解决方案效果
 
 
             //绘制加减号，做了一些硬编码
-            if (e.Node.Nodes.Count > 0)
+            if (e.Node.Nodes.Count > 0 && minusImage != null && plusImage != null)
             {
                 e.Graphics.DrawImage((e.Node.IsExpanded ? minusImage : plusImage), center);
             }
@@ -241,9 +241,9 @@ namespace 自定义TreeView仿VS解决方案效果
 
         [DllImport("user32.dll")]
         static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, UIntPtr wParam, IntPtr lParam);
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static public extern bool GetScrollInfo(System.IntPtr hwnd, int fnBar, ref LPSCROLLINFO lpsi);
+        //[DllImport("user32.dll")]
+        //[return: MarshalAs(UnmanagedType.Bool)]
+        //static public extern bool GetScrollInfo(System.IntPtr hwnd, int fnBar, ref LPSCROLLINFO lpsi);
 
 
         public const int sb_horz = 0;//滚动条水平常量
@@ -274,7 +274,6 @@ namespace 自定义TreeView仿VS解决方案效果
             }
             set
             {
-                var t = this.DisplayRectangle;
                 SetScrollPos(this.Handle, sb_vert, value, true);
 
                 int param = getSBFromScrollEventType(ScrollEventType.ThumbPosition);
@@ -302,29 +301,29 @@ namespace 自定义TreeView仿VS解决方案效果
                 SendMessage(this.Handle, (uint)WM_HSCROLL, (System.UIntPtr)param, (System.IntPtr)0);
             }
         }
-
-        public bool VerticalScrollVisible
-        {
-            get
-            {
-                LPSCROLLINFO si = new LPSCROLLINFO();
-                si.cbSize = (uint)Marshal.SizeOf(si);
-                si.fMask = (uint)ScrollInfoMask.SIF_DISABLEDNOSCROLL;
-                bool rlt = GetScrollInfo(this.Handle, sb_vert, ref si);
-                return si.nMax > 0;
-            }
-        }
-        public bool HorizontalScrollVisible
-        {
-            get
-            {
-                LPSCROLLINFO si = new LPSCROLLINFO();
-                si.cbSize = (uint)Marshal.SizeOf(si);
-                si.fMask = (uint)ScrollInfoMask.SIF_DISABLEDNOSCROLL;
-                bool rlt = GetScrollInfo(this.Handle, sb_horz, ref si);
-                return si.nMax > 0;
-            }
-        }
+        //没有效果
+        //public bool VerticalScrollVisible
+        //{
+        //    get
+        //    {
+        //        LPSCROLLINFO si = new LPSCROLLINFO();
+        //        si.cbSize = (uint)Marshal.SizeOf(si);
+        //        si.fMask = (uint)ScrollInfoMask.SIF_DISABLEDNOSCROLL;
+        //        bool rlt = GetScrollInfo(this.Handle, sb_vert, ref si);
+        //        return si.nMax > 0;
+        //    }
+        //}
+        //public bool HorizontalScrollVisible
+        //{
+        //    get
+        //    {
+        //        LPSCROLLINFO si = new LPSCROLLINFO();
+        //        si.cbSize = (uint)Marshal.SizeOf(si);
+        //        si.fMask = (uint)ScrollInfoMask.SIF_DISABLEDNOSCROLL;
+        //        bool rlt = GetScrollInfo(this.Handle, sb_horz, ref si);
+        //        return si.nMax > 0;
+        //    }
+        //}
 
 
 
@@ -367,26 +366,26 @@ namespace 自定义TreeView仿VS解决方案效果
         }
 
 
-        public struct LPSCROLLINFO
-        {
-            public uint cbSize;
-            public uint fMask;
-            public int nMin;
-            public int nMax;
-            public uint nPage;
-            public int nPos;
-            public int nTrackPos;
-        }
+        //public struct LPSCROLLINFO
+        //{
+        //    public uint cbSize;
+        //    public uint fMask;
+        //    public int nMin;
+        //    public int nMax;
+        //    public uint nPage;
+        //    public int nPos;
+        //    public int nTrackPos;
+        //}
 
-        public enum ScrollInfoMask : uint
-        { 
-            SIF_RANGE =0x1,
-            SIF_PAGE = 0x2,
-            SIF_POS = 0x4,
-            SIF_DISABLEDNOSCROLL = 0x8,
-            SIF_TRACKPOS = 0x10,
-            SIF_ALL = (SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS),
-        }
+        //public enum ScrollInfoMask : uint
+        //{ 
+        //    SIF_RANGE =0x1,
+        //    SIF_PAGE = 0x2,
+        //    SIF_POS = 0x4,
+        //    SIF_DISABLEDNOSCROLL = 0x8,
+        //    SIF_TRACKPOS = 0x10,
+        //    SIF_ALL = (SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS),
+        //}
         #endregion
 
 

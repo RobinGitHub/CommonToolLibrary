@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace 自定义TreeView仿VS解决方案效果
 {
@@ -117,6 +118,9 @@ namespace 自定义TreeView仿VS解决方案效果
                         value.MouseWheel += tv_MouseWheel;
                         value.SizeChanged += tv_SizeChanged;
                         value.Click += tv_Click;
+
+                        TreeViewEx tv = value as TreeViewEx;
+                        tv.AfterSelect += tv_AfterSelect;
                     }
                 }
             }
@@ -125,23 +129,53 @@ namespace 自定义TreeView仿VS解决方案效果
 
         #endregion
         #region TreeView
+        void tv_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            tv_SizeChanged(sender, e);
+        }
+
         void tv_Click(object sender, EventArgs e)
         {
             TreeViewEx tv = sender as TreeViewEx;
-            this.Value = tv.VerticalScrollValue;
+            this.Value = tv.VerticalScrollValue * tv.ItemHeight;
         }
 
         void tv_SizeChanged(object sender, EventArgs e)
         {
             TreeViewEx tv = sender as TreeViewEx;
+            int totalHeight = 0;
+            NextNode(tv.Nodes, ref totalHeight);
 
-            UpdateScrollbar(tv.Scrollable, tv.Height, tv.ItemHeight * (tv.GetNodeCount(true)), tv.VerticalScrollValue, tv.ItemHeight * 3, tv.ItemHeight);
+            if (tv.Height - tv.DisplayRectangle.Height >= 17)//当出现水平滚动条
+                totalHeight += (tv.ItemHeight * 2);
+            
+            UpdateScrollbar(tv.Scrollable, tv.Height, totalHeight, tv.VerticalScrollValue * tv.ItemHeight, tv.ItemHeight * 3, tv.ItemHeight);
+        }
+
+        private void NextNode(TreeNodeCollection tnc, ref int totalHeight)
+        {
+            foreach (TreeNode item in tnc)
+            {
+                totalHeight += item.TreeView.ItemHeight;
+                if (item.Nodes.Count > 0 && item.IsExpanded)
+                {
+                    NextNode(item.Nodes, ref totalHeight);
+                }
+            }
         }
 
         void tv_MouseWheel(object sender, MouseEventArgs e)
         {
-            TreeViewEx tv = sender as TreeViewEx;
-            this.Value = tv.VerticalScrollValue;
+            Thread t = new Thread(() =>
+            {
+                this.Invoke((MethodInvoker)delegate
+                {//执行完后才能得到滚动的值，所有这里用异步的方式去解决这个问题
+                    //VerticalScrollValue 返回的是移动的行数
+                    TreeViewEx tv = sender as TreeViewEx;
+                    this.Value = tv.VerticalScrollValue * tv.ItemHeight;
+                });
+            });
+            t.Start();
         }
         #endregion
 
@@ -267,8 +301,13 @@ namespace 自定义TreeView仿VS解决方案效果
             else if (this.moControl.GetType() == typeof(TreeViewEx))
             {
                 TreeViewEx control = this.moControl as TreeViewEx;
+                int totalHeight = 0;
+                NextNode(control.Nodes, ref totalHeight);
 
-                UpdateScrollbar(control.Scrollable, control.Height, control.ItemHeight * (control.GetNodeCount(true)), control.VerticalScrollValue, control.ItemHeight * 3, control.ItemHeight);
+                if (control.Height - control.DisplayRectangle.Height >= 17)//当高度相同时还是会出现滚动条
+                    totalHeight += (control.ItemHeight * 2);
+
+                UpdateScrollbar(control.Scrollable, control.Height, totalHeight, control.VerticalScrollValue * control.ItemHeight, control.ItemHeight * 3, control.ItemHeight);
             }
         }
         #endregion
@@ -610,8 +649,8 @@ namespace 自定义TreeView仿VS解决方案效果
                 }
                 else if (this.moControl.GetType() == typeof(TreeViewEx))
                 {
-                    TreeViewEx pnl = this.moControl as TreeViewEx;
-                    pnl.VerticalScrollValue = moValue;
+                    TreeViewEx tv = this.moControl as TreeViewEx;
+                    tv.VerticalScrollValue = Convert.ToInt32(Math.Ceiling((decimal)moValue / (decimal)tv.ItemHeight));
                 }
             }
             #endregion
