@@ -10,11 +10,12 @@ using System.Windows.Forms.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
 
+
 namespace 自定义TreeView仿VS解决方案效果
 {
     //http://blog.csdn.net/tdgx2004/article/details/5864784
     [Designer(typeof(ScrollbarControlDesigner))]
-    public partial class MyVScrollBar : UserControl
+    public partial class MyHScrollBar : UserControl
     {
         #region 属性
         /// <summary>
@@ -38,7 +39,7 @@ namespace 自定义TreeView仿VS解决方案效果
         /// <summary>
         /// 滑块到顶部的偏移量
         /// </summary>
-        protected int moThumbTop = 0;
+        protected int moThumbLeft = 0;
         protected bool moAutoSize = false;
         private bool moThumbDown = false;
         private bool moThumbDragging = false;
@@ -70,7 +71,7 @@ namespace 自定义TreeView仿VS解决方案效果
         #endregion
 
         #region 构造函数
-        public MyVScrollBar()
+        public MyHScrollBar()
         {
             InitializeComponent();
 
@@ -81,13 +82,14 @@ namespace 自定义TreeView仿VS解决方案效果
             moChannelColor = Color.FromArgb(225, 225, 225);
             moThumbColor = Color.FromArgb(124, 131, 135);
 
+            this.Height = 8;
+
             customScrollInfo = new CustomScroll();
             customScrollInfo.TrackHeight = this.Height;
             customScrollInfo.DisplayHeight = customScrollInfo.TrackHeight;
             customScrollInfo.DisplayRectangleHeight = customScrollInfo.TrackHeight;
 
-            this.Width = 8;
-            base.MinimumSize = new Size(this.Width, minSize);
+            base.MinimumSize = new Size(minSize, this.Height);
         }
         #endregion
 
@@ -110,75 +112,53 @@ namespace 自定义TreeView仿VS解决方案效果
                     if (value.GetType() == typeof(DataGridView))
                     {
                         DataGridView dgv = value as DataGridView;
-                        dgv.RowStateChanged += dgv_RowStateChanged;
-                        dgv.RowHeightChanged += dgv_RowHeightChanged;
                         dgv.SizeChanged += dgv_SizeChanged;
-                        dgv.RowsAdded += dgv_RowsAdded;
-                        dgv.RowsRemoved += dgv_RowsRemoved;
+                        dgv.CellStateChanged += dgv_CellStateChanged;
                     }
                     else if (value.GetType() == typeof(TreeViewEx))
                     {
-                        value.MouseWheel += tv_MouseWheel;
                         value.SizeChanged += tv_SizeChanged;
-                        value.Click += tv_Click;
 
                         TreeViewEx tv = value as TreeViewEx;
                         tv.AfterSelect += tv_AfterSelect;
+                        
                     }
                 }
             }
         }
 
+        
         #endregion
         #region TreeView
         void tv_AfterSelect(object sender, TreeViewEventArgs e)
         {
             tv_SizeChanged(sender, e);
         }
-
-        void tv_Click(object sender, EventArgs e)
-        {
-            TreeViewEx tv = sender as TreeViewEx;
-            this.Value = tv.VerticalScrollValue * tv.ItemHeight;
-        }
-
         void tv_SizeChanged(object sender, EventArgs e)
         {
+            //判断当前展开的节点有没有超出显示的宽度
             TreeViewEx tv = sender as TreeViewEx;
-            int totalHeight = 0;
-            NextNode(tv.Nodes, ref totalHeight);
+            int displayRectangleWidth = tv.Width;
+            tv_HScrollBarVisible(tv.Nodes, ref displayRectangleWidth);
+            bool isVisible = displayRectangleWidth > tv.Width;
 
-            if (tv.Height - tv.DisplayRectangle.Height >= 17)//当出现水平滚动条
-                totalHeight += (tv.ItemHeight * 2);
-
-            bool isVisible = totalHeight > tv.Height;
-            UpdateScrollbar(isVisible, tv.Height, totalHeight, tv.VerticalScrollValue * tv.ItemHeight, tv.ItemHeight * 3, tv.ItemHeight);
+            UpdateScrollbar(isVisible, tv.Width, displayRectangleWidth, tv.HorizontalScrollValue, tv.ItemHeight * 3, tv.ItemHeight);
         }
 
-        private void NextNode(TreeNodeCollection tnc, ref int totalHeight)
+        private void tv_HScrollBarVisible(TreeNodeCollection tnc, ref int maxWidth)
         {
             foreach (TreeNode item in tnc)
             {
-                totalHeight += item.TreeView.ItemHeight;
+                if (item.Bounds.Width + item.Bounds.Left > item.TreeView.Width)
+                {
+                    if (maxWidth < item.Bounds.Width + item.Bounds.Left)
+                        maxWidth = item.Bounds.Width + item.Bounds.Left;
+                }
                 if (item.Nodes.Count > 0 && item.IsExpanded)
                 {
-                    NextNode(item.Nodes, ref totalHeight);
+                    tv_HScrollBarVisible(item.Nodes, ref maxWidth);
                 }
             }
-        }
-
-        void tv_MouseWheel(object sender, MouseEventArgs e)
-        {
-            Thread t = new Thread(() =>
-            {
-                this.Invoke((MethodInvoker)delegate
-                {//执行完后才能得到滚动的值，所有这里用异步的方式去解决这个问题
-                    //VerticalScrollValue 返回的是移动的行数
-                    TreeViewEx tv = sender as TreeViewEx;
-                    this.Value = tv.VerticalScrollValue * tv.ItemHeight;
-                });
-            });
-            t.Start();
         }
         #endregion
 
@@ -188,91 +168,35 @@ namespace 自定义TreeView仿VS解决方案效果
         void dgv_SizeChanged(object sender, EventArgs e)
         {
             DataGridView dgv = sender as DataGridView;
-            int rowHeight = 23;
-            int totalRowHeight = 0;
-            foreach (DataGridViewRow item in dgv.Rows)
-            {
-                totalRowHeight += item.Height;
-            } 
-            //如果出现水平滚动条，显示的高度要加上滚动条的高度和间隙            
-            bool isVisible = dgv.DisplayedRowCount(false) != dgv.RowCount;
-            var t = dgv.DisplayRectangle.Height;
-            if (dgv_HScrollBarVisible(dgv))
-            {
-                totalRowHeight += dgv.RowTemplate.Height;
-            }
-            if (dgv.BorderStyle != System.Windows.Forms.BorderStyle.None)
-            {
-                totalRowHeight -= 2;
-            }
-            this.UpdateScrollbar(isVisible, dgv.Height, totalRowHeight + dgv.ColumnHeadersHeight, dgv.VerticalScrollingOffset, rowHeight * 3, rowHeight);
-        }
-
-        private bool dgv_HScrollBarVisible(DataGridView control)
-        {
+            int colWidth = 0;
+            if (dgv.Columns.Count > 0)
+                colWidth = dgv.Columns[0].Width;
             int totalRowWidth = 0;
-            foreach (DataGridViewColumn item in control.Columns)
+            foreach (DataGridViewColumn item in dgv.Columns)
             {
                 totalRowWidth += item.Width;
             }
-            int displayWidth = control.Width - control.RowHeadersWidth;
+            int displayWidth = dgv.Width - dgv.RowHeadersWidth;
 
-            if (control.DisplayedRowCount(false) != control.RowCount)
+            if (dgv.DisplayedRowCount(false) != dgv.RowCount)
             {
                 displayWidth -= 17;
             }
-            if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            if (dgv.BorderStyle != System.Windows.Forms.BorderStyle.None)
             {
                 displayWidth -= 2;
             }
-            return displayWidth < totalRowWidth;
-        }
+            bool isVisible = displayWidth < totalRowWidth;
 
-        void dgv_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
-        {//Click 会改变 Row 的状态
+            this.UpdateScrollbar(isVisible, displayWidth, totalRowWidth, dgv.HorizontalScrollingOffset, colWidth * 3, colWidth);
+        }
+        void dgv_CellStateChanged(object sender, DataGridViewCellStateChangedEventArgs e)
+        {
             DataGridView dgv = sender as DataGridView;
-            if (dgv.VerticalScrollingOffset != this.moValue)
+            if (dgv.HorizontalScrollingOffset != this.moValue)
             {
-                this.Value = dgv.VerticalScrollingOffset;
+                this.Value = dgv.HorizontalScrollingOffset;
             }
-        }
-        void dgv_RowHeightChanged(object sender, DataGridViewRowEventArgs e)
-        {
-            dgv_SizeChanged(sender, e);
-        }
-        void dgv_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
-        {
-            dgv_SizeChanged(sender, e);
-        }
-
-        void dgv_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            dgv_SizeChanged(sender, e);
-        }
-        #endregion
-
-        #region 计算 DataGridView 根据偏移量 得出行号
-        /// <summary>
-        /// 计算 DataGridView 根据偏移量 得出行号
-        /// </summary>
-        /// <param name="dgv"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
-        private int CalcRowIndex(DataGridView dgv, int offset)
-        {
-            //偏移量 就等于 内容移动的高度
-            int totalHeight = 0;
-            int rowIndex = 0;
-            foreach (DataGridViewRow item in dgv.Rows)
-            {
-                if (totalHeight - offset >= 0 && totalHeight - offset <= item.Height)
-                {
-                    rowIndex = item.Index;
-                    break;
-                }
-                totalHeight += item.Height;
-            }
-            return rowIndex;
         }
         #endregion
 
@@ -283,12 +207,12 @@ namespace 自定义TreeView仿VS解决方案效果
         /// 当内容增减时要调用此方法，重新计算滚动条信息
         /// </summary>
         /// <param name="isVisible">控件的滚动条显示隐藏</param>
-        /// <param name="displayHeight">显示的高度</param>
-        /// <param name="displayRectangleHeight">内容的高度</param>
+        /// <param name="displayWidth">显示的高度</param>
+        /// <param name="displayRectangleWidth">内容的高度</param>
         /// <param name="offset">控件滚动条的偏移量</param>
         /// <param name="largeChange">控件滚动的最大距离</param>
         /// <param name="smallChange">控件滚动的最小距离</param>
-        private void UpdateScrollbar(bool isVisible, int displayHeight, int displayRectangleHeight, int offset, int largeChange, int smallChange)
+        private void UpdateScrollbar(bool isVisible, int displayWidth, int displayRectangleWidth, int offset, int largeChange, int smallChange)
         {
             if (this.moControl == null)
                 return;
@@ -296,22 +220,20 @@ namespace 自定义TreeView仿VS解决方案效果
             this.Visible = isVisible;
             customScrollInfo.IsVisible = isVisible;
             customScrollInfo.Offset = offset;
-            customScrollInfo.TrackHeight = this.Height;
-            customScrollInfo.DisplayHeight = displayHeight;
-            customScrollInfo.DisplayRectangleHeight = displayRectangleHeight;
+            customScrollInfo.TrackHeight = this.Width;
+            customScrollInfo.DisplayHeight = displayWidth;
+            customScrollInfo.DisplayRectangleHeight = displayRectangleWidth;
 
             if (largeChange == 0)
                 largeChange = 50;
             if (smallChange == 0)
                 smallChange = 30;
 
-            customScrollInfo.LargeChange = largeChange;
-            customScrollInfo.SmallChange = smallChange;
             customScrollInfo.UpdateThumbHeight();
-            if (displayRectangleHeight > 0)
+            if (displayRectangleWidth > 0)
             {
-                moLargeChange = this.Height * largeChange / displayRectangleHeight;
-                moSmallChange = this.Height * smallChange / displayRectangleHeight;
+                moLargeChange = this.Height * largeChange / displayRectangleWidth;
+                moSmallChange = this.Height * smallChange / displayRectangleWidth;
                 if (moSmallChange == 0)
                 { //内容太多
                     moSmallChange = 2;
@@ -334,37 +256,35 @@ namespace 自定义TreeView仿VS解决方案效果
             if (this.moControl.GetType() == typeof(DataGridView))
             {
                 DataGridView control = this.moControl as DataGridView;
-                int rowHeight = 0;
-                int totalRowHeight = 0;
-                foreach (DataGridViewRow item in control.Rows)
+                int colWidth = 0;
+                if (control.Columns.Count > 0)
+                    colWidth = control.Columns[0].Width;
+                int totalRowWidth = 0;
+                foreach (DataGridViewColumn item in control.Columns)
                 {
-                    if (rowHeight == 0)
-                        rowHeight = item.Height;
-                    totalRowHeight += item.Height;
+                    totalRowWidth += item.Width;
                 }
-                if (dgv_HScrollBarVisible(control))
+                int displayWidth = control.Width - control.RowHeadersWidth;
+
+                if (control.DisplayedRowCount(false) != control.RowCount)
                 {
-                    totalRowHeight += control.RowTemplate.Height;
+                    displayWidth -= 17;
                 }
                 if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
                 {
-                    totalRowHeight -= 2;
+                    displayWidth -= 2;
                 }
-                bool isVisible = control.DisplayedRowCount(false) != control.RowCount;
-                this.UpdateScrollbar(isVisible, control.Height, totalRowHeight + control.ColumnHeadersHeight, control.VerticalScrollingOffset, rowHeight * 3, rowHeight);
+                bool isVisible = displayWidth < totalRowWidth;
+                this.UpdateScrollbar(isVisible, displayWidth, totalRowWidth, control.VerticalScrollingOffset, colWidth * 3, colWidth);
             }
             else if (this.moControl.GetType() == typeof(TreeViewEx))
             {
                 TreeViewEx control = this.moControl as TreeViewEx;
-                int totalHeight = 0;
-                NextNode(control.Nodes, ref totalHeight);
+                int displayRectangleWidth = control.Width;
+                tv_HScrollBarVisible(control.Nodes, ref displayRectangleWidth);
+                bool isVisible = displayRectangleWidth > control.Width;
 
-                if (control.Height - control.DisplayRectangle.Height >= 17)//当高度相同时还是会出现滚动条
-                { 
-                    totalHeight += (control.ItemHeight * 2);
-                }
-                bool isVisible = totalHeight > control.Height;
-                UpdateScrollbar(isVisible, control.Height, totalHeight, control.VerticalScrollValue * control.ItemHeight, control.ItemHeight * 3, control.ItemHeight);
+                UpdateScrollbar(isVisible, control.Width, displayRectangleWidth, control.HorizontalScrollValue, control.ItemHeight * 3, control.ItemHeight);
             }
         }
         #endregion
@@ -392,9 +312,9 @@ namespace 自定义TreeView仿VS解决方案效果
             set
             {
                 moValue = value;
-                moThumbTop = customScrollInfo.GetScrollOffsetY(value);
-                lastmoThumbTopValue = moThumbTop;
-                if (moThumbTop == 0)
+                moThumbLeft = customScrollInfo.GetScrollOffsetY(value);
+                lastmoThumbLeftValue = moThumbLeft;
+                if (moThumbLeft == 0)
                     moValue = 0;
                 Invalidate();
             }
@@ -429,7 +349,7 @@ namespace 自定义TreeView仿VS解决方案效果
 
             //draw thumb
             Brush oWhiteBrush = new SolidBrush(moThumbColor);
-            e.Graphics.FillRectangle(oWhiteBrush, 0, moThumbTop, this.Width, customScrollInfo.ThumbHeight);
+            e.Graphics.FillRectangle(oWhiteBrush, moThumbLeft, 0, customScrollInfo.ThumbHeight, this.Height);
             base.OnPaint(e);
         }
         #endregion
@@ -490,25 +410,25 @@ namespace 自定义TreeView仿VS解决方案效果
             nClickDateTime = DateTime.Now;
             moMouseDown = true;
 
-            int nTop = moThumbTop;
+            int nLeft = moThumbLeft;
             Point ptPoint = this.PointToClient(Cursor.Position);
             //滑块
-            Rectangle thumbrect = new Rectangle(new Point(0, nTop), new Size(this.Width, customScrollInfo.ThumbHeight));
+            Rectangle thumbrect = new Rectangle(new Point(nLeft, 0), new Size(customScrollInfo.ThumbHeight, this.Height));
             //轨道
-            Rectangle trackrec = new Rectangle(new Point(0, 0), new Size(this.Width, customScrollInfo.TrackHeight));
+            Rectangle trackrec = new Rectangle(new Point(0, 0), new Size(customScrollInfo.TrackHeight, this.Height));
             if (thumbrect.Contains(ptPoint))
             {
                 //hit the thumb
-                nClickPoint = (ptPoint.Y - nTop);
+                nClickPoint = (ptPoint.X - nLeft);
                 this.moThumbDown = true;
             }
             else if (trackrec.Contains(ptPoint))
             {
                 this.moTrackDown = true;
                 //判断当前鼠标点击的位置与 滑块的位置差
-                nClickPoint = ptPoint.Y;
-                bool isUp = (ptPoint.Y - nTop) > 0 ? false : true;
-                MoveThumbByClick(isUp);
+                nClickPoint = ptPoint.X;
+                bool isLeft = (ptPoint.X - nLeft) > 0 ? false : true;
+                MoveThumbByClick(isLeft);
             }
         }
         #endregion
@@ -544,7 +464,7 @@ namespace 自定义TreeView仿VS解决方案效果
             }
             if (this.moThumbDragging)
             {
-                MoveThumb(e.Y);
+                MoveThumb(e.X);
             }
         }
         #endregion
@@ -553,25 +473,25 @@ namespace 自定义TreeView仿VS解决方案效果
         /// <summary>
         /// 点击轨道 移动滑块
         /// </summary>
-        /// <param name="isUp"></param>
-        private void MoveThumbByClick(bool isUp)
+        /// <param name="isLeft"></param>
+        private void MoveThumbByClick(bool isLeft)
         {
-            MoveThumb(isUp);
+            MoveThumb(isLeft);
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Interval = 100;
             timer.Tick += timer_Tick;
-            timer.Tag = isUp;
+            timer.Tag = isLeft;
             timer.Start();
         }
 
         void timer_Tick(object sender, EventArgs e)
         {
             System.Windows.Forms.Timer timer = sender as System.Windows.Forms.Timer;
-            bool isUp = bool.Parse(timer.Tag.ToString());
+            bool isLeft = bool.Parse(timer.Tag.ToString());
 
             if ((DateTime.Now - nClickDateTime).TotalMilliseconds > 800)
             {
-                MoveThumb(isUp);
+                MoveThumb(isLeft);
                 //到最高或最低退出
                 if (moValue == 0 || !moMouseDown)
                     timer.Stop();
@@ -582,7 +502,7 @@ namespace 自定义TreeView仿VS解决方案效果
         /// <summary>
         /// 点击轨道 移动滑块
         /// </summary>
-        private void MoveThumb(bool isUp)
+        private void MoveThumb(bool isLeft)
         {
             if (!moMouseDown)
                 return;
@@ -591,67 +511,67 @@ namespace 自定义TreeView仿VS解决方案效果
             if (moTrackDown)
             {
                 int nSpot = nClickPoint;//除去上箭头的高度
-                if (isUp)
+                if (isLeft)
                 {
-                    nRealRange = moThumbTop - nSpot;//拇指顶端与点击处的距离
+                    nRealRange = moThumbLeft - nSpot;//拇指顶端与点击处的距离
                 }
                 else
                 {
-                    nRealRange = nSpot - moThumbTop - customScrollInfo.ThumbHeight; // 拇指底端与点击处的距离
+                    nRealRange = nSpot - moThumbLeft - customScrollInfo.ThumbHeight; // 拇指底端与点击处的距离
                 }
             }
             if (nRealRange > 0)
             {
                 if (nPixelRange > 0)
                 {
-                    if (isUp)
+                    if (isLeft)
                     {
-                        if ((moThumbTop - SmallChange) < 0)
-                            moThumbTop = 0;
+                        if ((moThumbLeft - SmallChange) < 0)
+                            moThumbLeft = 0;
                         else
-                            moThumbTop -= SmallChange;
+                            moThumbLeft -= SmallChange;
                     }
                     else
                     {
-                        if ((moThumbTop + SmallChange) > nPixelRange)
-                            moThumbTop = nPixelRange;
+                        if ((moThumbLeft + SmallChange) > nPixelRange)
+                            moThumbLeft = nPixelRange;
                         else
-                            moThumbTop += SmallChange;
+                            moThumbLeft += SmallChange;
                     }
                     MoveThumbGetValue();
                 }
             }
         }
 
-        private void MoveThumbMouseWheel(bool isUp)
+        private void MoveThumbMouseWheel(bool isLeft)
         {
             int nRealRange = 0;
             int nPixelRange = customScrollInfo.TrackHeight - customScrollInfo.ThumbHeight;
-            if (isUp)
+            if (isLeft)
             {
-                nRealRange = moThumbTop;//拇指顶端与点击处的距离
+                nRealRange = moThumbLeft;//拇指顶端与点击处的距离
             }
             else
             {
-                nRealRange = customScrollInfo.TrackHeight - moThumbTop - customScrollInfo.ThumbHeight; // 拇指底端与点击处的距离
+                nRealRange = customScrollInfo.TrackHeight - moThumbLeft - customScrollInfo.ThumbHeight; // 拇指底端与点击处的距离
             }
             if (nRealRange > 0)
             {
                 if (nPixelRange > 0)
                 {
-                    if (isUp)
+                    if (isLeft)
                     {
-                        if ((moThumbTop - SmallChange) < 0)
-                            moThumbTop = 0;
+                        if ((moThumbLeft - SmallChange) < 0)
+                            moThumbLeft = 0;
                         else
-                            moThumbTop -= SmallChange;
+                            moThumbLeft -= SmallChange;
                     }
                     else
                     {
-                        if ((moThumbTop + SmallChange) > nPixelRange)
-                            moThumbTop = nPixelRange;
+                        if ((moThumbLeft + SmallChange) > nPixelRange)
+                            moThumbLeft = nPixelRange;
                         else
-                            moThumbTop += SmallChange;
+                            moThumbLeft += SmallChange;
                     }
                     MoveThumbGetValue();
                 }
@@ -661,26 +581,26 @@ namespace 自定义TreeView仿VS解决方案效果
         /// <summary>
         /// 鼠标拖动 移动滑块
         /// </summary>
-        /// <param name="y"></param>
-        private void MoveThumb(int y)
+        /// <param name="x"></param>
+        private void MoveThumb(int x)
         {
             int nSpot = nClickPoint;
             int nPixelRange = customScrollInfo.TrackHeight - customScrollInfo.ThumbHeight;
             if (moThumbDown && nPixelRange > 0)
             {
-                int nNewThumbTop = y - nSpot;
+                int nNewThumbTop = x - nSpot;
 
                 if (nNewThumbTop < 0)
                 {
-                    moThumbTop = nNewThumbTop = 0;
+                    moThumbLeft = nNewThumbTop = 0;
                 }
                 else if (nNewThumbTop > nPixelRange)
                 {
-                    moThumbTop = nNewThumbTop = nPixelRange;
+                    moThumbLeft = nNewThumbTop = nPixelRange;
                 }
                 else
                 {
-                    moThumbTop = y - nSpot;
+                    moThumbLeft = x - nSpot;
                 }
 
                 MoveThumbGetValue();
@@ -694,30 +614,37 @@ namespace 自定义TreeView仿VS解决方案效果
         /// <param name="nPixelRange"></param>
         private void MoveThumbGetValue()
         {
-            moValue = customScrollInfo.GetValue(moThumbTop);
+            moValue = customScrollInfo.GetValue(moThumbLeft);
 
             #region 计算绑定控件 应该滚动的位置
             if (this.moControl != null)
             {
                 if (this.moControl.GetType() == typeof(DataGridView))
                 {
-                    DataGridView dgv = this.moControl as DataGridView;
-                    dgv.FirstDisplayedScrollingRowIndex = CalcRowIndex(dgv, moValue);
+                    Thread t = new Thread(() =>
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {//滚动有延迟，所以用线程
+                            DataGridView dgv = this.moControl as DataGridView;
+                            dgv.HorizontalScrollingOffset = moValue;
+                        });
+                    });
+                    t.Start();
                 }
                 else if (this.moControl.GetType() == typeof(TreeViewEx))
                 {
                     TreeViewEx tv = this.moControl as TreeViewEx;
-                    tv.VerticalScrollValue = Convert.ToInt32(Math.Ceiling((decimal)moValue / (decimal)tv.ItemHeight));
+                    tv.HorizontalScrollValue = moValue;
                 }
             }
             #endregion
 
-            if (moThumbTop - lastmoThumbTopValue != 0)
+            if (moThumbLeft - lastmoThumbLeftValue != 0)
             {
-                if (moThumbTop - lastmoThumbTopValue > 0)
-                    isMoveUp = false;
+                if (moThumbLeft - lastmoThumbLeftValue > 0)
+                    isMoveLeft = false;
                 else
-                    isMoveUp = true;
+                    isMoveLeft = true;
 
                 if (ValueChanged != null)
                     ValueChanged(this, new EventArgs());
@@ -726,7 +653,7 @@ namespace 自定义TreeView仿VS解决方案效果
                     Scroll(this, new EventArgs());
 
             }
-            lastmoThumbTopValue = moThumbTop;
+            lastmoThumbLeftValue = moThumbLeft;
             Invalidate();
         }
         #endregion
@@ -735,7 +662,7 @@ namespace 自定义TreeView仿VS解决方案效果
         /// <summary>
         /// 上次移动的位置
         /// </summary>
-        private int lastmoThumbTopValue = 0;
+        private int lastmoThumbLeftValue = 0;
 
 
         /// <summary>
@@ -745,160 +672,23 @@ namespace 自定义TreeView仿VS解决方案效果
         {
             get
             {
-                return customScrollInfo.GetValue(lastmoThumbTopValue);
+                return customScrollInfo.GetValue(lastmoThumbLeftValue);
             }
         }
-        private bool isMoveUp = false;
+        private bool isMoveLeft = false;
 
         /// <summary>
         /// 移动的方向
         /// </summary>
-        public bool IsMoveUp
+        public bool IsMoveLeft
         {
-            get { return isMoveUp; }
+            get { return isMoveLeft; }
         }
         #endregion
 
         #endregion
+
+
+
     }
-
-    #region class ScrollbarControlDesigner
-    internal class ScrollbarControlDesigner : System.Windows.Forms.Design.ControlDesigner
-    {
-        public override SelectionRules SelectionRules
-        {
-            get
-            {
-                SelectionRules selectionRules = base.SelectionRules;
-                PropertyDescriptor propDescriptor = TypeDescriptor.GetProperties(this.Component)["AutoSize"];
-                if (propDescriptor != null)
-                {
-                    bool autoSize = (bool)propDescriptor.GetValue(this.Component);
-                    if (autoSize)
-                    {
-                        selectionRules = SelectionRules.Visible | SelectionRules.Moveable | SelectionRules.BottomSizeable | SelectionRules.TopSizeable;
-                    }
-                    else
-                    {
-                        selectionRules = SelectionRules.Visible | SelectionRules.AllSizeable | SelectionRules.Moveable;
-                    }
-                }
-                return selectionRules;
-            }
-        }
-    }
-
-    #endregion
-
-    #region 滚动条对象
-    /// <summary>
-    /// 滚动条信息
-    /// </summary>
-    internal struct CustomScroll
-    {
-        /// <summary>
-        /// 滑块最小高度
-        /// </summary>
-        const int thumbMinHeight = 15;
-        /// <summary>
-        /// 滑块高度
-        /// </summary>
-        private int thumbHeight;
-
-        /// <summary>
-        /// 轨道高度
-        /// </summary>
-        public int TrackHeight { get; set; }
-        /// <summary>
-        /// 滑块高度
-        /// </summary>
-        public int ThumbHeight
-        {
-            get
-            {
-                return thumbHeight;
-            }
-        }
-
-        /// <summary>
-        /// 显示区域
-        /// </summary>
-        public float Rate { get; set; }
-
-        /// <summary>
-        /// 内容显示区域高度
-        /// </summary>
-        public int DisplayHeight { get; set; }
-        /// <summary>
-        /// 内容的实际范围
-        /// </summary>
-        public int DisplayRectangleHeight { get; set; }
-        /// <summary>
-        /// 控件滚动条的显示隐藏
-        /// </summary>
-        public bool IsVisible { get; set; }
-        /// <summary>
-        /// 控件滚动条的偏移量
-        /// </summary>
-        public int Offset { get; set; }
-
-        public int LargeChange { get; set; }
-
-        public int SmallChange { get; set; }
-
-
-        private bool IsVisibleScroll
-        {
-            get
-            {
-                return DisplayRectangleHeight - DisplayHeight > 0;
-            }
-        }
-
-        /// <summary>
-        /// 获取滚动条的位置
-        /// </summary>
-        /// <returns></returns>
-        public int GetScrollOffsetY(int offsetY)
-        {
-            /* 由 P:(G-B)=O:(H-D) 得 P=O(G-B)/(H-D)  
-             * 滑块的偏移(P) = 主体内容的偏移量(O) * (轨道高度(G) - 滑块高度(B)) / (内容的实际高度(H) - 显示区域的高度(D))
-             */
-            float rlt = 0;
-            if (IsVisibleScroll)
-                rlt = offsetY * (TrackHeight - ThumbHeight) / (DisplayRectangleHeight - DisplayHeight);
-            return (int)rlt;
-        }
-        /// <summary>
-        /// 获取当前显示内容的偏移量
-        /// </summary>
-        /// <returns></returns>
-        public int GetValue(int offsetY)
-        {
-            /* 由 P:(G-B)=O:(H-D) 得 O=P(H-D)/(G-B)  
-             * 主体内容的偏移量(O) = 滑块的偏移(P) * (内容的实际高度(H) - 显示区域的高度(D) / (轨道高度(G) - 滑块高度(B))
-             */
-            float rlt = 0;
-            if (IsVisibleScroll)
-                rlt = offsetY * (DisplayRectangleHeight - DisplayHeight) / (TrackHeight - ThumbHeight);
-            return (int)rlt;
-        }
-        /// <summary>
-        /// 重新计算滑块高度
-        /// </summary>
-        public void UpdateThumbHeight()
-        {
-            /* 由 B:G=D:H 得 B=GD/H 滑块高度(B) = 轨道高度(G) * 显示区域的高度(D) / 内容的实际高度(H)
-                */
-            float B = thumbMinHeight;
-            if (IsVisibleScroll)
-                B = TrackHeight * DisplayHeight / DisplayRectangleHeight;
-            if (B < thumbMinHeight)
-            {
-                B = thumbMinHeight;
-            }
-            thumbHeight = (int)B;
-        }
-    }
-    #endregion
 }

@@ -17,6 +17,7 @@ namespace 自定义TreeView仿VS解决方案效果
         {
             InitializeComponent();
             this.myVScrollBar1.BindControl = this.treeViewEx1;
+            this.myHScrollBar1.BindControl = this.treeViewEx1;
             this.treeViewEx1.MouseWheel += treeViewEx1_MouseWheel;
         }
 
@@ -25,6 +26,7 @@ namespace 自定义TreeView仿VS解决方案效果
         {
             Deserialize(treeViewEx1, "tree.xml");
             this.myVScrollBar1.UpdateScrollbar();
+            this.myHScrollBar1.UpdateScrollbar();
         }
 
         public void Deserialize(TreeView tv, string fn)

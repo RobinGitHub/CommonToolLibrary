@@ -35,6 +35,7 @@
             this.myVScrollBar1 = new 自定义TreeView仿VS解决方案效果.MyVScrollBar();
             this.treeViewEx1 = new 自定义TreeView仿VS解决方案效果.TreeViewEx();
             this.button3 = new System.Windows.Forms.Button();
+            this.myHScrollBar1 = new 自定义TreeView仿VS解决方案效果.MyHScrollBar();
             this.SuspendLayout();
             // 
             // button1
@@ -119,11 +120,20 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // myHScrollBar1
+            // 
+            this.myHScrollBar1.Location = new System.Drawing.Point(241, 204);
+            this.myHScrollBar1.MinimumSize = new System.Drawing.Size(15, 8);
+            this.myHScrollBar1.Name = "myHScrollBar1";
+            this.myHScrollBar1.Size = new System.Drawing.Size(269, 8);
+            this.myHScrollBar1.TabIndex = 6;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(533, 394);
+            this.Controls.Add(this.myHScrollBar1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.button2);
@@ -144,5 +154,6 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button button3;
+        private MyHScrollBar myHScrollBar1;
     }
 }
