@@ -148,7 +148,7 @@ namespace 自定义TreeView仿VS解决方案效果
             int totalHeight = 0;
             NextNode(tv.Nodes, ref totalHeight);
 
-            if (tv.Height - tv.DisplayRectangle.Height >= 17)//当出现水平滚动条
+            if (tv.Height - tv.DisplayRectangle.Height >= 17)//当出现水平滚动条s
                 totalHeight += (tv.ItemHeight * 2);
 
             bool isVisible = totalHeight > tv.Height;

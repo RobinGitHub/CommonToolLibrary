@@ -169,6 +169,7 @@ namespace 自定义TreeView仿VS解决方案效果
         /// <param name="e"></param>
         void TreeViewEx_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
+            if (!e.Node.IsVisible) return;
             Size txtSize = TextRenderer.MeasureText(e.Node.Text, this.Font);
 
             PointF center = new PointF(e.Node.Bounds.X, e.Node.Bounds.Y + (this.ItemHeight - txtSize.Height) / 2);
@@ -240,7 +241,7 @@ namespace 自定义TreeView仿VS解决方案效果
         public static extern int SetScrollPos(IntPtr hwnd, int nbar, int nPos, bool bRedraw);
 
         [DllImport("user32.dll")]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, UIntPtr wParam, IntPtr lParam);
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static public extern bool GetScrollInfo(System.IntPtr hwnd, int fnBar, ref LPSCROLLINFO lpsi);
@@ -280,7 +281,7 @@ namespace 自定义TreeView仿VS解决方案效果
                 if (param == -1)
                     return;
                 //移动内容
-                SendMessage(this.Handle, (uint)WM_VSCROLL, (System.UIntPtr)param, (System.IntPtr)0);
+                SendMessage(this.Handle, (uint)WM_VSCROLL, (System.IntPtr)param, (System.IntPtr)0);
             }
         }
 
@@ -295,13 +296,28 @@ namespace 自定义TreeView仿VS解决方案效果
                 SetScrollPos(this.Handle, sb_horz, value, true);
 
                 int param = getSBFromScrollEventType(ScrollEventType.ThumbPosition);
-                if (param == -1)
-                    return;
+                //if (param == -1)
+                //    return;
                 //移动内容
-                SendMessage(this.Handle, (uint)WM_HSCROLL, (System.UIntPtr)0, (System.IntPtr)0);
+                SendMessage(this.Handle, (uint)WM_HSCROLL, (System.IntPtr)param, (System.IntPtr)0);
 
             }
         }
+
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case WM_HSCROLL:
+                    SendMessage(this.Handle, (uint)m.Msg, m.WParam, m.LParam);
+                    //MessageBox.Show("asdf");
+                    break;
+                default:
+                    base.WndProc(ref m);
+                    break;
+            }
+        }
+
         //没有效果
         //public bool VerticalScrollVisible
         //{

@@ -53,7 +53,7 @@ namespace 自定义TreeView仿VS解决方案效果
 
                 if (Convert.ToBoolean(xn.Attributes["IsExpanded"].Value))
                 {
-                    tn.Expand();
+                    //tn.Expand();
                 }
             }
         }

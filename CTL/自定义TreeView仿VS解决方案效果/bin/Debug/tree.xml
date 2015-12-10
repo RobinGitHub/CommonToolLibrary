@@ -1,11 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <XTree>
-  <Solution Text="Solution '$Name:  " IsExpanded="True">
-    <Project Text="$Name:  $$Name:  " IsExpanded="True">
-      <Properties Text="Properties" IsExpanded="False" />
-      <References Text="References" IsExpanded="False" />
-      <Folder Text="$Folder$" IsExpanded="False" />
-    </Project>
+  <Solution Text="Solution '$NameTTTTTTTTTTTTTT:  " IsExpanded="True">
     <Project Text="$Name:  $$Name: " IsExpanded="True">
       <Properties Text="Properties" IsExpanded="False" />
       <References Text="References" IsExpanded="False" />
@@ -16,7 +11,18 @@
         <References Text="References" IsExpanded="False" />
         <File Text="$File$" IsExpanded="False" />
         <File Text="$File$" IsExpanded="False" />
+        <Project Text="$Name:  $$Name: " IsExpanded="True">
+          <Properties Text="Properties" IsExpanded="False" />
+          <References Text="References" IsExpanded="False" />
+          <File Text="$File$" IsExpanded="False" />
+          <File Text="$File$" IsExpanded="False" />
+        </Project>
       </Project>
+    </Project>
+    <Project Text="$Name:  $$Name:  " IsExpanded="True">
+      <Properties Text="Properties" IsExpanded="False" />
+      <References Text="References" IsExpanded="False" />
+      <Folder Text="$Folder$" IsExpanded="False" />
     </Project>
   </Solution>
 </XTree>
