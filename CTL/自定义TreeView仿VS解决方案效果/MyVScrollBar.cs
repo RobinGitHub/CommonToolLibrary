@@ -123,23 +123,36 @@ namespace 自定义TreeView仿VS解决方案效果
                         value.Click += tv_Click;
 
                         TreeViewEx tv = value as TreeViewEx;
+                        tv.AfterExpand += tv_AfterExpand;
+                        tv.AfterCollapse += tv_AfterCollapse;
                         tv.AfterSelect += tv_AfterSelect;
                     }
                 }
             }
         }
 
+
+
         #endregion
         #region TreeView
-        void tv_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            tv_SizeChanged(sender, e);
-        }
-
         void tv_Click(object sender, EventArgs e)
         {
             TreeViewEx tv = sender as TreeViewEx;
             this.Value = tv.VerticalScrollValue * tv.ItemHeight;
+        }
+        void tv_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            TreeViewEx tv = sender as TreeViewEx;
+            this.Value = tv.VerticalScrollValue * tv.ItemHeight;
+        }
+        void tv_AfterCollapse(object sender, TreeViewEventArgs e)
+        {
+            tv_SizeChanged(sender, e);
+        }
+
+        void tv_AfterExpand(object sender, TreeViewEventArgs e)
+        {
+            tv_SizeChanged(sender, e);
         }
 
         void tv_SizeChanged(object sender, EventArgs e)
@@ -148,11 +161,16 @@ namespace 自定义TreeView仿VS解决方案效果
             int totalHeight = 0;
             NextNode(tv.Nodes, ref totalHeight);
 
-            if (tv.Height - tv.DisplayRectangle.Height >= 17)//当出现水平滚动条s
-                totalHeight += (tv.ItemHeight * 2);
+            int disHeight = tv.Height;
+            if (tv.HorizontalScrollVisible)//当出现水平滚动条s
+                disHeight -= 17;
+            //判断当前显示区域（不包含滚动条）是否是行的整数倍，不是则会有空白行
+            if (disHeight % tv.ItemHeight != 0)
+            {
+                totalHeight += disHeight % tv.ItemHeight;
+            }
 
-            bool isVisible = totalHeight > tv.Height;
-            UpdateScrollbar(isVisible, tv.Height, totalHeight, tv.VerticalScrollValue * tv.ItemHeight, tv.ItemHeight * 3, tv.ItemHeight);
+            UpdateScrollbar(tv.VerticalScrollVisible, disHeight, totalHeight, tv.VerticalScrollValue * tv.ItemHeight, tv.ItemHeight * 3, tv.ItemHeight);
         }
 
         private void NextNode(TreeNodeCollection tnc, ref int totalHeight)
@@ -433,14 +451,7 @@ namespace 自定义TreeView仿VS解决方案效果
             base.OnPaint(e);
         }
         #endregion
-
-        #region API
-        [DllImport("user32.dll")]
-
-        private static extern IntPtr GetForegroundWindow();
-
-        #endregion
-
+        
         #region InitializeComponent
         /// <summary>
         /// 初始化
@@ -469,7 +480,7 @@ namespace 自定义TreeView仿VS解决方案效果
         {
             if (this.moControl != null)
             {
-                if (moControl.TopLevelControl.Handle == GetForegroundWindow())
+                if (moControl.TopLevelControl.Handle == Win32API.Win32API.GetForegroundWindow())
                 {
                     this.moControl.Focus();
                 }

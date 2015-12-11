@@ -117,7 +117,9 @@ namespace 自定义TreeView仿VS解决方案效果
                     }
                     else if (value.GetType() == typeof(TreeViewEx))
                     {
+                        value.MouseWheel += tv_MouseWheel;
                         value.SizeChanged += tv_SizeChanged;
+                        value.Click += tv_Click;
 
                         TreeViewEx tv = value as TreeViewEx;
                         tv.AfterSelect += tv_AfterSelect;
@@ -134,29 +136,52 @@ namespace 自定义TreeView仿VS解决方案效果
         {
             tv_SizeChanged(sender, e);
         }
+        void tv_Click(object sender, EventArgs e)
+        {
+            TreeViewEx tv = sender as TreeViewEx;
+            this.Value = tv.HorizontalScrollValue;
+        }
         void tv_SizeChanged(object sender, EventArgs e)
         {
             //判断当前展开的节点有没有超出显示的宽度
             TreeViewEx tv = sender as TreeViewEx;
             int displayRectangleWidth = tv.Width;
-            tv_HScrollBarVisible(tv.Nodes, ref displayRectangleWidth);
-            bool isVisible = displayRectangleWidth > tv.Width;
+            tv_HScrollBarVisible(tv.Nodes, tv.HorizontalScrollValue, ref displayRectangleWidth);
 
-            UpdateScrollbar(isVisible, tv.Width, displayRectangleWidth, tv.HorizontalScrollValue, tv.ItemHeight * 3, tv.ItemHeight);
+            int disWeight = tv.Width;
+            if (tv.VerticalScrollVisible)
+            {
+                disWeight -= 17;
+            }
+
+            UpdateScrollbar(tv.HorizontalScrollVisible, disWeight, displayRectangleWidth, tv.HorizontalScrollValue, tv.ItemHeight * 3, tv.ItemHeight);
+        }
+        void tv_MouseWheel(object sender, MouseEventArgs e)
+        {
+            Thread t = new Thread(() =>
+            {
+                this.Invoke((MethodInvoker)delegate
+                {//执行完后才能得到滚动的值，所有这里用异步的方式去解决这个问题
+                    //VerticalScrollValue 返回的是移动的行数
+                    TreeViewEx tv = sender as TreeViewEx;
+                    this.Value = tv.VerticalScrollValue * tv.ItemHeight;
+                });
+            });
+            t.Start();
         }
 
-        private void tv_HScrollBarVisible(TreeNodeCollection tnc, ref int maxWidth)
+        private void tv_HScrollBarVisible(TreeNodeCollection tnc, int scrollValue, ref int maxWidth)
         {
             foreach (TreeNode item in tnc)
             {
-                if (item.Bounds.Width + item.Bounds.Left > item.TreeView.Width)
+                if (item.Bounds.Width + item.Bounds.Left + scrollValue > item.TreeView.Width)
                 {
-                    if (maxWidth < item.Bounds.Width + item.Bounds.Left)
-                        maxWidth = item.Bounds.Width + item.Bounds.Left;
+                    if (maxWidth < item.Bounds.Width + item.Bounds.Left + scrollValue)
+                        maxWidth = item.Bounds.Width + item.Bounds.Left + scrollValue + 2;
                 }
                 if (item.Nodes.Count > 0 && item.IsExpanded)
                 {
-                    tv_HScrollBarVisible(item.Nodes, ref maxWidth);
+                    tv_HScrollBarVisible(item.Nodes, scrollValue, ref maxWidth);
                 }
             }
         }
@@ -281,10 +306,13 @@ namespace 自定义TreeView仿VS解决方案效果
             {
                 TreeViewEx control = this.moControl as TreeViewEx;
                 int displayRectangleWidth = control.Width;
-                tv_HScrollBarVisible(control.Nodes, ref displayRectangleWidth);
-                bool isVisible = displayRectangleWidth > control.Width;
-
-                UpdateScrollbar(isVisible, control.Width, displayRectangleWidth, control.HorizontalScrollValue, control.ItemHeight * 3, control.ItemHeight);
+                tv_HScrollBarVisible(control.Nodes, control.HorizontalScrollValue, ref displayRectangleWidth);
+                int disWeight = control.Width;
+                if (control.VerticalScrollVisible)
+                {
+                    disWeight -= 17;
+                }
+                UpdateScrollbar(control.HorizontalScrollVisible, disWeight, displayRectangleWidth, control.HorizontalScrollValue, control.ItemHeight * 3, control.ItemHeight);
             }
         }
         #endregion

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using Win32API;
 using 自定义TreeView仿VS解决方案效果.Properties;
 
 /*实现效果：
@@ -232,177 +233,77 @@ namespace 自定义TreeView仿VS解决方案效果
         #endregion
 
         #region 获取&设置滚动条的值
-        //获取滚动条位置
-        [DllImport("user32.dll", EntryPoint = "GetScrollPos")]
-        public static extern int GetScrollPos(IntPtr hwnd, int nbar);
-        //设置滚动条位置
-        //TreeView句柄，滚动条方向/水平/垂直/,滚动条位置,是否重新描绘
-        [DllImport("user32.dll", EntryPoint = "SetScrollPos")]
-        public static extern int SetScrollPos(IntPtr hwnd, int nbar, int nPos, bool bRedraw);
-
-        [DllImport("user32.dll")]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static public extern bool GetScrollInfo(System.IntPtr hwnd, int fnBar, ref LPSCROLLINFO lpsi);
-
-
-        public const int sb_horz = 0;//滚动条水平常量
-        public const int sb_vert = 1;//滚动条垂直常量
-
-        private const int SB_LINEUP = 0;
-        private const int SB_LINEDOWN = 1;
-        private const int SB_PAGEUP = 2;
-        private const int SB_PAGEDOWN = 3;
-        private const int SB_THUMBPOSITION = 4;
-        private const int SB_THUMBTRACK = 5;
-        private const int SB_TOP = 6;
-        private const int SB_BOTTOM = 7;
-        private const int SB_ENDSCROLL = 8;
-
-        private const int WM_HSCROLL = 0x114;
-        private const int WM_VSCROLL = 0x115;
-        private const int WM_MOUSEWHEEL = 0x020A;
-        private const int WM_NCCALCSIZE = 0x0083;
-        private const int WM_PAINT = 0x000F;
-        private const int WM_SIZE = 0x0005;
-
         public int VerticalScrollValue
         {
             get
             {
-                return GetScrollPos(this.Handle, sb_vert);
+                return Win32API.Win32API.GetScrollPos(this.Handle, ScrollBarTypes.SB_VERT.GetHashCode());
             }
             set
             {
-                SetScrollPos(this.Handle, sb_vert, value, true);
-
-                int param = getSBFromScrollEventType(ScrollEventType.ThumbTrack);
-                if (param == -1)
-                    return;
+                Win32API.Win32API.SetScrollPos(this.Handle, ScrollBarTypes.SB_VERT.GetHashCode(), value, true);
                 //移动内容
-                SendMessage(this.Handle, (uint)WM_VSCROLL, (System.IntPtr)param, (System.IntPtr)0);
+                Win32API.Win32API.SendMessage(this.Handle, WinMsg.WM_VSCROLL.GetHashCode(), (System.IntPtr)ScrollBarRequests.SB_THUMBPOSITION.GetHashCode(), (System.IntPtr)0);
             }
         }
-
+        
         public int HorizontalScrollValue
         {
             get
             {
-                return GetScrollPos(this.Handle, sb_horz);
+                return Win32API.Win32API.GetScrollPos(this.Handle, ScrollBarTypes.SB_HORZ.GetHashCode());
             }
             set
             {
-                SetScrollPos(this.Handle, sb_horz, value, true);
-
-                int param = getSBFromScrollEventType(ScrollEventType.ThumbPosition);
-                //if (param == -1)
-                //    return;
-                //移动内容
-                SendMessage(this.Handle, (uint)WM_HSCROLL, (System.IntPtr)param, (System.IntPtr)0);
-
+                //滚动条动，但是内容没有移动
+                Win32API.Win32API.SetScrollPos(this.Handle, ScrollBarTypes.SB_HORZ.GetHashCode(), value, true);
+                ///用垂直滚动条的方式没有效果，经过调试，如果直接移动本身的滚动条 wParam 值是随时变化的
+                ///而滚动条的值 是通过 HiWord 方法算出来的
+                ///而这里需要反推即：通过滚动条的值 算出 wParam 的值
+                ///这里为什么要 +5 因为算出来的值与本身滚动条的值相差5，具体原因不明
+                int wParam = (value << 16) + 5;
+                Win32API.Win32API.SendMessage(this.Handle, WinMsg.WM_HSCROLL.GetHashCode(), (System.IntPtr)wParam, (System.IntPtr)0);
             }
-        }
+        }        
 
-        protected override void WndProc(ref Message m)
+        public bool VerticalScrollVisible
         {
-            switch (m.Msg)
+            get
             {
-                case WM_HSCROLL:
-                    SendMessage(this.Handle, (uint)m.Msg, m.WParam, m.LParam);
-                    //MessageBox.Show("asdf");
-                    break;
-                default:
-                    base.WndProc(ref m);
-                    break;
+                return (Win32API.Win32API.GetWindowLong(this.Handle, SetWindowLongOffsets.GWL_STYLE.GetHashCode()) & WindowStyles.WS_VSCROLL.GetHashCode()) != 0;
+            }
+        }
+        public bool HorizontalScrollVisible
+        {
+            get
+            {
+                return (Win32API.Win32API.GetWindowLong(this.Handle, SetWindowLongOffsets.GWL_STYLE.GetHashCode()) & WindowStyles.WS_HSCROLL.GetHashCode()) != 0;
             }
         }
 
-        //没有效果
-        //public bool VerticalScrollVisible
+        //public SCROLLINFO VerticalScrollInfo
         //{
         //    get
         //    {
-        //        LPSCROLLINFO si = new LPSCROLLINFO();
+        //        SCROLLINFO si = new SCROLLINFO();
         //        si.cbSize = (uint)Marshal.SizeOf(si);
-        //        si.fMask = (uint)ScrollInfoMask.SIF_DISABLEDNOSCROLL;
-        //        bool rlt = GetScrollInfo(this.Handle, sb_vert, ref si);
-        //        return si.nMax > 0;
+        //        si.fMask = (uint)ScrollBarInfoFlags.SIF_ALL;
+        //        Win32API.Win32API.GetScrollInfo(this.Handle, (int)ScrollBarTypes.SB_VERT, ref si);
+        //        return si;
         //    }
         //}
-        //public bool HorizontalScrollVisible
+
+        //public SCROLLINFO HorizontalScrollInfo
         //{
         //    get
         //    {
-        //        LPSCROLLINFO si = new LPSCROLLINFO();
+        //        SCROLLINFO si = new SCROLLINFO();
         //        si.cbSize = (uint)Marshal.SizeOf(si);
-        //        si.fMask = (uint)ScrollInfoMask.SIF_DISABLEDNOSCROLL;
-        //        bool rlt = GetScrollInfo(this.Handle, sb_horz, ref si);
-        //        return si.nMax > 0;
+        //        si.fMask = (uint)ScrollBarInfoFlags.SIF_ALL;
+        //        Win32API.Win32API.GetScrollInfo(this.Handle, (int)ScrollBarTypes.SB_HORZ, ref si);
+        //        return si;
         //    }
         //}
-
-
-
-        private int getSBFromScrollEventType(ScrollEventType type)
-        {
-            int res = -1;
-            switch (type)
-            {
-                case ScrollEventType.SmallDecrement:
-                    res = SB_LINEUP;
-                    break;
-                case ScrollEventType.SmallIncrement:
-                    res = SB_LINEDOWN;
-                    break;
-                case ScrollEventType.LargeDecrement:
-                    res = SB_PAGEUP;
-                    break;
-                case ScrollEventType.LargeIncrement:
-                    res = SB_PAGEDOWN;
-                    break;
-                case ScrollEventType.ThumbTrack:
-                    res = SB_THUMBTRACK;
-                    break;
-                case ScrollEventType.First:
-                    res = SB_TOP;
-                    break;
-                case ScrollEventType.Last:
-                    res = SB_BOTTOM;
-                    break;
-                case ScrollEventType.ThumbPosition:
-                    res = SB_THUMBPOSITION;
-                    break;
-                case ScrollEventType.EndScroll:
-                    res = SB_ENDSCROLL;
-                    break;
-                default:
-                    break;
-            }
-            return res;
-        }
-
-
-        public struct LPSCROLLINFO
-        {
-            public uint cbSize;
-            public uint fMask;
-            public int nMin;
-            public int nMax;
-            public uint nPage;
-            public int nPos;
-            public int nTrackPos;
-        }
-
-        public enum ScrollInfoMask : uint
-        {
-            SIF_RANGE = 0x1,
-            SIF_PAGE = 0x2,
-            SIF_POS = 0x4,
-            SIF_DISABLEDNOSCROLL = 0x8,
-            SIF_TRACKPOS = 0x10,
-            SIF_ALL = (SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS),
-        }
         #endregion
 
 

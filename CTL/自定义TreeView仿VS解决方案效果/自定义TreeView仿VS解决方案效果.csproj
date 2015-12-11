@@ -110,6 +110,12 @@
   <ItemGroup>
     <Content Include="bin\Debug\tree.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Win32API\Win32API.csproj">
+      <Project>{e6634caa-a34d-4e07-b747-42ff3de06f81}</Project>
+      <Name>Win32API</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
