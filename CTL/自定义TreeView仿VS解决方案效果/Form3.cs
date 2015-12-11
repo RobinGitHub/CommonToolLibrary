@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Win32API;
 
 namespace 自定义TreeView仿VS解决方案效果
 {
@@ -17,6 +18,7 @@ namespace 自定义TreeView仿VS解决方案效果
             this.myVScrollBar1.BindControl = this.dataGridView1;
             this.myHScrollBar1.BindControl = this.dataGridView1;
             this.dataGridView1.ColumnStateChanged += dataGridView1_ColumnStateChanged;
+
         }
 
         void dataGridView1_ColumnStateChanged(object sender, DataGridViewColumnStateChangedEventArgs e)
@@ -52,6 +54,12 @@ namespace 自定义TreeView仿VS解决方案效果
             this.dataGridView1.DataSource = DataSource();
             this.myHScrollBar1.UpdateScrollbar();
             this.myVScrollBar1.UpdateScrollbar();
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

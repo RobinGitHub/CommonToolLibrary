@@ -122,6 +122,8 @@ namespace 自定义TreeView仿VS解决方案效果
                         value.Click += tv_Click;
 
                         TreeViewEx tv = value as TreeViewEx;
+                        tv.AfterExpand += tv_AfterExpand;
+                        tv.AfterCollapse += tv_AfterCollapse;
                         tv.AfterSelect += tv_AfterSelect;
                         
                     }
@@ -133,6 +135,16 @@ namespace 自定义TreeView仿VS解决方案效果
         #endregion
         #region TreeView
         void tv_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            TreeViewEx tv = sender as TreeViewEx;
+            this.Value = tv.HorizontalScrollValue;
+        }
+        void tv_AfterCollapse(object sender, TreeViewEventArgs e)
+        {
+            tv_SizeChanged(sender, e);
+        }
+
+        void tv_AfterExpand(object sender, TreeViewEventArgs e)
         {
             tv_SizeChanged(sender, e);
         }
@@ -207,10 +219,7 @@ namespace 自定义TreeView仿VS解决方案效果
             {
                 displayWidth -= 17;
             }
-            if (dgv.BorderStyle != System.Windows.Forms.BorderStyle.None)
-            {
-                displayWidth -= 2;
-            }
+            
             bool isVisible = displayWidth < totalRowWidth;
 
             this.UpdateScrollbar(isVisible, displayWidth, totalRowWidth, dgv.HorizontalScrollingOffset, colWidth * 3, colWidth);

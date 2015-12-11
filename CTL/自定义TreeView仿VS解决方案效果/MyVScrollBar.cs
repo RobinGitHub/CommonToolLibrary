@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Win32API;
 
 namespace 自定义TreeView仿VS解决方案效果
 {
@@ -211,19 +212,24 @@ namespace 自定义TreeView仿VS解决方案效果
             foreach (DataGridViewRow item in dgv.Rows)
             {
                 totalRowHeight += item.Height;
-            } 
+            }
             //如果出现水平滚动条，显示的高度要加上滚动条的高度和间隙            
             bool isVisible = dgv.DisplayedRowCount(false) != dgv.RowCount;
             var t = dgv.DisplayRectangle.Height;
-            if (dgv_HScrollBarVisible(dgv))
+
+            int disHeight = dgv.Height;
+
+            bool hScrollVis = dgv_HScrollBarVisible(dgv);
+
+            if (hScrollVis)
             {
-                totalRowHeight += dgv.RowTemplate.Height;
+                disHeight -= 17;
             }
-            if (dgv.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            if ((disHeight - dgv.ColumnHeadersHeight) % dgv.RowTemplate.Height != 0)
             {
-                totalRowHeight -= 2;
+                totalRowHeight += (disHeight - dgv.ColumnHeadersHeight) % dgv.RowTemplate.Height;
             }
-            this.UpdateScrollbar(isVisible, dgv.Height, totalRowHeight + dgv.ColumnHeadersHeight, dgv.VerticalScrollingOffset, rowHeight * 3, rowHeight);
+            this.UpdateScrollbar(isVisible, disHeight, totalRowHeight + dgv.ColumnHeadersHeight, dgv.VerticalScrollingOffset, rowHeight * 3, rowHeight);
         }
 
         private bool dgv_HScrollBarVisible(DataGridView control)
@@ -377,12 +383,20 @@ namespace 自定义TreeView仿VS解决方案效果
                 int totalHeight = 0;
                 NextNode(control.Nodes, ref totalHeight);
 
+                int disHeight = control.Height;
+                if (control.HorizontalScrollVisible)//当出现水平滚动条s
+                    disHeight -= 17;
+                //判断当前显示区域（不包含滚动条）是否是行的整数倍，不是则会有空白行
+                if (disHeight % control.ItemHeight != 0)
+                {
+                    totalHeight += disHeight % control.ItemHeight;
+                }
                 if (control.Height - control.DisplayRectangle.Height >= 17)//当高度相同时还是会出现滚动条
-                { 
+                {
                     totalHeight += (control.ItemHeight * 2);
                 }
                 bool isVisible = totalHeight > control.Height;
-                UpdateScrollbar(isVisible, control.Height, totalHeight, control.VerticalScrollValue * control.ItemHeight, control.ItemHeight * 3, control.ItemHeight);
+                UpdateScrollbar(control.VerticalScrollVisible, disHeight, totalHeight, control.VerticalScrollValue * control.ItemHeight, control.ItemHeight * 3, control.ItemHeight);
             }
         }
         #endregion
@@ -451,7 +465,7 @@ namespace 自定义TreeView仿VS解决方案效果
             base.OnPaint(e);
         }
         #endregion
-        
+
         #region InitializeComponent
         /// <summary>
         /// 初始化

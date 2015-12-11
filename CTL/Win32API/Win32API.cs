@@ -219,7 +219,7 @@ namespace Win32API
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int SetScrollInfo(IntPtr hwnd, int bar, ref SCROLLINFO si, int fRedraw);
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int ShowScrollBar(IntPtr hWnd, int bar, int show);
+        public static extern int ShowScrollBar(IntPtr hWnd, int bar, bool show);
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int EnableScrollBar(IntPtr hWnd, uint flags, uint arrows);
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
