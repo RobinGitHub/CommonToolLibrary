@@ -122,7 +122,7 @@
             this.treeViewEx1.Name = "treeViewEx1";
             this.treeViewEx1.PlusImage = ((System.Drawing.Image)(resources.GetObject("treeViewEx1.PlusImage")));
             this.treeViewEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
-            this.treeViewEx1.Size = new System.Drawing.Size(217, 368);
+            this.treeViewEx1.Size = new System.Drawing.Size(197, 369);
             this.treeViewEx1.TabIndex = 0;
             this.treeViewEx1.VerticalScrollValue = 0;
             // 

@@ -10,6 +10,18 @@ using System.Windows.Forms.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
 
+/* DataGridView要注意事件：
+ *  1.列增加
+ *  2.列减少
+ *  3.列宽的变化
+ *  4.列头的宽度变化
+ *  5.大小变化
+ *  
+ * TreeView要注意的事件
+ *  1.节点名称的修改
+ *  2.节点的展开收缩
+ *  3.大小改变
+ */
 
 namespace 自定义TreeView仿VS解决方案效果
 {
@@ -114,6 +126,11 @@ namespace 自定义TreeView仿VS解决方案效果
                         DataGridView dgv = value as DataGridView;
                         dgv.SizeChanged += dgv_SizeChanged;
                         dgv.CellStateChanged += dgv_CellStateChanged;
+                        dgv.ColumnAdded += dgv_ColumnAdded;
+                        dgv.ColumnRemoved += dgv_ColumnRemoved;
+                        dgv.ColumnWidthChanged += dgv_ColumnWidthChanged;
+                        dgv.RowHeadersWidthChanged += dgv_RowHeadersWidthChanged;
+                        dgv.RowHeaderMouseClick += dgv_RowHeaderMouseClick;
                     }
                     else if (value.GetType() == typeof(TreeViewEx))
                     {
@@ -124,14 +141,12 @@ namespace 自定义TreeView仿VS解决方案效果
                         TreeViewEx tv = value as TreeViewEx;
                         tv.AfterExpand += tv_AfterExpand;
                         tv.AfterCollapse += tv_AfterCollapse;
-                        tv.AfterSelect += tv_AfterSelect;
-                        
+                        tv.AfterSelect += tv_AfterSelect;                        
                     }
                 }
             }
         }
-
-        
+                
         #endregion
         #region TreeView
         void tv_AfterSelect(object sender, TreeViewEventArgs e)
@@ -176,7 +191,7 @@ namespace 自定义TreeView仿VS解决方案效果
                 {//执行完后才能得到滚动的值，所有这里用异步的方式去解决这个问题
                     //VerticalScrollValue 返回的是移动的行数
                     TreeViewEx tv = sender as TreeViewEx;
-                    this.Value = tv.VerticalScrollValue * tv.ItemHeight;
+                    this.Value = tv.HorizontalScrollValue; 
                 });
             });
             t.Start();
@@ -189,7 +204,11 @@ namespace 自定义TreeView仿VS解决方案效果
                 if (item.Bounds.Width + item.Bounds.Left + scrollValue > item.TreeView.Width)
                 {
                     if (maxWidth < item.Bounds.Width + item.Bounds.Left + scrollValue)
-                        maxWidth = item.Bounds.Width + item.Bounds.Left + scrollValue + 2;
+                    {
+                        maxWidth = item.Bounds.Width + item.Bounds.Left + scrollValue;
+                        if (item.TreeView.BorderStyle != System.Windows.Forms.BorderStyle.None)
+                            maxWidth += 2;
+                    }
                 }
                 if (item.Nodes.Count > 0 && item.IsExpanded)
                 {
@@ -215,15 +234,36 @@ namespace 自定义TreeView仿VS解决方案效果
             }
             int displayWidth = dgv.Width - dgv.RowHeadersWidth;
 
-            if (dgv.DisplayedRowCount(false) != dgv.RowCount)
+            if (dgv_VScrollBarVisible(dgv))
             {
                 displayWidth -= 17;
+            }
+            if (dgv.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            {
+                displayWidth -= 2;
             }
             
             bool isVisible = displayWidth < totalRowWidth;
 
             this.UpdateScrollbar(isVisible, displayWidth, totalRowWidth, dgv.HorizontalScrollingOffset, colWidth * 3, colWidth);
         }
+
+        private bool dgv_VScrollBarVisible(DataGridView control)
+        {
+            //int totalRowHeight = control.RowTemplate.Height;
+            //foreach (DataGridViewRow item in control.Rows)
+            //{
+            //    totalRowHeight += item.Height;
+            //}
+            //int displayHeight = control.Height - control.ColumnHeadersHeight;
+            //if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            //{
+            //    displayHeight -= 2;
+            //}
+            //return displayHeight < totalRowHeight;
+            return control.DisplayedRowCount(false) != control.RowCount;
+        }
+
         void dgv_CellStateChanged(object sender, DataGridViewCellStateChangedEventArgs e)
         {
             DataGridView dgv = sender as DataGridView;
@@ -231,6 +271,33 @@ namespace 自定义TreeView仿VS解决方案效果
             {
                 this.Value = dgv.HorizontalScrollingOffset;
             }
+        }
+        void dgv_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+
+            DataGridView dgv = sender as DataGridView;
+            if (dgv.HorizontalScrollingOffset != this.moValue)
+            {
+                this.Value = dgv.HorizontalScrollingOffset;
+            }
+        }
+        void dgv_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        {
+            dgv_SizeChanged(sender, e);
+        }
+
+        void dgv_ColumnRemoved(object sender, DataGridViewColumnEventArgs e)
+        {
+            dgv_SizeChanged(sender, e);
+        }
+
+        void dgv_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
+        {
+            dgv_SizeChanged(sender, e);
+        }
+        void dgv_RowHeadersWidthChanged(object sender, EventArgs e)
+        {
+            dgv_SizeChanged(sender, e);
         }
         #endregion
 
@@ -289,27 +356,7 @@ namespace 自定义TreeView仿VS解决方案效果
                 return;
             if (this.moControl.GetType() == typeof(DataGridView))
             {
-                DataGridView control = this.moControl as DataGridView;
-                int colWidth = 0;
-                if (control.Columns.Count > 0)
-                    colWidth = control.Columns[0].Width;
-                int totalRowWidth = 0;
-                foreach (DataGridViewColumn item in control.Columns)
-                {
-                    totalRowWidth += item.Width;
-                }
-                int displayWidth = control.Width - control.RowHeadersWidth;
-
-                if (control.DisplayedRowCount(false) != control.RowCount)
-                {
-                    displayWidth -= 17;
-                }
-                if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
-                {
-                    displayWidth -= 2;
-                }
-                bool isVisible = displayWidth < totalRowWidth;
-                this.UpdateScrollbar(isVisible, displayWidth, totalRowWidth, control.VerticalScrollingOffset, colWidth * 3, colWidth);
+                dgv_SizeChanged(this.moControl, null);
             }
             else if (this.moControl.GetType() == typeof(TreeViewEx))
             {

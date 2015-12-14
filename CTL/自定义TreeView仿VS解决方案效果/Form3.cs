@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Win32API;
@@ -17,13 +18,7 @@ namespace 自定义TreeView仿VS解决方案效果
             InitializeComponent();
             this.myVScrollBar1.BindControl = this.dataGridView1;
             this.myHScrollBar1.BindControl = this.dataGridView1;
-            this.dataGridView1.ColumnStateChanged += dataGridView1_ColumnStateChanged;
 
-        }
-
-        void dataGridView1_ColumnStateChanged(object sender, DataGridViewColumnStateChangedEventArgs e)
-        {
-            
         }
 
         private DataTable DataSource()
@@ -52,8 +47,13 @@ namespace 自定义TreeView仿VS解决方案效果
         {
             this.dataGridView1.DataSource = null;
             this.dataGridView1.DataSource = DataSource();
-            this.myHScrollBar1.UpdateScrollbar();
-            this.myVScrollBar1.UpdateScrollbar();
+
+            Type type = dataGridView1.GetType();
+            PropertyInfo pi = type.GetProperty("DoubleBuffered",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            pi.SetValue(dataGridView1, true, null);
+            //this.myHScrollBar1.UpdateScrollbar();
+            //this.myVScrollBar1.UpdateScrollbar();
 
         }
 

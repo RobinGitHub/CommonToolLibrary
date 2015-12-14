@@ -57,8 +57,8 @@ namespace 自定义TreeView仿VS解决方案效果
 
         private void button2_Click(object sender, EventArgs e)
         {
-            richTextBox1.AppendText(this.treeViewEx1.VerticalScrollVisible.ToString() + "\n");
-            richTextBox1.ScrollToCaret();
+            treeViewEx1.Nodes.Add("TTTTTT");
+            myVScrollBar1.UpdateScrollbar();
         }
         void treeViewEx1_MouseWheel(object sender, MouseEventArgs e)
         {
@@ -75,8 +75,8 @@ namespace 自定义TreeView仿VS解决方案效果
 
         private void button3_Click(object sender, EventArgs e)
         {
-            richTextBox1.AppendText(this.treeViewEx1.HorizontalScrollVisible.ToString() + "\n");
-            richTextBox1.ScrollToCaret();
+            treeViewEx1.Nodes.RemoveAt(treeViewEx1.Nodes.Count - 1);
+            myVScrollBar1.UpdateScrollbar();
         }
     }
 }

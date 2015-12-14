@@ -11,6 +11,20 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Win32API;
 
+/* DataGridView要注意事件：
+ *  1.行增加
+ *  2.行减少
+ *  3.行高的变化
+ *  4.大小变化
+ * 
+ * TreeView要注意的事件
+ *  1.增加节点
+ *  2.删除节点
+ *  3.节点的展开收缩
+ *  4.大小改变
+ */
+
+
 namespace 自定义TreeView仿VS解决方案效果
 {
     //http://blog.csdn.net/tdgx2004/article/details/5864784
@@ -113,9 +127,12 @@ namespace 自定义TreeView仿VS解决方案效果
                         DataGridView dgv = value as DataGridView;
                         dgv.RowStateChanged += dgv_RowStateChanged;
                         dgv.RowHeightChanged += dgv_RowHeightChanged;
+                        dgv.ColumnHeadersHeightChanged += dgv_ColumnHeadersHeightChanged;
+                        dgv.RowHeadersWidthChanged += dgv_RowHeadersWidthChanged;
                         dgv.SizeChanged += dgv_SizeChanged;
                         dgv.RowsAdded += dgv_RowsAdded;
                         dgv.RowsRemoved += dgv_RowsRemoved;
+                        //dgv.MouseWheel += dgv_MouseWheel;
                     }
                     else if (value.GetType() == typeof(TreeViewEx))
                     {
@@ -131,8 +148,6 @@ namespace 自定义TreeView仿VS解决方案效果
                 }
             }
         }
-
-
 
         #endregion
         #region TreeView
@@ -170,6 +185,18 @@ namespace 自定义TreeView仿VS解决方案效果
             {
                 totalHeight += disHeight % tv.ItemHeight;
             }
+
+            tv.SizeChanged -= tv_SizeChanged;
+            if (tv.HorizontalScrollVisible)
+                tv.Height = tv.Parent.Height + 17;
+            else
+                tv.Height = tv.Parent.Height;
+
+            if (tv.VerticalScrollVisible)
+                tv.Width = tv.Parent.Width + 17;
+            else
+                tv.Width = tv.Parent.Width;
+            tv.SizeChanged += tv_SizeChanged;
 
             UpdateScrollbar(tv.VerticalScrollVisible, disHeight, totalHeight, tv.VerticalScrollValue * tv.ItemHeight, tv.ItemHeight * 3, tv.ItemHeight);
         }
@@ -214,21 +241,44 @@ namespace 自定义TreeView仿VS解决方案效果
                 totalRowHeight += item.Height;
             }
             //如果出现水平滚动条，显示的高度要加上滚动条的高度和间隙            
-            bool isVisible = dgv.DisplayedRowCount(false) != dgv.RowCount;
+            bool isVisible = dgv_VScrollBarVisible(dgv);
             var t = dgv.DisplayRectangle.Height;
 
             int disHeight = dgv.Height;
 
             bool hScrollVis = dgv_HScrollBarVisible(dgv);
 
+            dgv.SizeChanged -= dgv_SizeChanged;
             if (hScrollVis)
             {
+                dgv.Height = dgv.Parent.Height + 17;
                 disHeight -= 17;
             }
+            else
+            {
+                dgv.Height = dgv.Parent.Height;
+            }
+
+            if (isVisible)
+            {
+                dgv.Width = dgv.Parent.Width + 17;
+            }
+            else
+            {
+                dgv.Width = dgv.Parent.Width;
+            }
+
+            dgv.SizeChanged += dgv_SizeChanged;
+
             if ((disHeight - dgv.ColumnHeadersHeight) % dgv.RowTemplate.Height != 0)
             {
                 totalRowHeight += (disHeight - dgv.ColumnHeadersHeight) % dgv.RowTemplate.Height;
             }
+            //else
+            //{
+            //    totalRowHeight += dgv.RowTemplate.Height;
+            //}
+
             this.UpdateScrollbar(isVisible, disHeight, totalRowHeight + dgv.ColumnHeadersHeight, dgv.VerticalScrollingOffset, rowHeight * 3, rowHeight);
         }
 
@@ -241,7 +291,7 @@ namespace 自定义TreeView仿VS解决方案效果
             }
             int displayWidth = control.Width - control.RowHeadersWidth;
 
-            if (control.DisplayedRowCount(false) != control.RowCount)
+            if (dgv_VScrollBarVisible(control))
             {
                 displayWidth -= 17;
             }
@@ -250,6 +300,48 @@ namespace 自定义TreeView仿VS解决方案效果
                 displayWidth -= 2;
             }
             return displayWidth < totalRowWidth;
+        }
+
+        private bool dgv_VScrollBarVisible(DataGridView control)
+        {
+            //int totalRowHeight = 0;
+            //foreach (DataGridViewRow item in control.Rows)
+            //{
+            //    totalRowHeight += item.Height;
+            //}
+            //int displayHeight = control.Height - control.ColumnHeadersHeight;
+            //if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            //{
+            //    displayHeight -= 2;
+            //}
+            //if (displayHeight > totalRowHeight && control.Rows.Count > 0 && !control.Rows[0].Visible)
+            //{
+            //    return displayHeight < totalRowHeight + control.RowTemplate.Height;
+            //}
+            //return displayHeight < totalRowHeight;
+            return control.DisplayedRowCount(false) != control.RowCount;
+        }
+
+        void dgv_MouseWheel(object sender, MouseEventArgs e)
+        {
+            DataGridView dgv = this.moControl as DataGridView;
+            bool isUp = e.Delta > 0;
+            int disRowIndex = 0;
+            if (isUp)
+            {
+                if (dgv.FirstDisplayedScrollingRowIndex >= 3)
+                    disRowIndex = dgv.FirstDisplayedScrollingRowIndex - 3;
+                else
+                    disRowIndex = 0;
+            }
+            else
+            {
+                if (dgv.FirstDisplayedScrollingRowIndex + 3 <= dgv.Rows.Count - 1)
+                    disRowIndex = dgv.FirstDisplayedScrollingRowIndex + 3;
+                else
+                    disRowIndex = dgv.Rows.Count - 1;
+            }
+            dgv.FirstDisplayedScrollingRowIndex = disRowIndex;
         }
 
         void dgv_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
@@ -270,6 +362,14 @@ namespace 自定义TreeView仿VS解决方案效果
         }
 
         void dgv_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            dgv_SizeChanged(sender, e);
+        }
+        void dgv_ColumnHeadersHeightChanged(object sender, EventArgs e)
+        {
+            dgv_SizeChanged(sender, e);
+        }
+        void dgv_RowHeadersWidthChanged(object sender, EventArgs e)
         {
             dgv_SizeChanged(sender, e);
         }
@@ -357,46 +457,11 @@ namespace 自定义TreeView仿VS解决方案效果
                 return;
             if (this.moControl.GetType() == typeof(DataGridView))
             {
-                DataGridView control = this.moControl as DataGridView;
-                int rowHeight = 0;
-                int totalRowHeight = 0;
-                foreach (DataGridViewRow item in control.Rows)
-                {
-                    if (rowHeight == 0)
-                        rowHeight = item.Height;
-                    totalRowHeight += item.Height;
-                }
-                if (dgv_HScrollBarVisible(control))
-                {
-                    totalRowHeight += control.RowTemplate.Height;
-                }
-                if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
-                {
-                    totalRowHeight -= 2;
-                }
-                bool isVisible = control.DisplayedRowCount(false) != control.RowCount;
-                this.UpdateScrollbar(isVisible, control.Height, totalRowHeight + control.ColumnHeadersHeight, control.VerticalScrollingOffset, rowHeight * 3, rowHeight);
+                dgv_SizeChanged(this.moControl, null);
             }
             else if (this.moControl.GetType() == typeof(TreeViewEx))
             {
-                TreeViewEx control = this.moControl as TreeViewEx;
-                int totalHeight = 0;
-                NextNode(control.Nodes, ref totalHeight);
-
-                int disHeight = control.Height;
-                if (control.HorizontalScrollVisible)//当出现水平滚动条s
-                    disHeight -= 17;
-                //判断当前显示区域（不包含滚动条）是否是行的整数倍，不是则会有空白行
-                if (disHeight % control.ItemHeight != 0)
-                {
-                    totalHeight += disHeight % control.ItemHeight;
-                }
-                if (control.Height - control.DisplayRectangle.Height >= 17)//当高度相同时还是会出现滚动条
-                {
-                    totalHeight += (control.ItemHeight * 2);
-                }
-                bool isVisible = totalHeight > control.Height;
-                UpdateScrollbar(control.VerticalScrollVisible, disHeight, totalHeight, control.VerticalScrollValue * control.ItemHeight, control.ItemHeight * 3, control.ItemHeight);
+                tv_SizeChanged(this.moControl, null);
             }
         }
         #endregion
