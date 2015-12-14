@@ -179,7 +179,7 @@ namespace 自定义TreeView仿VS解决方案效果
 
             int disHeight = tv.Height;
             if (tv.HorizontalScrollVisible)//当出现水平滚动条s
-                disHeight -= 17;
+                disHeight -= SystemInformation.HorizontalScrollBarHeight;
             //判断当前显示区域（不包含滚动条）是否是行的整数倍，不是则会有空白行
             if (disHeight % tv.ItemHeight != 0)
             {
@@ -188,12 +188,12 @@ namespace 自定义TreeView仿VS解决方案效果
 
             tv.SizeChanged -= tv_SizeChanged;
             if (tv.HorizontalScrollVisible)
-                tv.Height = tv.Parent.Height + 17;
+                tv.Height = tv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
             else
                 tv.Height = tv.Parent.Height;
 
             if (tv.VerticalScrollVisible)
-                tv.Width = tv.Parent.Width + 17;
+                tv.Width = tv.Parent.Width + SystemInformation.VerticalScrollBarWidth;
             else
                 tv.Width = tv.Parent.Width;
             tv.SizeChanged += tv_SizeChanged;
@@ -251,8 +251,8 @@ namespace 自定义TreeView仿VS解决方案效果
             dgv.SizeChanged -= dgv_SizeChanged;
             if (hScrollVis)
             {
-                dgv.Height = dgv.Parent.Height + 17;
-                disHeight -= 17;
+                dgv.Height = dgv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
+                disHeight -= SystemInformation.HorizontalScrollBarHeight;
             }
             else
             {
@@ -261,7 +261,7 @@ namespace 自定义TreeView仿VS解决方案效果
 
             if (isVisible)
             {
-                dgv.Width = dgv.Parent.Width + 17;
+                dgv.Width = dgv.Parent.Width + SystemInformation.HorizontalScrollBarHeight;
             }
             else
             {
@@ -293,7 +293,7 @@ namespace 自定义TreeView仿VS解决方案效果
 
             if (dgv_VScrollBarVisible(control))
             {
-                displayWidth -= 17;
+                displayWidth -= SystemInformation.VerticalScrollBarWidth;
             }
             if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
             {

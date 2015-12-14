@@ -178,7 +178,7 @@ namespace 自定义TreeView仿VS解决方案效果
             int disWeight = tv.Width;
             if (tv.VerticalScrollVisible)
             {
-                disWeight -= 17;
+                disWeight -= SystemInformation.VerticalScrollBarWidth;
             }
 
             UpdateScrollbar(tv.HorizontalScrollVisible, disWeight, displayRectangleWidth, tv.HorizontalScrollValue, tv.ItemHeight * 3, tv.ItemHeight);
@@ -236,7 +236,7 @@ namespace 自定义TreeView仿VS解决方案效果
 
             if (dgv_VScrollBarVisible(dgv))
             {
-                displayWidth -= 17;
+                displayWidth -= SystemInformation.VerticalScrollBarWidth;
             }
             if (dgv.BorderStyle != System.Windows.Forms.BorderStyle.None)
             {
@@ -360,15 +360,7 @@ namespace 自定义TreeView仿VS解决方案效果
             }
             else if (this.moControl.GetType() == typeof(TreeViewEx))
             {
-                TreeViewEx control = this.moControl as TreeViewEx;
-                int displayRectangleWidth = control.Width;
-                tv_HScrollBarVisible(control.Nodes, control.HorizontalScrollValue, ref displayRectangleWidth);
-                int disWeight = control.Width;
-                if (control.VerticalScrollVisible)
-                {
-                    disWeight -= 17;
-                }
-                UpdateScrollbar(control.HorizontalScrollVisible, disWeight, displayRectangleWidth, control.HorizontalScrollValue, control.ItemHeight * 3, control.ItemHeight);
+                tv_SizeChanged(this.moControl, null);
             }
         }
         #endregion

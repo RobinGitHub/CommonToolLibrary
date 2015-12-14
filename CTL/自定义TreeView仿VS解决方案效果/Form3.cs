@@ -16,8 +16,8 @@ namespace 自定义TreeView仿VS解决方案效果
         public Form3()
         {
             InitializeComponent();
-            this.myVScrollBar1.BindControl = this.dataGridView1;
-            this.myHScrollBar1.BindControl = this.dataGridView1;
+            //this.myVScrollBar1.BindControl = this.dataGridView1;
+            //this.myHScrollBar1.BindControl = this.dataGridView1;
 
         }
 
@@ -48,10 +48,10 @@ namespace 自定义TreeView仿VS解决方案效果
             this.dataGridView1.DataSource = null;
             this.dataGridView1.DataSource = DataSource();
 
-            Type type = dataGridView1.GetType();
-            PropertyInfo pi = type.GetProperty("DoubleBuffered",
-                BindingFlags.Instance | BindingFlags.NonPublic);
-            pi.SetValue(dataGridView1, true, null);
+            //Type type = dataGridView1.GetType();
+            //PropertyInfo pi = type.GetProperty("DoubleBuffered",
+            //    BindingFlags.Instance | BindingFlags.NonPublic);
+            //pi.SetValue(dataGridView1, true, null);
             //this.myHScrollBar1.UpdateScrollbar();
             //this.myVScrollBar1.UpdateScrollbar();
 
