@@ -141,12 +141,12 @@ namespace 自定义TreeView仿VS解决方案效果
                         TreeViewEx tv = value as TreeViewEx;
                         tv.AfterExpand += tv_AfterExpand;
                         tv.AfterCollapse += tv_AfterCollapse;
-                        tv.AfterSelect += tv_AfterSelect;                        
+                        tv.AfterSelect += tv_AfterSelect;
                     }
                 }
             }
         }
-                
+
         #endregion
         #region TreeView
         void tv_AfterSelect(object sender, TreeViewEventArgs e)
@@ -191,10 +191,15 @@ namespace 自定义TreeView仿VS解决方案效果
                 {//执行完后才能得到滚动的值，所有这里用异步的方式去解决这个问题
                     //VerticalScrollValue 返回的是移动的行数
                     TreeViewEx tv = sender as TreeViewEx;
-                    this.Value = tv.HorizontalScrollValue; 
+                    if (this.Value != tv.HorizontalScrollValue)
+                    {
+                        this.Value = tv.HorizontalScrollValue;
+                        tv.Refresh();
+                    }
                 });
             });
             t.Start();
+
         }
 
         private void tv_HScrollBarVisible(TreeNodeCollection tnc, int scrollValue, ref int maxWidth)
@@ -227,41 +232,50 @@ namespace 自定义TreeView仿VS解决方案效果
             int colWidth = 0;
             if (dgv.Columns.Count > 0)
                 colWidth = dgv.Columns[0].Width;
+            //int totalRowWidth = dgv.RowHeadersWidth;
+            //foreach (DataGridViewColumn item in dgv.Columns)
+            //{
+            //    totalRowWidth += item.Width;
+            //}
+            //bool isVisible = dgv.Bounds.Height != dgv.DisplayRectangle.Height;
+
+            dgv.SizeChanged -= dgv_SizeChanged;
             int totalRowWidth = 0;
-            foreach (DataGridViewColumn item in dgv.Columns)
+            bool isVisible = dgv_HScrollBarVisible(dgv, out totalRowWidth);//dgv.Bounds.Height != dgv.DisplayRectangle.Height;
+            if (isVisible)
+            {
+                dgv.Height = dgv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
+            }
+            else
+            {
+                dgv.Height = dgv.Parent.Height;
+            }
+            isVisible = dgv_HScrollBarVisible(dgv, out totalRowWidth);
+            dgv.SizeChanged += dgv_SizeChanged;
+
+            Thread t = new Thread(() =>
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.UpdateScrollbar(isVisible, dgv.DisplayRectangle.Width, totalRowWidth, dgv.HorizontalScrollingOffset, colWidth * 3, colWidth);
+                });
+            });
+            t.Start();
+        }
+
+        private bool dgv_HScrollBarVisible(DataGridView control, out int totalRowWidth)
+        {
+            totalRowWidth = control.RowHeadersWidth;
+            foreach (DataGridViewColumn item in control.Columns)
             {
                 totalRowWidth += item.Width;
             }
-            int displayWidth = dgv.Width - dgv.RowHeadersWidth;
-
-            if (dgv_VScrollBarVisible(dgv))
-            {
-                displayWidth -= SystemInformation.VerticalScrollBarWidth;
-            }
-            if (dgv.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            int displayWidth = control.Width;
+            if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
             {
                 displayWidth -= 2;
             }
-            
-            bool isVisible = displayWidth < totalRowWidth;
-
-            this.UpdateScrollbar(isVisible, displayWidth, totalRowWidth, dgv.HorizontalScrollingOffset, colWidth * 3, colWidth);
-        }
-
-        private bool dgv_VScrollBarVisible(DataGridView control)
-        {
-            //int totalRowHeight = control.RowTemplate.Height;
-            //foreach (DataGridViewRow item in control.Rows)
-            //{
-            //    totalRowHeight += item.Height;
-            //}
-            //int displayHeight = control.Height - control.ColumnHeadersHeight;
-            //if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
-            //{
-            //    displayHeight -= 2;
-            //}
-            //return displayHeight < totalRowHeight;
-            return control.DisplayedRowCount(false) != control.RowCount;
+            return displayWidth < totalRowWidth;
         }
 
         void dgv_CellStateChanged(object sender, DataGridViewCellStateChangedEventArgs e)

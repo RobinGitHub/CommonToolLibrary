@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Win32API;
 using 自定义TreeView仿VS解决方案效果.Properties;
@@ -122,22 +124,47 @@ namespace 自定义TreeView仿VS解决方案效果
             set { plusImage = value; }
         }
         #endregion
+
+        #region 是否自定义绘制
+        /// <summary>
+        /// 是否自定义绘制
+        /// </summary>
+        private bool isCustomDraw = true;
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(true), Category("其他"), Description("是否自定义绘制")]
+        public bool IsCustomDraw
+        {
+            get { return isCustomDraw; }
+            set
+            {
+                isCustomDraw = value;
+                if (!value)
+                {
+                    this.DrawNode += TreeViewEx_DrawNode;
+                    this.NodeMouseClick += TreeViewEx_NodeMouseClick;
+                }
+            }
+        }
+        #endregion
         #endregion
 
         #region 构造函数
         public TreeViewEx()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true); // 禁止擦除背景.
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true); // 双缓冲
-            this.UpdateStyles();
-
-            this.DrawNode += TreeViewEx_DrawNode;
-            this.NodeMouseClick += TreeViewEx_NodeMouseClick;
+            //SetStyle(ControlStyles.AllPaintingInWmPaint, true); // 禁止擦除背景.
+            //SetStyle(ControlStyles.OptimizedDoubleBuffer, true); // 双缓冲
+            //this.UpdateStyles();
+            //SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(ControlStyles.Opaque, true);
 
             this.FullRowSelect = true;
             this.HideSelection = false;
             this.HotTracking = true;
+
+            HorizontalScrollVisible = false;
         }
+
         #endregion
 
         #region 控制展开 收缩
@@ -170,9 +197,11 @@ namespace 自定义TreeView仿VS解决方案效果
         /// <param name="e"></param>
         void TreeViewEx_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
-            if (!e.Node.IsVisible) return;
+            if (!e.Node.IsVisible)
+            {
+                return;
+            }
             Size txtSize = TextRenderer.MeasureText(e.Node.Text, this.Font);
-
             PointF center = new PointF(e.Node.Bounds.X, e.Node.Bounds.Y + (this.ItemHeight - txtSize.Height) / 2);
 
             Color foreColor;
@@ -192,6 +221,7 @@ namespace 自定义TreeView仿VS解决方案效果
             {
                 foreColor = e.Node.ForeColor;
                 backColor = Color.White;
+
             }
 
             if (foreColor.A == 0)
@@ -199,38 +229,93 @@ namespace 自定义TreeView仿VS解决方案效果
                 foreColor = this.ForeColor;
             }
 
-            if (FullRowSelect)
+            using (BufferedGraphics myBuffer = BufferedGraphicsManager.Current.Allocate(e.Graphics, e.Bounds))
             {
-                e.Graphics.FillRectangle(new SolidBrush(backColor), e.Bounds);
-            }
-            else
-            {
-                e.Graphics.FillRectangle(new SolidBrush(backColor), new Rectangle(e.Bounds.Location, new Size(this.Width - e.Bounds.X, e.Bounds.Height)));
-            }
-
-
-            //绘制加减号，做了一些硬编码
-            if (e.Node.Nodes.Count > 0 && minusImage != null && plusImage != null)
-            {
-                e.Graphics.DrawImage((e.Node.IsExpanded ? minusImage : plusImage), center);
-            }
-
-            //绘制文字
-            if (e.Node.NodeFont != null)
-                e.Graphics.DrawString(e.Node.Text, e.Node.NodeFont, new SolidBrush(foreColor), new PointF(center.X + 20, center.Y));
-            else
-                e.Graphics.DrawString(e.Node.Text, this.Font, new SolidBrush(foreColor), new PointF(center.X + 20, center.Y));
-
-            if (isShowBottomLine)
-            {
-                using (Pen pen = new Pen(bottomLineColor))
+                using (SolidBrush brush = new SolidBrush(backColor))
                 {
-                    e.Graphics.DrawLine(pen, new Point(e.Bounds.X, e.Node.Bounds.Y + this.ItemHeight - 1), new Point(e.Bounds.X + e.Bounds.Width, e.Node.Bounds.Y + this.ItemHeight - 1));
+                    if (FullRowSelect)
+                    {
+                        myBuffer.Graphics.FillRectangle(brush, e.Bounds);
+                    }
+                    else
+                    {
+                        myBuffer.Graphics.FillRectangle(brush, new Rectangle(e.Bounds.Location, new Size(this.Width - e.Bounds.X, e.Bounds.Height)));
+                    }
                 }
+
+                //    //绘制加减号，做了一些硬编码
+                if (e.Node.Nodes.Count > 0 && minusImage != null && plusImage != null)
+                {
+                    myBuffer.Graphics.DrawImage((e.Node.IsExpanded ? minusImage : plusImage), center);
+                }
+
+                //    //绘制文字
+                if (e.Node.NodeFont != null)
+                    myBuffer.Graphics.DrawString(e.Node.Text, e.Node.NodeFont, new SolidBrush(foreColor), new PointF(center.X + 20, center.Y));
+                else
+                    myBuffer.Graphics.DrawString(e.Node.Text, this.Font, new SolidBrush(foreColor), new PointF(center.X + 20, center.Y));
+
+                if (isShowBottomLine)
+                {
+                    using (Pen pen = new Pen(bottomLineColor))
+                    {
+                        myBuffer.Graphics.DrawLine(pen, new Point(e.Bounds.X, e.Node.Bounds.Y + this.ItemHeight - 1), new Point(e.Bounds.X + e.Bounds.Width, e.Node.Bounds.Y + this.ItemHeight - 1));
+                    }
+                }
+                myBuffer.Render(e.Graphics);
+                myBuffer.Dispose();
             }
-            this.Update();
+
+            //if (FullRowSelect)
+            //{
+            //    using (SolidBrush brush = new SolidBrush(backColor))
+            //    {
+            //        e.Graphics.FillRectangle(brush, e.Bounds);
+            //    }
+            //}
+            //else
+            //{
+            //    using (SolidBrush brush = new SolidBrush(backColor))
+            //    {
+            //        e.Graphics.FillRectangle(brush, new Rectangle(e.Bounds.Location, new Size(this.Width - e.Bounds.X, e.Bounds.Height)));
+            //    }
+            //}
+
+            ////绘制加减号，做了一些硬编码
+            //if (e.Node.Nodes.Count > 0 && minusImage != null && plusImage != null)
+            //{
+            //    e.Graphics.DrawImage((e.Node.IsExpanded ? minusImage : plusImage), center);
+            //}
+
+            ////绘制文字
+            //if (e.Node.NodeFont != null)
+            //    e.Graphics.DrawString(e.Node.Text, e.Node.NodeFont, new SolidBrush(foreColor), new PointF(center.X + 20, center.Y));
+            //else
+            //    e.Graphics.DrawString(e.Node.Text, this.Font, new SolidBrush(foreColor), new PointF(center.X + 20, center.Y));
+
+            //if (isShowBottomLine)
+            //{
+            //    using (Pen pen = new Pen(bottomLineColor))
+            //    {
+            //        e.Graphics.DrawLine(pen, new Point(e.Bounds.X, e.Node.Bounds.Y + this.ItemHeight - 1), new Point(e.Bounds.X + e.Bounds.Width, e.Node.Bounds.Y + this.ItemHeight - 1));
+            //    }
+            //}
+
+            //this.SuspendLayout();
         }
         #endregion
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x0014) // 禁掉清除背景消息
+                return;
+            if (m.Msg == (int)WinMsg.WM_HSCROLL)
+            {
+                this.Invalidate();
+            }
+
+            base.WndProc(ref m);
+        }
 
         #region 获取&设置滚动条的值
         public int VerticalScrollValue
@@ -246,7 +331,7 @@ namespace 自定义TreeView仿VS解决方案效果
                 Win32API.Win32API.SendMessage(this.Handle, WinMsg.WM_VSCROLL.GetHashCode(), (System.IntPtr)ScrollBarRequests.SB_THUMBPOSITION.GetHashCode(), (System.IntPtr)0);
             }
         }
-        
+
         public int HorizontalScrollValue
         {
             get
@@ -264,20 +349,31 @@ namespace 自定义TreeView仿VS解决方案效果
                 int wParam = (value << 16) + 5;
                 Win32API.Win32API.SendMessage(this.Handle, WinMsg.WM_HSCROLL.GetHashCode(), (System.IntPtr)wParam, (System.IntPtr)0);
             }
-        }        
+        }
 
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(true), Category("其他"), Description("垂直滚动条是否显示")]
         public bool VerticalScrollVisible
         {
+            set
+            {
+                Win32API.Win32API.ShowScrollBar(this.Handle, (int)ScrollBarTypes.SB_VERT, value);
+            }
             get
             {
-                return (Win32API.Win32API.GetWindowLong(this.Handle, SetWindowLongOffsets.GWL_STYLE.GetHashCode()) & WindowStyles.WS_VSCROLL.GetHashCode()) != 0;
+                return (Win32API.Win32API.GetWindowLong(this.Handle, (int)SetWindowLongOffsets.GWL_STYLE) & (int)WindowStyles.WS_VSCROLL) != 0;
             }
         }
+
+        [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(true), Category("其他"), Description("水平滚动条是否显示")]
         public bool HorizontalScrollVisible
         {
+            set
+            {
+                Win32API.Win32API.ShowScrollBar(this.Handle, (int)ScrollBarTypes.SB_HORZ, value);
+            }
             get
             {
-                return (Win32API.Win32API.GetWindowLong(this.Handle, SetWindowLongOffsets.GWL_STYLE.GetHashCode()) & WindowStyles.WS_HSCROLL.GetHashCode()) != 0;
+                return (Win32API.Win32API.GetWindowLong(this.Handle, (int)SetWindowLongOffsets.GWL_STYLE) & (int)WindowStyles.WS_HSCROLL) != 0;
             }
         }
 

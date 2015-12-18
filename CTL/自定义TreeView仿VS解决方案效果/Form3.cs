@@ -16,9 +16,13 @@ namespace 自定义TreeView仿VS解决方案效果
         public Form3()
         {
             InitializeComponent();
-            //this.myVScrollBar1.BindControl = this.dataGridView1;
-            //this.myHScrollBar1.BindControl = this.dataGridView1;
+            this.myVScrollBar1.BindControl = this.dataGridView1;
+            this.myHScrollBar1.BindControl = this.dataGridView1;
+            this.SizeChanged += Form3_SizeChanged;
+        }
 
+        void Form3_SizeChanged(object sender, EventArgs e)
+        {
         }
 
         private DataTable DataSource()
@@ -48,18 +52,34 @@ namespace 自定义TreeView仿VS解决方案效果
             this.dataGridView1.DataSource = null;
             this.dataGridView1.DataSource = DataSource();
 
+            
+
             //Type type = dataGridView1.GetType();
             //PropertyInfo pi = type.GetProperty("DoubleBuffered",
             //    BindingFlags.Instance | BindingFlags.NonPublic);
             //pi.SetValue(dataGridView1, true, null);
-            //this.myHScrollBar1.UpdateScrollbar();
-            //this.myVScrollBar1.UpdateScrollbar();
+            this.myHScrollBar1.UpdateScrollbar();
+            this.myVScrollBar1.UpdateScrollbar();
+            
 
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-
+            int totalHeight = dataGridView1.ColumnHeadersHeight;
+            int displayHeight = dataGridView1.DisplayRectangle.Height;
+            int spaceHeight = 0;
+            for (int i = dataGridView1.Rows.Count - 1; i >= 0; i--)
+            {
+                if (totalHeight > displayHeight)
+                {
+                    spaceHeight = displayHeight - (totalHeight - dataGridView1.Rows[i + 1].Height);
+                    break;
+                }
+                totalHeight += dataGridView1.Rows[i].Height;
+            }
+            richTextBox1.AppendText(spaceHeight + "\n");
+            richTextBox1.ScrollToCaret();
         }
     }
 }

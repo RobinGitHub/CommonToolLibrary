@@ -132,7 +132,6 @@ namespace 自定义TreeView仿VS解决方案效果
                         dgv.SizeChanged += dgv_SizeChanged;
                         dgv.RowsAdded += dgv_RowsAdded;
                         dgv.RowsRemoved += dgv_RowsRemoved;
-                        //dgv.MouseWheel += dgv_MouseWheel;
                     }
                     else if (value.GetType() == typeof(TreeViewEx))
                     {
@@ -174,6 +173,7 @@ namespace 自定义TreeView仿VS解决方案效果
         void tv_SizeChanged(object sender, EventArgs e)
         {
             TreeViewEx tv = sender as TreeViewEx;
+            tv.HorizontalScrollVisible = false;
             int totalHeight = 0;
             NextNode(tv.Nodes, ref totalHeight);
 
@@ -186,17 +186,17 @@ namespace 自定义TreeView仿VS解决方案效果
                 totalHeight += disHeight % tv.ItemHeight;
             }
 
-            tv.SizeChanged -= tv_SizeChanged;
-            if (tv.HorizontalScrollVisible)
-                tv.Height = tv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
-            else
-                tv.Height = tv.Parent.Height;
+            //tv.SizeChanged -= tv_SizeChanged;
+            //if (tv.HorizontalScrollVisible)
+            //    tv.Height = tv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
+            //else
+            //    tv.Height = tv.Parent.Height;
 
-            if (tv.VerticalScrollVisible)
-                tv.Width = tv.Parent.Width + SystemInformation.VerticalScrollBarWidth;
-            else
-                tv.Width = tv.Parent.Width;
-            tv.SizeChanged += tv_SizeChanged;
+            //if (tv.VerticalScrollVisible)
+            //    tv.Width = tv.Parent.Width + SystemInformation.VerticalScrollBarWidth;
+            //else
+            //    tv.Width = tv.Parent.Width;
+            //tv.SizeChanged += tv_SizeChanged;
 
             UpdateScrollbar(tv.VerticalScrollVisible, disHeight, totalHeight, tv.VerticalScrollValue * tv.ItemHeight, tv.ItemHeight * 3, tv.ItemHeight);
         }
@@ -235,113 +235,75 @@ namespace 自定义TreeView仿VS解决方案效果
         {
             DataGridView dgv = sender as DataGridView;
             int rowHeight = 23;
-            int totalRowHeight = 0;
-            foreach (DataGridViewRow item in dgv.Rows)
-            {
-                totalRowHeight += item.Height;
-            }
-            //如果出现水平滚动条，显示的高度要加上滚动条的高度和间隙            
-            bool isVisible = dgv_VScrollBarVisible(dgv);
-            var t = dgv.DisplayRectangle.Height;
 
-            int disHeight = dgv.Height;
-
-            bool hScrollVis = dgv_HScrollBarVisible(dgv);
-
-            dgv.SizeChanged -= dgv_SizeChanged;
-            if (hScrollVis)
-            {
-                dgv.Height = dgv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
-                disHeight -= SystemInformation.HorizontalScrollBarHeight;
-            }
-            else
-            {
-                dgv.Height = dgv.Parent.Height;
-            }
-
-            if (isVisible)
-            {
-                dgv.Width = dgv.Parent.Width + SystemInformation.HorizontalScrollBarHeight;
-            }
-            else
-            {
-                dgv.Width = dgv.Parent.Width;
-            }
-
-            dgv.SizeChanged += dgv_SizeChanged;
-
-            if ((disHeight - dgv.ColumnHeadersHeight) % dgv.RowTemplate.Height != 0)
-            {
-                totalRowHeight += (disHeight - dgv.ColumnHeadersHeight) % dgv.RowTemplate.Height;
-            }
-            //else
-            //{
-            //    totalRowHeight += dgv.RowTemplate.Height;
-            //}
-
-            this.UpdateScrollbar(isVisible, disHeight, totalRowHeight + dgv.ColumnHeadersHeight, dgv.VerticalScrollingOffset, rowHeight * 3, rowHeight);
-        }
-
-        private bool dgv_HScrollBarVisible(DataGridView control)
-        {
-            int totalRowWidth = 0;
-            foreach (DataGridViewColumn item in control.Columns)
-            {
-                totalRowWidth += item.Width;
-            }
-            int displayWidth = control.Width - control.RowHeadersWidth;
-
-            if (dgv_VScrollBarVisible(control))
-            {
-                displayWidth -= SystemInformation.VerticalScrollBarWidth;
-            }
-            if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
-            {
-                displayWidth -= 2;
-            }
-            return displayWidth < totalRowWidth;
-        }
-
-        private bool dgv_VScrollBarVisible(DataGridView control)
-        {
-            //int totalRowHeight = 0;
-            //foreach (DataGridViewRow item in control.Rows)
+            //int totalRowHeight = GetDgvSpaceHeight(dgv) + dgv.ColumnHeadersHeight;
+            //foreach (DataGridViewRow item in dgv.Rows)
             //{
             //    totalRowHeight += item.Height;
             //}
-            //int displayHeight = control.Height - control.ColumnHeadersHeight;
-            //if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
-            //{
-            //    displayHeight -= 2;
-            //}
-            //if (displayHeight > totalRowHeight && control.Rows.Count > 0 && !control.Rows[0].Visible)
-            //{
-            //    return displayHeight < totalRowHeight + control.RowTemplate.Height;
-            //}
-            //return displayHeight < totalRowHeight;
-            return control.DisplayedRowCount(false) != control.RowCount;
-        }
 
-        void dgv_MouseWheel(object sender, MouseEventArgs e)
-        {
-            DataGridView dgv = this.moControl as DataGridView;
-            bool isUp = e.Delta > 0;
-            int disRowIndex = 0;
-            if (isUp)
+            dgv.SizeChanged -= dgv_SizeChanged;
+
+            //如果出现水平滚动条，显示的高度要加上滚动条的高度和间隙       
+            int totalRowHeight = 0;
+            //int totalRowWidth = 0;
+            //bool hScrollVis = dgv_HScrollBarVisible(dgv, out totalRowWidth);//dgv.Bounds.Height != dgv.DisplayRectangle.Height;
+            //if (hScrollVis)
+            //{
+            //    dgv.Height = dgv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
+            //}
+            //else
+            //{
+            //    if (totalRowHeight + SystemInformation.HorizontalScrollBarHeight <= dgv.Parent.Height)
+            //        dgv.Height = dgv.Parent.Height;
+            //}
+
+            bool isVisible = dgv_VScrollBarVisible(dgv, out totalRowHeight);// dgv.Bounds.Width != dgv.DisplayRectangle.Width;
+            if (isVisible)
             {
-                if (dgv.FirstDisplayedScrollingRowIndex >= 3)
-                    disRowIndex = dgv.FirstDisplayedScrollingRowIndex - 3;
-                else
-                    disRowIndex = 0;
+                dgv.Width = dgv.Parent.Width + SystemInformation.VerticalScrollBarWidth;
             }
             else
             {
-                if (dgv.FirstDisplayedScrollingRowIndex + 3 <= dgv.Rows.Count - 1)
-                    disRowIndex = dgv.FirstDisplayedScrollingRowIndex + 3;
-                else
-                    disRowIndex = dgv.Rows.Count - 1;
+                //if (totalRowWidth + SystemInformation.VerticalScrollBarWidth <= dgv.Parent.Width)
+                dgv.Width = dgv.Parent.Width;
             }
-            dgv.FirstDisplayedScrollingRowIndex = disRowIndex;
+            isVisible = dgv_VScrollBarVisible(dgv, out totalRowHeight);
+            dgv.SizeChanged += dgv_SizeChanged;
+
+            Thread t = new Thread(() =>
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.UpdateScrollbar(isVisible, dgv.DisplayRectangle.Height, totalRowHeight, dgv.VerticalScrollingOffset, rowHeight * 3, rowHeight);
+
+                });
+            });
+            t.Start();
+        }
+        /// <summary>
+        /// 计算出间隙的高度
+        /// </summary>
+        /// <param name="dgv"></param>
+        /// <returns></returns>
+        private int GetDgvSpaceHeight(DataGridView dgv)
+        {
+            int totalHeight = dgv.ColumnHeadersHeight;
+            int displayHeight = dgv.DisplayRectangle.Height;
+            int spaceHeight = 0;
+            for (int i = dgv.Rows.Count - 1; i >= 0; i--)
+            {
+                totalHeight += dgv.Rows[i].Height;
+                if (totalHeight > displayHeight)
+                {
+                    if (i == dgv.Rows.Count - 1)
+                        spaceHeight = displayHeight - totalHeight;
+                    else
+                        spaceHeight = displayHeight - (totalHeight - dgv.Rows[i + 1].Height);
+                    break;
+                }
+            }
+            return spaceHeight;
         }
 
         void dgv_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
@@ -352,6 +314,35 @@ namespace 自定义TreeView仿VS解决方案效果
                 this.Value = dgv.VerticalScrollingOffset;
             }
         }
+        private bool dgv_VScrollBarVisible(DataGridView control, out int totalRowHeight)
+        {
+            totalRowHeight = GetDgvSpaceHeight(control) + control.ColumnHeadersHeight;
+            foreach (DataGridViewRow item in control.Rows)
+            {
+                totalRowHeight += item.Height;
+            }
+            int displayHeight = control.Height;
+            if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            {
+                displayHeight -= 2;
+            }
+            return displayHeight < totalRowHeight;
+        }
+        private bool dgv_HScrollBarVisible(DataGridView control, out int totalRowWidth)
+        {
+            totalRowWidth = control.RowHeadersWidth;
+            foreach (DataGridViewColumn item in control.Columns)
+            {
+                totalRowWidth += item.Width;
+            }
+            int displayWidth = control.Width;
+            if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            {
+                displayWidth -= 2;
+            }
+            return displayWidth < totalRowWidth;
+        }
+
         void dgv_RowHeightChanged(object sender, DataGridViewRowEventArgs e)
         {
             dgv_SizeChanged(sender, e);

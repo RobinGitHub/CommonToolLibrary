@@ -108,13 +108,17 @@
             this.treeViewEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewEx1.BackColor = System.Drawing.SystemColors.InfoText;
             this.treeViewEx1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.treeViewEx1.BottomLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(221)))), ((int)(((byte)(237)))), ((int)(((byte)(252)))));
             this.treeViewEx1.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
+            this.treeViewEx1.ForeColor = System.Drawing.SystemColors.Desktop;
             this.treeViewEx1.FullRowSelect = true;
             this.treeViewEx1.HideSelection = false;
             this.treeViewEx1.HorizontalScrollValue = 0;
             this.treeViewEx1.HotTracking = true;
+            this.treeViewEx1.IsCustomDraw = false;
+            this.treeViewEx1.IsShowBottomLine = false;
             this.treeViewEx1.ItemHeight = 40;
             this.treeViewEx1.Location = new System.Drawing.Point(0, 0);
             this.treeViewEx1.MinusImage = ((System.Drawing.Image)(resources.GetObject("treeViewEx1.MinusImage")));
@@ -122,7 +126,7 @@
             this.treeViewEx1.Name = "treeViewEx1";
             this.treeViewEx1.PlusImage = ((System.Drawing.Image)(resources.GetObject("treeViewEx1.PlusImage")));
             this.treeViewEx1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(235)))), ((int)(((byte)(166)))));
-            this.treeViewEx1.Size = new System.Drawing.Size(197, 369);
+            this.treeViewEx1.Size = new System.Drawing.Size(197, 349);
             this.treeViewEx1.TabIndex = 0;
             this.treeViewEx1.VerticalScrollValue = 0;
             // 
@@ -162,6 +166,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.myHScrollBar1);
             this.Controls.Add(this.myVScrollBar1);
+            this.DoubleBuffered = true;
             this.Name = "Form2";
             this.Text = "Form2";
             this.panel1.ResumeLayout(false);
