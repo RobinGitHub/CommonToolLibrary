@@ -116,6 +116,7 @@
             this.treeViewEx1.FullRowSelect = true;
             this.treeViewEx1.HideSelection = false;
             this.treeViewEx1.HorizontalScrollValue = 0;
+            this.treeViewEx1.HorizontalScrollVisible = false;
             this.treeViewEx1.HotTracking = true;
             this.treeViewEx1.IsCustomDraw = false;
             this.treeViewEx1.IsShowBottomLine = false;
@@ -129,6 +130,7 @@
             this.treeViewEx1.Size = new System.Drawing.Size(197, 349);
             this.treeViewEx1.TabIndex = 0;
             this.treeViewEx1.VerticalScrollValue = 0;
+            this.treeViewEx1.VerticalScrollVisible = false;
             // 
             // myHScrollBar1
             // 

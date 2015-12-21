@@ -228,6 +228,7 @@ namespace 自定义TreeView仿VS解决方案效果
         #region DataGridView 的 点击事件
         void dgv_SizeChanged(object sender, EventArgs e)
         {
+            
             DataGridView dgv = sender as DataGridView;
             int colWidth = 0;
             if (dgv.Columns.Count > 0)
@@ -239,17 +240,18 @@ namespace 自定义TreeView仿VS解决方案效果
             //}
             //bool isVisible = dgv.Bounds.Height != dgv.DisplayRectangle.Height;
 
-            dgv.SizeChanged -= dgv_SizeChanged;
             int totalRowWidth = 0;
-            bool isVisible = dgv_HScrollBarVisible(dgv, out totalRowWidth);//dgv.Bounds.Height != dgv.DisplayRectangle.Height;
-            if (isVisible)
-            {
-                dgv.Height = dgv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
-            }
-            else
-            {
-                dgv.Height = dgv.Parent.Height;
-            }
+            bool isVisible = dgv_HScrollBarVisible(dgv, out totalRowWidth);
+            dgv.SizeChanged -= dgv_SizeChanged;
+            //if (isVisible)
+            //{
+            //    dgv.Height = dgv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
+            //}
+            //else
+            //{
+            //    dgv.Height = dgv.Parent.Height;
+            //}
+            //dgv.Height = dgv.Parent.Height;
             isVisible = dgv_HScrollBarVisible(dgv, out totalRowWidth);
             dgv.SizeChanged += dgv_SizeChanged;
 
@@ -268,9 +270,10 @@ namespace 自定义TreeView仿VS解决方案效果
             totalRowWidth = control.RowHeadersWidth;
             foreach (DataGridViewColumn item in control.Columns)
             {
+                if (!item.Visible) continue;
                 totalRowWidth += item.Width;
             }
-            int displayWidth = control.Width;
+            int displayWidth = control.DisplayRectangle.Width;
             if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
             {
                 displayWidth -= 2;

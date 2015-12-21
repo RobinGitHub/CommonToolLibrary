@@ -145,6 +145,7 @@ namespace 自定义TreeView仿VS解决方案效果
             }
         }
         #endregion
+        
         #endregion
 
         #region 构造函数
@@ -163,6 +164,7 @@ namespace 自定义TreeView仿VS解决方案效果
             this.HotTracking = true;
 
             HorizontalScrollVisible = false;
+
         }
 
         #endregion
@@ -305,6 +307,7 @@ namespace 自定义TreeView仿VS解决方案效果
         }
         #endregion
 
+        #region override
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == 0x0014) // 禁掉清除背景消息
@@ -316,6 +319,7 @@ namespace 自定义TreeView仿VS解决方案效果
 
             base.WndProc(ref m);
         }
+        #endregion
 
         #region 获取&设置滚动条的值
         public int VerticalScrollValue

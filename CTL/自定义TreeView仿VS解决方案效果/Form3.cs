@@ -41,7 +41,7 @@ namespace 自定义TreeView仿VS解决方案效果
                 row[1] = "描述" + i.ToString();
                 row[2] = "描述" + i.ToString();
                 row[3] = "描述" + i.ToString();
-                row[4] = "描述" + i.ToString();
+                row[4] = "描述描述描述描述描述" + i.ToString();
                 dt.Rows.Add(row);
             }
             return dt;

@@ -149,6 +149,7 @@ namespace 自定义TreeView仿VS解决方案效果
         }
 
         #endregion
+
         #region TreeView
         void tv_Click(object sender, EventArgs e)
         {
@@ -233,6 +234,7 @@ namespace 自定义TreeView仿VS解决方案效果
         #region DataGridView 的 点击事件
         void dgv_SizeChanged(object sender, EventArgs e)
         {
+            
             DataGridView dgv = sender as DataGridView;
             int rowHeight = 23;
 
@@ -259,15 +261,16 @@ namespace 自定义TreeView仿VS解决方案效果
             //}
 
             bool isVisible = dgv_VScrollBarVisible(dgv, out totalRowHeight);// dgv.Bounds.Width != dgv.DisplayRectangle.Width;
-            if (isVisible)
-            {
-                dgv.Width = dgv.Parent.Width + SystemInformation.VerticalScrollBarWidth;
-            }
-            else
-            {
-                //if (totalRowWidth + SystemInformation.VerticalScrollBarWidth <= dgv.Parent.Width)
-                dgv.Width = dgv.Parent.Width;
-            }
+            //if (isVisible)
+            //{
+            //    dgv.Width = dgv.Parent.Width + SystemInformation.VerticalScrollBarWidth;
+            //}
+            //else
+            //{
+            //    //if (totalRowWidth + SystemInformation.VerticalScrollBarWidth <= dgv.Parent.Width)
+            //    dgv.Width = dgv.Parent.Width;
+            //}
+            //dgv.Width = dgv.Parent.Width;
             isVisible = dgv_VScrollBarVisible(dgv, out totalRowHeight);
             dgv.SizeChanged += dgv_SizeChanged;
 
@@ -321,12 +324,12 @@ namespace 自定义TreeView仿VS解决方案效果
             {
                 totalRowHeight += item.Height;
             }
-            int displayHeight = control.Height;
+            int displayHeight = control.DisplayRectangle.Height;
             if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
             {
                 displayHeight -= 2;
             }
-            return displayHeight < totalRowHeight;
+            return displayHeight <= totalRowHeight;
         }
         private bool dgv_HScrollBarVisible(DataGridView control, out int totalRowWidth)
         {
