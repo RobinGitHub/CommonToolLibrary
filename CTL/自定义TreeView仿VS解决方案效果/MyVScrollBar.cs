@@ -129,9 +129,12 @@ namespace 自定义TreeView仿VS解决方案效果
                         dgv.RowHeightChanged += dgv_RowHeightChanged;
                         dgv.ColumnHeadersHeightChanged += dgv_ColumnHeadersHeightChanged;
                         dgv.RowHeadersWidthChanged += dgv_RowHeadersWidthChanged;
-                        dgv.SizeChanged += dgv_SizeChanged;
+                        //dgv.SizeChanged += dgv_SizeChanged;
                         dgv.RowsAdded += dgv_RowsAdded;
                         dgv.RowsRemoved += dgv_RowsRemoved;
+
+                        Panel pnl = dgv.Parent as Panel;
+                        pnl.SizeChanged += pnl_SizeChanged;
                     }
                     else if (value.GetType() == typeof(TreeViewEx))
                     {
@@ -270,7 +273,7 @@ namespace 自定义TreeView仿VS解决方案效果
             //    //if (totalRowWidth + SystemInformation.VerticalScrollBarWidth <= dgv.Parent.Width)
             //    dgv.Width = dgv.Parent.Width;
             //}
-            //dgv.Width = dgv.Parent.Width;
+            dgv.Width = dgv.Parent.Width;
             isVisible = dgv_VScrollBarVisible(dgv, out totalRowHeight);
             dgv.SizeChanged += dgv_SizeChanged;
 
@@ -284,6 +287,39 @@ namespace 自定义TreeView仿VS解决方案效果
             });
             t.Start();
         }
+
+        void pnl_SizeChanged(object sender, EventArgs e)
+        {
+            Panel pnl = sender as Panel;
+            DataGridView dgv = pnl.Controls[0] as DataGridView;
+
+            int rowHeight = 23;
+            
+            //如果出现水平滚动条，显示的高度要加上滚动条的高度和间隙       
+            int totalRowHeight = 0;
+            bool isVisible = dgv_VScrollBarVisible(dgv, out totalRowHeight);
+            if (isVisible)
+            {
+                dgv.Width = dgv.Parent.Width + SystemInformation.VerticalScrollBarWidth;
+            }
+            else
+            {
+                dgv.Width = dgv.Parent.Width;
+            }
+            isVisible = dgv_VScrollBarVisible(dgv, out totalRowHeight);
+
+            Thread t = new Thread(() =>
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.UpdateScrollbar(isVisible, dgv.DisplayRectangle.Height, totalRowHeight, dgv.VerticalScrollingOffset, rowHeight * 3, rowHeight);
+
+                });
+            });
+            t.Start();
+
+        }
+
         /// <summary>
         /// 计算出间隙的高度
         /// </summary>
@@ -319,16 +355,16 @@ namespace 自定义TreeView仿VS解决方案效果
         }
         private bool dgv_VScrollBarVisible(DataGridView control, out int totalRowHeight)
         {
-            totalRowHeight = GetDgvSpaceHeight(control) + control.ColumnHeadersHeight;
+            totalRowHeight = control.ColumnHeadersHeight;//GetDgvSpaceHeight(control) + 
             foreach (DataGridViewRow item in control.Rows)
             {
                 totalRowHeight += item.Height;
             }
-            int displayHeight = control.DisplayRectangle.Height;
-            if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
-            {
-                displayHeight -= 2;
-            }
+            int displayHeight = control.Height; //control.DisplayRectangle.Height;
+            //if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            //{
+            //    displayHeight -= 2;
+            //}
             return displayHeight <= totalRowHeight;
         }
         private bool dgv_HScrollBarVisible(DataGridView control, out int totalRowWidth)

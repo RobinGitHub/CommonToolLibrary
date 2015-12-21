@@ -124,13 +124,16 @@ namespace 自定义TreeView仿VS解决方案效果
                     if (value.GetType() == typeof(DataGridView))
                     {
                         DataGridView dgv = value as DataGridView;
-                        dgv.SizeChanged += dgv_SizeChanged;
+                        //dgv.SizeChanged += dgv_SizeChanged;
                         dgv.CellStateChanged += dgv_CellStateChanged;
                         dgv.ColumnAdded += dgv_ColumnAdded;
                         dgv.ColumnRemoved += dgv_ColumnRemoved;
                         dgv.ColumnWidthChanged += dgv_ColumnWidthChanged;
                         dgv.RowHeadersWidthChanged += dgv_RowHeadersWidthChanged;
                         dgv.RowHeaderMouseClick += dgv_RowHeaderMouseClick;
+
+                        Panel pnl = dgv.Parent as Panel;
+                        pnl.SizeChanged += pnl_SizeChanged;
                     }
                     else if (value.GetType() == typeof(TreeViewEx))
                     {
@@ -148,6 +151,7 @@ namespace 自定义TreeView仿VS解决方案效果
         }
 
         #endregion
+
         #region TreeView
         void tv_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -228,7 +232,7 @@ namespace 自定义TreeView仿VS解决方案效果
         #region DataGridView 的 点击事件
         void dgv_SizeChanged(object sender, EventArgs e)
         {
-            
+            return;
             DataGridView dgv = sender as DataGridView;
             int colWidth = 0;
             if (dgv.Columns.Count > 0)
@@ -265,6 +269,38 @@ namespace 自定义TreeView仿VS解决方案效果
             t.Start();
         }
 
+        void pnl_SizeChanged(object sender, EventArgs e)
+        {
+            Panel pnl = sender as Panel;
+            DataGridView dgv = pnl.Controls[0] as DataGridView;
+
+            int colWidth = 0;
+            if (dgv.Columns.Count > 0)
+                colWidth = dgv.Columns[0].Width;
+
+            int totalRowWidth = 0;
+            bool isVisible = dgv_HScrollBarVisible(dgv, out totalRowWidth);
+            //if (isVisible)
+            //{
+            //    dgv.Height = dgv.Parent.Height + SystemInformation.HorizontalScrollBarHeight;
+            //}
+            //else
+            //{
+            //    dgv.Height = dgv.Parent.Height;
+            //}
+            //isVisible = dgv_HScrollBarVisible(dgv, out totalRowWidth);
+            dgv.Height = dgv.Parent.Height;
+            Thread t = new Thread(() =>
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.UpdateScrollbar(isVisible, dgv.DisplayRectangle.Width, totalRowWidth, dgv.HorizontalScrollingOffset, colWidth * 3, colWidth);
+                });
+            });
+            t.Start();
+        }
+
+
         private bool dgv_HScrollBarVisible(DataGridView control, out int totalRowWidth)
         {
             totalRowWidth = control.RowHeadersWidth;
@@ -273,11 +309,11 @@ namespace 自定义TreeView仿VS解决方案效果
                 if (!item.Visible) continue;
                 totalRowWidth += item.Width;
             }
-            int displayWidth = control.DisplayRectangle.Width;
-            if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
-            {
-                displayWidth -= 2;
-            }
+            int displayWidth = control.Width; // control.DisplayRectangle.Width;
+            //if (control.BorderStyle != System.Windows.Forms.BorderStyle.None)
+            //{
+            //    displayWidth -= 2;
+            //}
             return displayWidth < totalRowWidth;
         }
 

@@ -60,26 +60,44 @@ namespace 自定义TreeView仿VS解决方案效果
             //pi.SetValue(dataGridView1, true, null);
             this.myHScrollBar1.UpdateScrollbar();
             this.myVScrollBar1.UpdateScrollbar();
-            
 
+            DataGridViewTextBoxColumn c1 = new DataGridViewTextBoxColumn();
+            c1.HeaderText = "";
+            c1.Width = 17;
+            dataGridView1.Columns.Add(c1);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int totalHeight = dataGridView1.ColumnHeadersHeight;
-            int displayHeight = dataGridView1.DisplayRectangle.Height;
-            int spaceHeight = 0;
-            for (int i = dataGridView1.Rows.Count - 1; i >= 0; i--)
-            {
-                if (totalHeight > displayHeight)
-                {
-                    spaceHeight = displayHeight - (totalHeight - dataGridView1.Rows[i + 1].Height);
-                    break;
-                }
-                totalHeight += dataGridView1.Rows[i].Height;
-            }
-            richTextBox1.AppendText(spaceHeight + "\n");
-            richTextBox1.ScrollToCaret();
+            //int totalHeight = dataGridView1.ColumnHeadersHeight;
+            //int displayHeight = dataGridView1.DisplayRectangle.Height;
+            //int spaceHeight = 0;
+            //for (int i = dataGridView1.Rows.Count - 1; i >= 0; i--)
+            //{
+            //    if (totalHeight > displayHeight)
+            //    {
+            //        spaceHeight = displayHeight - (totalHeight - dataGridView1.Rows[i + 1].Height);
+            //        break;
+            //    }
+            //    totalHeight += dataGridView1.Rows[i].Height;
+            //}
+            //richTextBox1.AppendText(spaceHeight + "\n");
+            //richTextBox1.ScrollToCaret();
+
+            DataGridViewColumn c1 = dataGridView1.Columns[dataGridView1.Columns.Count - 1];
+            c1.Visible = true;
+            dataGridView1.Invalidate();
+            this.myHScrollBar1.UpdateScrollbar();
+            this.myVScrollBar1.UpdateScrollbar();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DataGridViewColumn c1 = dataGridView1.Columns[dataGridView1.Columns.Count - 1];
+            c1.Visible = false;
+            dataGridView1.Invalidate();
+            this.myHScrollBar1.UpdateScrollbar();
+            this.myVScrollBar1.UpdateScrollbar();
         }
     }
 }
