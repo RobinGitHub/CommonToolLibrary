@@ -114,16 +114,35 @@ namespace 自定义Panel列表V2
                         dgv.RowStateChanged += dgv_RowStateChanged;
                         dgv.SizeChanged += dgv_SizeChanged;
                     }
-                    else if (value.GetType() == typeof(DataPanelContainer))
+                    else if (value.GetType() == typeof(TreeView))
                     {
-                        value.MouseWheel += dpc_MouseWheel;
-                        value.Click += dpc_Click;
-                    }
+                        value.MouseWheel += tv_MouseWheel;
+                        value.SizeChanged += tv_SizeChanged;
+                        value.Click += tv_Click;
                 }
             }
         }
-        #endregion
+        }
 
+        
+        #endregion
+        #region TreeView
+        void tv_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void tv_SizeChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void tv_MouseWheel(object sender, MouseEventArgs e)
+        {
+            TreeView tv = sender as TreeView;
+            //this.Value = 
+        }
+        #endregion
         #region Panel 的点击事件
 
         void dpc_Click(object sender, EventArgs e)
@@ -205,7 +224,7 @@ namespace 自定义Panel列表V2
             if (this.moControl == null)
                 return;
 
-            this.Visible = isVisible;
+                this.Visible = isVisible;
 
             customScrollInfo.IsVisible = isVisible;
             customScrollInfo.Offset = offset;
@@ -374,7 +393,7 @@ namespace 自定义Panel列表V2
             }
             moChannelColor = moChannelMouseEnterColor;
             this.Refresh();
-        }
+            }
         void MyVScrollBar_MouseLeave(object sender, EventArgs e)
         {
             moChannelColor = moChannelDefaultColor;
