@@ -12,30 +12,30 @@ using System.Text;
 
 namespace SQLiteORM.Dialect
 {
-	public class Actions
-	{
-		internal static string CreateTable(TableMeta meta, string tableName)
-		{
-			if ( (meta.Columns.Count( col => col.PrimaryKey && col.AutoIncrement ) == 1) ||
-                 (meta.Columns.Count( col => col.PrimaryKey) == 0))
-				return String.Format("CREATE TABLE if not exists {0} ({1}); ", tableName,
-				                      BuildColumnList( meta.Columns, (sb, col) => sb.AppendFormat( "{0} {1}", col.Name, col.SqlType ) ) );
+    public class Actions
+    {
+        internal static string CreateTable(TableMeta meta, string tableName)
+        {
+            if ((meta.Columns.Count(col => col.PrimaryKey && col.AutoIncrement) == 1) ||
+                 (meta.Columns.Count(col => col.PrimaryKey) == 0))
+                return String.Format("CREATE TABLE if not exists {0} ({1}); ", tableName,
+                                      BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0} {1}", col.Name, col.SqlType)));
 
 
-			return String.Format("CREATE TABLE if not exists {0} ({1}, PRIMARY KEY ({2})); ", tableName,
-			                     BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0} {1}", col.Name, col.SqlType)),
-			                     BuildColumnList(meta.Columns.Where(col => col.PrimaryKey) , (sb, col) => sb.AppendFormat("{0} ", col.Name)));
-		}
+            return String.Format("CREATE TABLE if not exists {0} ({1}, PRIMARY KEY ({2})); ", tableName,
+                                 BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0} {1}", col.Name, col.SqlType)),
+                                 BuildColumnList(meta.Columns.Where(col => col.PrimaryKey), (sb, col) => sb.AppendFormat("{0} ", col.Name)));
+        }
 
         internal static string InsertSql(TableMeta meta, string tableName)
         {
             return string.Format("INSERT INTO {0} ({1}) VALUES ({2}); ", tableName,
                                  BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0}", col.Name)),
-                                 BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0}", col.ParamName)));  
+                                 BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0}", col.ParamName)));
         }
 
-		internal static string UpdateSql(TableMeta meta, string tableName)
-		{
+        internal static string UpdateSql(TableMeta meta, string tableName)
+        {
             List<TableColumn> columns = new List<TableColumn>();
             foreach (TableColumn item in meta.Columns)
             {
@@ -45,61 +45,66 @@ namespace SQLiteORM.Dialect
 
 
             return string.Format("UPDATE {0} SET {1} WHERE {2};", tableName,
-                BuildColumnList(columns, 
-                (sb, col) => 
+                BuildColumnList(columns,
+                (sb, col) =>
                 {
                     if (!col.PrimaryKey)
                         sb.AppendFormat("{0} = {1}", col.Name, col.ParamName);
-                }), 
+                }),
                 BuildColumnList(meta.Columns.Where(col => col.PrimaryKey), (sb, col) => sb.AppendFormat("{0} = {1}", col.Name, col.ParamName), " AND "));
-		}
+        }
 
-		internal static string SelectRowSql(TableMeta meta, string tableName) 
-		{
-			return string.Format("SELECT {0} FROM {1} WHERE {2} ",
-			                     BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0}", col.Name)),
-								 tableName,
-			                     BuildColumnList(meta.Columns.Where(col => col.PrimaryKey), (sb, col) => sb.AppendFormat("{0} = {1}", col.Name, col.ParamName), " AND "));
-		}
+        internal static string SelectRowSql(TableMeta meta, string tableName)
+        {
+            return string.Format("SELECT {0} FROM {1} WHERE {2} ",
+                                 BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0}", col.Name)),
+                                 tableName,
+                                 BuildColumnList(meta.Columns.Where(col => col.PrimaryKey), (sb, col) => sb.AppendFormat("{0} = {1}", col.Name, col.ParamName), " AND "));
+        }
 
-		internal static string SelectAllSql(TableMeta meta, string tableName) 
-		{
-			return string.Format("SELECT {0} FROM {1}",
-			                     BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0}", col.Name)),
-								 tableName);
-		}
-                
-		internal static string DeleteRowSql(TableMeta meta, string tableName)
-		{
-			return string.Format("DELETE FROM {0} WHERE {1}", tableName,
-			                     BuildColumnList(meta.Columns.Where(col => col.PrimaryKey), (sb, col) => sb.AppendFormat("{0} = {1}", col.Name, col.ParamName), " AND "));
-		}
+        internal static string SelectRowCountSql(TableMeta meta, string tableName)
+        {
+            return string.Format("SELECT COUNT({0}) FROM {1} ", meta.Columns[0].Name, tableName);
+        }
 
-		internal static string DeleteSql(TableMeta meta, string tableName) 
-		{
-			return string.Format("DELETE FROM {0}", tableName);
-		}
+        internal static string SelectAllSql(TableMeta meta, string tableName)
+        {
+            return string.Format("SELECT {0} FROM {1}",
+                                 BuildColumnList(meta.Columns, (sb, col) => sb.AppendFormat("{0}", col.Name)),
+                                 tableName);
+        }
 
-		private static string BuildColumnList(IEnumerable<TableColumn> columns, Action<StringBuilder, TableColumn> builder)
-		{
-			return BuildColumnList(columns, builder, ",");
-		}
+        internal static string DeleteRowSql(TableMeta meta, string tableName)
+        {
+            return string.Format("DELETE FROM {0} WHERE {1}", tableName,
+                                 BuildColumnList(meta.Columns.Where(col => col.PrimaryKey), (sb, col) => sb.AppendFormat("{0} = {1}", col.Name, col.ParamName), " AND "));
+        }
 
-		private static string BuildColumnList(IEnumerable<TableColumn> columns, Action<StringBuilder, TableColumn> builder, string join)
-		{
-			if (!columns.Any())
-				return string.Empty;
+        internal static string DeleteSql(TableMeta meta, string tableName)
+        {
+            return string.Format("DELETE FROM {0}", tableName);
+        }
 
-			StringBuilder list = new StringBuilder();
-			foreach (TableColumn column in columns)
-			{
-				builder(list, column);
-				list.Append(join);
-			}
+        private static string BuildColumnList(IEnumerable<TableColumn> columns, Action<StringBuilder, TableColumn> builder)
+        {
+            return BuildColumnList(columns, builder, ",");
+        }
 
-			list.Remove(list.Length - join.Length, join.Length);
-			return list.ToString();
-		}
+        private static string BuildColumnList(IEnumerable<TableColumn> columns, Action<StringBuilder, TableColumn> builder, string join)
+        {
+            if (!columns.Any())
+                return string.Empty;
+
+            StringBuilder list = new StringBuilder();
+            foreach (TableColumn column in columns)
+            {
+                builder(list, column);
+                list.Append(join);
+            }
+
+            list.Remove(list.Length - join.Length, join.Length);
+            return list.ToString();
+        }
 
         internal static string ColumnsWithAlias(TableMeta meta, string alias)
         {
@@ -110,17 +115,17 @@ namespace SQLiteORM.Dialect
         {
             StringBuilder sql = new StringBuilder();
             sql.Append("SELECT ");
-            
+
             for (int i = 0; i < list.Count(); i++)
                 sql.Append(BuildColumnList(list[i].Columns, (sb, col) => sb.AppendFormat("{0}.{1}", tableAlias[i], col.Name)) + ", ");
 
             sql.Remove(sql.Length - 2, 2);
-            
+
             sql.AppendFormat(" FROM {0} as {1} ", list[0].ParameterizedTableName, tableAlias[0]);
             for (int i = 1; i < list.Count(); i++)
                 sql.AppendFormat("JOIN {0} as {1} on {2} ",
                     list[i].ParameterizedTableName, tableAlias[i],
-                    JoinOn(list[i-1], tableAlias[i-1], list[i], tableAlias[i]));
+                    JoinOn(list[i - 1], tableAlias[i - 1], list[i], tableAlias[i]));
 
             return sql.ToString();
         }
@@ -130,7 +135,7 @@ namespace SQLiteORM.Dialect
             var join = FindJoin(metaA, metaB);
             if (join != null)
                 return string.Format("{0}.{1} == {2}.{3}", aliasA, join.Name, aliasB, metaB.Columns.First(c => c.PrimaryKey).Name);
-           
+
             join = FindJoin(metaB, metaA);
             if (join != null)
                 return string.Format("{0}.{1} == {2}.{3}", aliasB, join.Name, aliasA, metaA.Columns.First(c => c.PrimaryKey).Name);
@@ -140,9 +145,9 @@ namespace SQLiteORM.Dialect
                     select colA).FirstOrDefault();
 
             if (join != null)
-                return string.Format("{0}.{1} == {2}.{3}", aliasA, join.Name, aliasB, metaA.Columns.First(c => c.ParentTableType == join.ParentTableType ).Name);
+                return string.Format("{0}.{1} == {2}.{3}", aliasA, join.Name, aliasB, metaA.Columns.First(c => c.ParentTableType == join.ParentTableType).Name);
 
-            throw new ArgumentException( "There is no ForeignKey relationship between entities " + metaA.TableType.Name + " and " + metaB.TableType.Name );
+            throw new ArgumentException("There is no ForeignKey relationship between entities " + metaA.TableType.Name + " and " + metaB.TableType.Name);
         }
 
 

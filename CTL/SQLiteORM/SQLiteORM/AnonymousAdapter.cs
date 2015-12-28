@@ -10,35 +10,35 @@ using SQLiteORM.Dialect;
 
 namespace SQLiteORM
 {
-	public sealed class AnonmousTable 
-	{
-		public AnonmousTable()
-		{ }
+    public sealed class AnonmousTable
+    {
+        public AnonmousTable()
+        { }
 
         private Dictionary<string, object> values = new Dictionary<string, object>();
 
-		public object this[string field]
-		{
-			get { return values[field]; }
+        public object this[string field]
+        {
+            get { return values[field]; }
             set { values[field] = value; }
-		}
-	}
+        }
+    }
 
-	public class AnonymousAdapter : TableAdapter<AnonmousTable>
-	{
-		public TableMeta Meta { get { return _meta;  } }
+    public class AnonymousAdapter : TableAdapter<AnonmousTable>
+    {
+        public TableMeta Meta { get { return _meta; } }
 
-		public static AnonymousAdapter Open(string tableName)
-		{
-			TableMeta meta = TableMeta.Get( tableName );
-			if (meta == null)
-				return null;
+        public static AnonymousAdapter Open(string tableName)
+        {
+            TableMeta meta = TableMeta.Get(tableName);
+            if (meta == null)
+                return null;
 
-			return new AnonymousAdapter(meta)
-				  {					  
-					  _tableName = meta.ParameterizedTableName
-				  };
-		}
+            return new AnonymousAdapter(meta)
+                  {
+                      _tableName = meta.ParameterizedTableName
+                  };
+        }
 
         public AnonymousAdapter(TableMeta meta)
         {
@@ -47,7 +47,7 @@ namespace SQLiteORM
 
         public void CreateTable(params object[] args)
         {
-            ExecuteSql(Actions.CreateTable(_meta, _meta.CreateTableName(args)));
+            //ExecuteSql(Actions.CreateTable(_meta, _meta.CreateTableName(args)));
         }
-	}
+    }
 }
