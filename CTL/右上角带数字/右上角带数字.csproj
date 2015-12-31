@@ -50,10 +50,19 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="MessageNumberGraphics.cs" />
+    <Compile Include="MsgCountTip.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MsgCountTip.designer.cs">
+      <DependentUpon>MsgCountTip.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MsgCountTip.resx">
+      <DependentUpon>MsgCountTip.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -74,12 +83,16 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="右上角图片.psd" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\MessageNumbers.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\T.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\T1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
