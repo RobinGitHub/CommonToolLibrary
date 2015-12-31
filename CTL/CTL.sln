@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "自定义TreeView仿VS解�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win32API", "Win32API\Win32API.csproj", "{E6634CAA-A34D-4E07-B747-42FF3DE06F81}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichTextBox消息处理", "RichTextBox消息处理\RichTextBox消息处理.csproj", "{9A897980-6373-4117-9B9C-A81879ACEF46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COMDLL注册", "COMDLL注册\COMDLL注册.csproj", "{809240AC-6FB3-431B-B3CF-68EA701D51ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{E6634CAA-A34D-4E07-B747-42FF3DE06F81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6634CAA-A34D-4E07-B747-42FF3DE06F81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6634CAA-A34D-4E07-B747-42FF3DE06F81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A897980-6373-4117-9B9C-A81879ACEF46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A897980-6373-4117-9B9C-A81879ACEF46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A897980-6373-4117-9B9C-A81879ACEF46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A897980-6373-4117-9B9C-A81879ACEF46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{809240AC-6FB3-431B-B3CF-68EA701D51ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{809240AC-6FB3-431B-B3CF-68EA701D51ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{809240AC-6FB3-431B-B3CF-68EA701D51ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{809240AC-6FB3-431B-B3CF-68EA701D51ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
