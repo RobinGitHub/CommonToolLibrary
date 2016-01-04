@@ -38,17 +38,17 @@ namespace RichTextBox消息处理
                 IOleClientSite site;
                 Guid guid = Marshal.GenerateGuidForType(control.GetType());
                 NativeMethods.CreateILockBytesOnHGlobal(IntPtr.Zero, true, out bytes);
-                NativeMethods.StgCreateDocfileOnILockBytes(bytes, 0x1012, 0, out storage);
+                NativeMethods.StgCreateDocfileOnILockBytes(bytes, (uint)(STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_CREATE | STGM.STGM_READWRITE), 0, out storage);
                 IRichEditOle.GetClientSite(out site);
-                REOBJECT lpreobject = new REOBJECT();
 
-                lpreobject.cp = _richEdit.SelectionStart; //_richEdit.TextLength;
+                REOBJECT lpreobject = new REOBJECT();
+                lpreobject.cp = _richEdit.SelectionStart; 
                 lpreobject.clsid = guid;
                 lpreobject.pstg = storage;
                 lpreobject.poleobj = Marshal.GetIUnknownForObject(control);
                 lpreobject.polesite = site;
-                lpreobject.dvAspect = 1;
-                lpreobject.dwFlags = 2;
+                lpreobject.dvAspect = (uint)(DVASPECT.DVASPECT_CONTENT);
+                lpreobject.dwFlags = (uint)(REOOBJECTFLAGS.REO_BELOWBASELINE);
                 lpreobject.dwUser = 1;
                 IRichEditOle.InsertObject(lpreobject);
                 Marshal.ReleaseComObject(bytes);

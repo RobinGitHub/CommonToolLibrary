@@ -43,14 +43,46 @@ namespace RichTextBox消息处理
             {
                 GifBox gif = new GifBox();
                 gif.BackColor = base.BackColor;
-                gif.Image = Image.FromFile(path);
+                Image img = Image.FromFile(path);
+
+                Bitmap bmp = new Bitmap(100, 100);
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    g.DrawImage(img, new RectangleF(0, 0, 100, 100));
+                }
+                gif.Image = bmp;
                 RichEditOle.InsertControl(gif);
+
+                gif.MouseDown += gif_MouseDown;
+
                 return true;
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
+        }        
+
+        void gif_MouseDown(object sender, MouseEventArgs e)
+        {
+            //GifBox gif = sender as GifBox;
+            this.Cursor = Cursors.Default;
+        }
+
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+
+            base.OnMouseClick(e);
+        }
+
+        protected override void OnDragEnter(DragEventArgs drgevent)
+        {
+            base.OnDragEnter(drgevent);
+        }
+
+        protected override void OnDragDrop(DragEventArgs drgevent)
+        {
+            base.OnDragDrop(drgevent);
         }
 
         protected override void OnLinkClicked(LinkClickedEventArgs e)
