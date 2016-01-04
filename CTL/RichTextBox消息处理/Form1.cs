@@ -18,7 +18,16 @@ namespace RichTextBox消息处理
 
         private void btnSend_Click(object sender, EventArgs e)
         {
+            rtbReceive.SelectedRtf = rtbSend.Rtf;
+        }
 
+        private void btnFilePath_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                txtFilePath.Text = openFileDialog1.FileName;
+                rtbSend.InsertImageUseGifBox(txtFilePath.Text);
+            }
         }
     }
 }
