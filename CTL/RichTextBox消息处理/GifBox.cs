@@ -39,6 +39,7 @@ namespace RichTextBox消息处理
                 ControlStyles.ResizeRedraw, true);
 
             SetStyle(ControlStyles.Opaque, false);
+            this.Cursor = Cursors.Arrow;
         }
 
         #endregion
@@ -57,6 +58,7 @@ namespace RichTextBox消息处理
                     _canAnimate = ImageAnimator.CanAnimate(_image);
                 else
                     _canAnimate = false;
+                //_canAnimate = false;
                 Size = Image.Size;
                 Invalidate(ImageRectangle);
                 if (!DesignMode)
@@ -73,6 +75,10 @@ namespace RichTextBox消息处理
                 base.Invalidate();
             }
         }
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string FilePath { get; set; }
 
         private Rectangle ImageRectangle
         {
@@ -126,21 +132,10 @@ namespace RichTextBox消息处理
             {
                 //每次画之前更新到图片的下一帧。
                 UpdateImage();
-                e.Graphics.DrawImage(
-                    _image,
-                    ImageRectangle,
-                    0,
-                    0,
-                    _image.Width,
-                    _image.Height,
-                    GraphicsUnit.Pixel);
+                e.Graphics.DrawImage(_image, ImageRectangle, 0, 0, _image.Width, _image.Height, GraphicsUnit.Pixel);
             }
 
-            ControlPaint.DrawBorder(
-                    e.Graphics,
-                    ClientRectangle,
-                    _borderColor,
-                    ButtonBorderStyle.Solid);
+            ControlPaint.DrawBorder(e.Graphics, ClientRectangle, _borderColor, ButtonBorderStyle.Solid);
         }
 
         protected override void Dispose(bool disposing)
@@ -160,6 +155,11 @@ namespace RichTextBox消息处理
         {
             base.OnHandleDestroyed(e);
             StopAnimate();
+        }
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
         }
 
         #endregion

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Collections.Generic;
 
 namespace RichTextBox消息处理
 {
@@ -10,6 +11,10 @@ namespace RichTextBox消息处理
     {
         private ChatRichTextBox _richEdit;
         private IRichEditOle _richEditOle;
+        /// <summary>
+        /// 记录插入的OLE对象
+        /// </summary>
+        Dictionary<uint, Control> oleList = new Dictionary<uint, Control>();
 
         public RichEditOle(ChatRichTextBox richEdit)
         {
@@ -28,7 +33,10 @@ namespace RichTextBox消息处理
                 return _richEditOle;
             }
         }
-
+        /// <summary>
+        /// 控件索引
+        /// </summary>
+        uint ctlIndex = 0;
         public void InsertControl(Control control)
         {
             if (control != null)
@@ -49,11 +57,14 @@ namespace RichTextBox消息处理
                 lpreobject.polesite = site;
                 lpreobject.dvAspect = (uint)(DVASPECT.DVASPECT_CONTENT);
                 lpreobject.dwFlags = (uint)(REOOBJECTFLAGS.REO_BELOWBASELINE);
-                lpreobject.dwUser = 1;
+                lpreobject.dwUser = ctlIndex;
                 IRichEditOle.InsertObject(lpreobject);
                 Marshal.ReleaseComObject(bytes);
                 Marshal.ReleaseComObject(site);
                 Marshal.ReleaseComObject(storage);
+
+                oleList.Add(ctlIndex, control);
+                ctlIndex++;
             }
         }
 
@@ -87,13 +98,13 @@ namespace RichTextBox消息处理
             pUnk.GetUserClassID(ref pClsid);
             NativeMethods.OleSetContainedObject(pUnk, true);
             REOBJECT lpreobject = new REOBJECT();
-            lpreobject.cp = _richEdit.TextLength;
+            lpreobject.cp = _richEdit.SelectionStart; 
             lpreobject.clsid = pClsid;
             lpreobject.pstg = storage;
             lpreobject.poleobj = Marshal.GetIUnknownForObject(pUnk);
             lpreobject.polesite = site;
-            lpreobject.dvAspect = 1;
-            lpreobject.dwFlags = 2;
+            lpreobject.dvAspect = (uint)(DVASPECT.DVASPECT_CONTENT);
+            lpreobject.dwFlags = (uint)(REOOBJECTFLAGS.REO_BELOWBASELINE);
             lpreobject.dwUser = 0;
             IRichEditOle.InsertObject(lpreobject);
             Marshal.ReleaseComObject(bytes);
@@ -156,7 +167,10 @@ namespace RichTextBox消息处理
                 REOBJECT lpreobject = new REOBJECT();
                 IRichEditOle.GetObject(i, lpreobject, GETOBJECTOPTIONS.REO_GETOBJ_ALL_INTERFACES);
                 Point positionFromCharIndex = this._richEdit.GetPositionFromCharIndex(lpreobject.cp);
-                Rectangle rc = new Rectangle(positionFromCharIndex.X, positionFromCharIndex.Y, 50, 50);
+
+                GifBox gif = this.oleList[lpreobject.dwUser] as GifBox;
+                Rectangle rc = new Rectangle(positionFromCharIndex.X, positionFromCharIndex.Y, gif.Width, gif.Height);
+
                 _richEdit.Invalidate(rc, false);
             }
         }
@@ -196,6 +210,25 @@ namespace RichTextBox消息处理
                     pts);
                 return new Size(pts[0]);
             }
+        }
+        /// <summary>
+        /// 获取所有图片信息
+        /// </summary>
+        /// <returns></returns>
+        public string GetGIFInfo()
+        {
+            string imageInfo = "";
+            REOBJECT reObject = new REOBJECT();
+            for (int i = 0; i < this._richEditOle.GetObjectCount(); i++)
+            {
+                this._richEditOle.GetObject(i, reObject, GETOBJECTOPTIONS.REO_GETOBJ_ALL_INTERFACES);
+                GifBox gif = this.oleList[reObject.dwUser] as GifBox;
+                if (gif != null)
+                {
+                    imageInfo += reObject.cp.ToString() + ":" + gif.FilePath + "|";
+                }
+            }
+            return imageInfo;
         }
     }
 }

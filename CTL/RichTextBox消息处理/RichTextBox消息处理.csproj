@@ -82,6 +82,9 @@
     <Compile Include="REOBJECT.cs" />
     <Compile Include="REOOBJECTFLAGS.cs" />
     <Compile Include="RichEditOle.cs" />
+    <Compile Include="RichTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="STATDATA.cs" />
     <Compile Include="STGM.cs" />
     <Compile Include="STGMEDIUM.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace RichTextBox消息处理
 {
@@ -14,6 +15,11 @@ namespace RichTextBox消息处理
  */
     public class ChatRichTextBox : RichTextBox
     {
+
+        [DllImport("user32.dll")]
+        private static extern int SendMessage(IntPtr hwnd, Int32 wMsg, Int32 wParam, ref Point pt);
+        const int EM_GETSCROLLPOS = 0x0400 + 221;
+
         private RichEditOle _richEditOle;
 
         public ChatRichTextBox()
@@ -42,18 +48,11 @@ namespace RichTextBox消息处理
             try
             {
                 GifBox gif = new GifBox();
+                gif.FilePath = path;
                 gif.BackColor = base.BackColor;
                 Image img = Image.FromFile(path);
-
-                Bitmap bmp = new Bitmap(100, 100);
-                using (Graphics g = Graphics.FromImage(bmp))
-                {
-                    g.DrawImage(img, new RectangleF(0, 0, 100, 100));
-                }
-                gif.Image = bmp;
+                gif.Image = img;
                 RichEditOle.InsertControl(gif);
-
-                gif.MouseDown += gif_MouseDown;
 
                 return true;
             }
@@ -61,28 +60,6 @@ namespace RichTextBox消息处理
             {
                 throw new Exception(ex.Message);
             }
-        }        
-
-        void gif_MouseDown(object sender, MouseEventArgs e)
-        {
-            //GifBox gif = sender as GifBox;
-            this.Cursor = Cursors.Default;
-        }
-
-        protected override void OnMouseClick(MouseEventArgs e)
-        {
-
-            base.OnMouseClick(e);
-        }
-
-        protected override void OnDragEnter(DragEventArgs drgevent)
-        {
-            base.OnDragEnter(drgevent);
-        }
-
-        protected override void OnDragDrop(DragEventArgs drgevent)
-        {
-            base.OnDragDrop(drgevent);
         }
 
         protected override void OnLinkClicked(LinkClickedEventArgs e)
@@ -91,5 +68,19 @@ namespace RichTextBox消息处理
             base.OnLinkClicked(e);
         }
 
+        protected override void OnVScroll(EventArgs e)
+        {
+            //Point pt = new Point();
+            //SendMessage(this.Handle, EM_GETSCROLLPOS, 0, ref pt);
+            RichEditOle.UpdateObjects();
+            base.OnVScroll(e);
+        }
+
+        protected override void OnTextChanged(EventArgs e)
+        {
+            base.OnTextChanged(e);
+        }
+
+        
     }
 }
