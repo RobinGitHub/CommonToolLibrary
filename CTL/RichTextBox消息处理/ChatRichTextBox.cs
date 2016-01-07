@@ -67,20 +67,6 @@ namespace RichTextBox消息处理
             System.Diagnostics.Process.Start(e.LinkText);
             base.OnLinkClicked(e);
         }
-
-        protected override void OnVScroll(EventArgs e)
-        {
-            //Point pt = new Point();
-            //SendMessage(this.Handle, EM_GETSCROLLPOS, 0, ref pt);
-            RichEditOle.UpdateObjects();
-            base.OnVScroll(e);
-        }
-
-        protected override void OnTextChanged(EventArgs e)
-        {
-            base.OnTextChanged(e);
-        }
-
-        
+                
     }
 }

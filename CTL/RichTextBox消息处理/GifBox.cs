@@ -75,10 +75,12 @@ namespace RichTextBox消息处理
                 base.Invalidate();
             }
         }
+
+        private string filePath = string.Empty;
         /// <summary>
         /// 文件路径
         /// </summary>
-        public string FilePath { get; set; }
+        public string FilePath { get { return filePath; } set { filePath = value; } }
 
         private Rectangle ImageRectangle
         {

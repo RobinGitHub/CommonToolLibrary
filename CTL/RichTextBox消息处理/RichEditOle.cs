@@ -50,7 +50,7 @@ namespace RichTextBox消息处理
                 IRichEditOle.GetClientSite(out site);
 
                 REOBJECT lpreobject = new REOBJECT();
-                lpreobject.cp = _richEdit.SelectionStart; 
+                lpreobject.cp = _richEdit.SelectionStart;
                 lpreobject.clsid = guid;
                 lpreobject.pstg = storage;
                 lpreobject.poleobj = Marshal.GetIUnknownForObject(control);
