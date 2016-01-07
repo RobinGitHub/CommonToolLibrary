@@ -54,11 +54,11 @@ namespace RichTextBox消息处理
                 StopAnimate();
                 _image = value;
                 _imageRectangle = Rectangle.Empty;
-                if (value != null)
-                    _canAnimate = ImageAnimator.CanAnimate(_image);
-                else
-                    _canAnimate = false;
-                //_canAnimate = false;
+                //if (value != null)
+                //    _canAnimate = ImageAnimator.CanAnimate(_image);
+                //else
+                //    _canAnimate = false;
+                _canAnimate = false;
                 Size = Image.Size;
                 Invalidate(ImageRectangle);
                 if (!DesignMode)
@@ -136,7 +136,6 @@ namespace RichTextBox消息处理
                 UpdateImage();
                 e.Graphics.DrawImage(_image, ImageRectangle, 0, 0, _image.Width, _image.Height, GraphicsUnit.Pixel);
             }
-
             ControlPaint.DrawBorder(e.Graphics, ClientRectangle, _borderColor, ButtonBorderStyle.Solid);
         }
 

@@ -32,11 +32,11 @@
             this.rtbReceive = new RichTextBox消息处理.ChatRichTextBox();
             this.rtbSend = new RichTextBox消息处理.ChatRichTextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnGetRTF = new System.Windows.Forms.Button();
             this.btnFilePath = new System.Windows.Forms.Button();
             this.txtFilePath = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btnGetRTF = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -90,6 +90,16 @@
             this.panel2.Size = new System.Drawing.Size(585, 41);
             this.panel2.TabIndex = 1;
             // 
+            // btnGetRTF
+            // 
+            this.btnGetRTF.Location = new System.Drawing.Point(417, 7);
+            this.btnGetRTF.Name = "btnGetRTF";
+            this.btnGetRTF.Size = new System.Drawing.Size(75, 23);
+            this.btnGetRTF.TabIndex = 3;
+            this.btnGetRTF.Text = "GetRTF";
+            this.btnGetRTF.UseVisualStyleBackColor = true;
+            this.btnGetRTF.Click += new System.EventHandler(this.btnGetRTF_Click);
+            // 
             // btnFilePath
             // 
             this.btnFilePath.Location = new System.Drawing.Point(199, 5);
@@ -120,16 +130,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // btnGetRTF
-            // 
-            this.btnGetRTF.Location = new System.Drawing.Point(417, 7);
-            this.btnGetRTF.Name = "btnGetRTF";
-            this.btnGetRTF.Size = new System.Drawing.Size(75, 23);
-            this.btnGetRTF.TabIndex = 3;
-            this.btnGetRTF.Text = "GetRTF";
-            this.btnGetRTF.UseVisualStyleBackColor = true;
-            this.btnGetRTF.Click += new System.EventHandler(this.btnGetRTF_Click);
             // 
             // Form1
             // 
