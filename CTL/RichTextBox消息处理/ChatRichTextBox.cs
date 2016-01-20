@@ -109,7 +109,7 @@ namespace RichTextBox消息处理
                         if (!Directory.Exists(Path.Combine(Application.StartupPath, "tmp")))
                         {
                             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "tmp"));
-                        }
+        }
 
                         string imagePath = Path.Combine(Application.StartupPath,string.Format(@"tmp/{0}.png", Guid.NewGuid()) );
                         photo.Save(imagePath);
@@ -134,14 +134,14 @@ namespace RichTextBox消息处理
                                 }
                             }
                             else
-                            { 
+        {
                                 //文件已不存在
                             }
                         }
-                    }
+        }
                     break;
                 #endregion
-
+        
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);
             }

@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using SQLiteORM;
+using SQLiteORMV1;
 
 namespace SQLiteORM.Demo
 {
     public class Class1 : TableBase<SimpleTable>
     {
+
+
     }
 }

@@ -92,8 +92,9 @@ namespace SQLiteORM.Demo
 
             //var t = numberTable.GetModel(2);
 
-            SimpleTable simple = new SimpleTable() { Id = 2, Test = "SSS", When = DateTime.UtcNow };
+            SimpleTable simple = new SimpleTable() { Test = "SSS", When = DateTime.UtcNow };
             Class1 c = new Class1();
+            c.Insert(simple);
 
         }
         private void btnRead_Click(object sender, EventArgs e)

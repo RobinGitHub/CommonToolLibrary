@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SQLiteORM.Demo
+namespace 图标格式转换
 {
     static class Program
     {
@@ -16,9 +15,6 @@ namespace SQLiteORM.Demo
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            string CONN = Path.Combine(Application.StartupPath, "test.db3");
-            DbConnection.Initialise("Data Source=" + CONN);
             Application.Run(new Form1());
         }
     }

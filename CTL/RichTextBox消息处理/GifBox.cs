@@ -58,7 +58,7 @@ namespace RichTextBox消息处理
                 //    _canAnimate = ImageAnimator.CanAnimate(_image);
                 //else
                 //    _canAnimate = false;
-                _canAnimate = false;
+                    _canAnimate = false;
                 Size = Image.Size;
                 Invalidate(ImageRectangle);
                 if (!DesignMode)

@@ -8,7 +8,7 @@ namespace SQLiteORM.Demo.Model
     [Table]
     public class SimpleTable
     {
-        [PrimaryKey]
+        [PrimaryKey(true)]
         public long Id { get; set; }
 
         [Field]
