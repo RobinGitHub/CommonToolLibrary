@@ -15,11 +15,32 @@ namespace RichTextBox消息处理
         public Form1()
         {
             InitializeComponent();
+            rtbSend.SelectionIndent = 1;
+            rtbSend.SelectionRightIndent = 1;
+
+            rtbReceive.SelectionIndent = 1;
+            rtbReceive.SelectionRightIndent = 1;
         }
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            //rtbReceive.SelectedRtf = rtbSend.Rtf;
+
+            rtbReceive.SelectionStart = rtbReceive.TextLength;
+            rtbReceive.SelectionIndent = 1;
+            rtbReceive.SelectionColor = Color.Red;
+            rtbReceive.SelectionAlignment = HorizontalAlignment.Left;
+            rtbReceive.SelectionFont = new Font(this.Font.FontFamily, 14);
+            //rtbReceive.SelectedText = "标题";
+            rtbReceive.AppendText("标题");
+            rtbReceive.AppendText(Environment.NewLine);
+
+            rtbReceive.SelectionIndent = 20;
+            rtbReceive.SelectionFont = new Font(this.Font.FontFamily, 9);
+            rtbReceive.AppendText("This text contains a hanging indent. The first sentence of the paragraph is spaced normally.This text contains a hanging indent. The first sentence of the paragraph is spaced normally.");
+            //rtbReceive.SelectedText = "This text contains a hanging indent. The first sentence of the paragraph is spaced normally.This text contains a hanging indent. The first sentence of the paragraph is spaced normally.";
+
+            rtbSend.Text = rtbReceive.Rtf;
+            rtbReceive.AppendText(Environment.NewLine);
         }
 
         private void btnFilePath_Click(object sender, EventArgs e)
