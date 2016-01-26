@@ -13,7 +13,7 @@ namespace Emoji处理
 {
     public partial class Form1 : Form
     {
-        string str = "\u263a";
+        string str = "؏؏ᖗ¤̴̶̷̤́‧̫̮¤̴̶̷̤̀)ᖘ؏؏ 小公举";
         public Form1()
         {
             InitializeComponent();
@@ -23,8 +23,16 @@ namespace Emoji处理
         void Form1_Load(object sender, EventArgs e)
         {
             //string rlt = convertEmojiToStr(str);
-            string rlt = toUnicode("ᖗ");
-            newRichTextBox1.Text = "؏؏ᖗ¤̴̶̷̤́‧̫̮¤̴̶̷̤̀)ᖘ؏؏ 小公举";
+            //string rlt = toUnicode("\u1597");
+            //newRichTextBox1.Text = @"؏؏ᖗ¤̴̶̷̤́‧̫̮¤̴̶̷̤̀)ᖘ؏؏ 小公举";
+            Encoding coding = Encoding.Unicode;
+
+            byte[] gb = coding.GetBytes(str);
+
+            newRichTextBox1.Text = str;
+            textBox1.Text = str;
+            newRichTextBox2.Text = textBox1.Text;
+
         }
 
         public string convertEmojiToStr(string sources)
@@ -112,6 +120,22 @@ namespace Emoji处理
             return sb.ToString();
         }
 
-
+        /// <summary>  
+        /// 字符串转为UniCode码字符串  
+        /// </summary>  
+        /// <param name="s"></param>  
+        /// <returns></returns>  
+        public string StringToUnicode(string s)
+        {
+            char[] charbuffers = s.ToCharArray();
+            byte[] buffer;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < charbuffers.Length; i++)
+            {
+                buffer = System.Text.Encoding.Unicode.GetBytes(charbuffers[i].ToString());
+                sb.Append(String.Format("//u{0:X2}{1:X2}", buffer[1], buffer[0]));
+            }
+            return sb.ToString();
+        } 
     }
 }

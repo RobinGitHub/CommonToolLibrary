@@ -49,12 +49,15 @@ namespace RichTextBox消息处理
         {
             try
             {
-                GifBox gif = new GifBox();
-                gif.FilePath = path;
-                gif.BackColor = base.BackColor;
-                Image img = Image.FromFile(path);
-                gif.Image = img;
-                RichEditOle.InsertControl(gif);
+                //GifBox gif = new GifBox();
+                //gif.FilePath = path;
+                //gif.BackColor = base.BackColor;
+                //Image img = Image.FromFile(path);
+                //gif.Image = img;
+                //RichEditOle.InsertControl(gif);
+
+                ShowMsgControl ctl = new ShowMsgControl();
+                RichEditOle.InsertControl(ctl);
 
                 return true;
             }
@@ -81,7 +84,7 @@ namespace RichTextBox消息处理
         //private static extern IntPtr ChangeClipboardChain(IntPtr hwnd, IntPtr hWndNext);
         //[DllImport("user32")]
         //private static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);  
-  
+
 
         //private IntPtr nextClipHwnd;  
         //protected override void WndProc(ref Message m)
@@ -103,15 +106,15 @@ namespace RichTextBox消息处理
                         this.Text = text.Insert(this.SelectionStart, (String)data.GetData(DataFormats.Text));
                     }
                     else if (data.GetDataPresent(DataFormats.Bitmap) | data.GetDataPresent(DataFormats.Dib))
-                    { 
+                    {
                         //图片
                         Bitmap photo = (Bitmap)data.GetData(typeof(Bitmap));
                         if (!Directory.Exists(Path.Combine(Application.StartupPath, "tmp")))
                         {
                             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "tmp"));
-        }
+                        }
 
-                        string imagePath = Path.Combine(Application.StartupPath,string.Format(@"tmp/{0}.png", Guid.NewGuid()) );
+                        string imagePath = Path.Combine(Application.StartupPath, string.Format(@"tmp/{0}.png", Guid.NewGuid()));
                         photo.Save(imagePath);
                         InsertImageUseGifBox(imagePath);
                     }
@@ -134,14 +137,14 @@ namespace RichTextBox消息处理
                                 }
                             }
                             else
-        {
+                            {
                                 //文件已不存在
                             }
                         }
-        }
+                    }
                     break;
                 #endregion
-        
+
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);
             }

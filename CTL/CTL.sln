@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "图标格式转换", "图�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emoji处理", "Emoji处理\Emoji处理.csproj", "{2289468D-DA73-421D-BD50-929878C13B44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "播放音频", "播放音频\播放音频.csproj", "{A253A6C5-6055-4AC2-9BFA-6E69208B0762}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{2289468D-DA73-421D-BD50-929878C13B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2289468D-DA73-421D-BD50-929878C13B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2289468D-DA73-421D-BD50-929878C13B44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A253A6C5-6055-4AC2-9BFA-6E69208B0762}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A253A6C5-6055-4AC2-9BFA-6E69208B0762}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A253A6C5-6055-4AC2-9BFA-6E69208B0762}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A253A6C5-6055-4AC2-9BFA-6E69208B0762}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
