@@ -9,30 +9,39 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
 using 播放音频.Properties;
+using System.Diagnostics;
+using System.IO;
+using System.Media;
 
-
+///https://ffmpeg.org/
+///http://www.cnblogs.com/xiaofengfeng/p/3573025.html
+///http://www.cnblogs.com/lidabo/p/3967481.html
+///http://wenku.baidu.com/link?url=VD2H1bYnAbshFtqL9BpzJzkkUXPC9X_IkZOXQvmWyt2WGY3KzjPi51leeuYkiVfx0vTMkArYqcxEztANvxtHk74Dj9lCMSF2PD8Y0NvHEEK
 ///http://www.cnblogs.com/Microblue/archive/2010/09/21/2406704.html
 namespace 播放音频
 {
 
     public partial class Form1 : Form
     {
-        public static uint SND_ASYNC = 0x0001;
-        public static uint SND_FILENAME = 0x00020000;
-        [DllImport("winmm.dll")]
-        public static extern uint mciSendString(string lpstrCommand,
-        string lpstrReturnString, uint uReturnLength, uint hWndCallback);
         public Form1()
         {
             InitializeComponent();
-            System.Media.SystemSounds.Beep.Play();
+            this.axWindowsMediaPlayer1.PlayStateChange += axWindowsMediaPlayer1_PlayStateChange;
+            axWindowsMediaPlayer1.settings.setMode("loop", false);
         }
 
-        public void Play()
+        void axWindowsMediaPlayer1_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
         {
-            mciSendString(@"close temp_alias", null, 0, 0);
-            mciSendString(@"open ""E:/Music/青花瓷.mp3"" alias temp_alias", null, 0, 0);
-            mciSendString("play temp_alias repeat", null, 0, 0);
+            if (axWindowsMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsMediaEnded)
+            {
+                Thread thread = new Thread(new ThreadStart(PlayThread));
+                thread.Start();
+            } 
+        }
+        private void PlayThread()
+        {
+            axWindowsMediaPlayer1.URL = Path.Combine(Application.StartupPath, "A.mp3");
+            axWindowsMediaPlayer1.Ctlcontrols.play();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -42,12 +51,26 @@ namespace 播放音频
             ///如果当前正在播放，点击其他的，要停止现在播放的，播放点击的
             ///如果点击当前正在播放的，则暂停播放
             ///
+            
+            /////AMR 转 mp3
+            //string cmd = "ffmpeg -i A.amr A.mp3";
+            //ExecBatCommand(p =>
+            //{
+            //    p(@cmd);
+            //    // 这里连续写入的命令将依次在控制台窗口中得到体现
+            //    p("exit 0");
+            //});
 
+            //System.Media.SystemSounds.Beep.Play();
 
+            axWindowsMediaPlayer1.URL = Path.Combine(Application.StartupPath, "A.mp3");
+            axWindowsMediaPlayer1.Ctlcontrols.play();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
+            axWindowsMediaPlayer1.URL = Path.Combine(Application.StartupPath, "msg.wav");
+            axWindowsMediaPlayer1.Ctlcontrols.play();
             
         }
 
@@ -125,5 +148,71 @@ namespace 播放音频
                 playThread = null;
             }
         }
+
+        /// <summary>
+        /// 打开控制台执行拼接完成的批处理命令字符串
+        /// </summary>
+        /// <param name="inputAction">需要执行的命令委托方法：每次调用 <paramref name="inputAction"/> 中的参数都会执行一次</param>
+        private void ExecBatCommand(Action<Action<string>> inputAction)
+        {
+            Process pro = null;
+            StreamWriter sIn = null;
+            StreamReader sOut = null;
+
+            try
+            {
+                pro = new Process();
+                pro.StartInfo.FileName = "cmd.exe";
+                pro.StartInfo.UseShellExecute = false;
+                pro.StartInfo.CreateNoWindow = true;
+                pro.StartInfo.RedirectStandardInput = true;
+                pro.StartInfo.RedirectStandardOutput = true;
+                pro.StartInfo.RedirectStandardError = true;
+
+                pro.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data);
+                pro.ErrorDataReceived += (sender, e) => Console.WriteLine(e.Data);
+
+                //pro.OutputDataReceived += (sender, e) =>
+                //{
+                //    this.Invoke((MethodInvoker)delegate
+                //    {
+                //        richTextBox1.AppendText(e.Data + "\n");
+                //    });
+                //};
+                //pro.ErrorDataReceived += (sender, e) =>
+                //{
+                //    this.Invoke((MethodInvoker)delegate
+                //    {
+                //        richTextBox1.AppendText(e.Data + "\n");
+                //    });
+                //};
+
+                pro.Start();
+                sIn = pro.StandardInput;
+                sIn.AutoFlush = true;
+
+                pro.BeginOutputReadLine();
+                inputAction(value => sIn.WriteLine(value));
+
+                pro.WaitForExit(100);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                if (pro != null && !pro.HasExited)
+                    pro.Kill();
+
+                if (sIn != null)
+                    sIn.Close();
+                if (sOut != null)
+                    sOut.Close();
+                if (pro != null)
+                    pro.Close();
+            }
+        }
+
     }
 }
