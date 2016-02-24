@@ -115,7 +115,14 @@ namespace RichTextBox消息处理
                 return _eventAnimator;
             }
         }
-
+        /// <summary>
+        /// 所在位置
+        /// </summary>
+        public int Index { get; set; }
+        /// <summary>
+        /// 对应Unicode编码
+        /// </summary>
+        public string UnicodeText { get; set; }
         #endregion
 
         #region Override

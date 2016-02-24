@@ -13,6 +13,7 @@ namespace Emoji处理
 {
     public partial class Form1 : Form
     {
+        string str1 = @"好该吃吃v[\ud83d\ude17][\ud83d\ude1a][\ud83d\ude1a][\ud83d\ude1a][\ud83d\ude25][\ud83d\ude1c][\ud83d\ude19][\ud83d\ude14]";
         string str = "؏؏ᖗ¤̴̶̷̤́‧̫̮¤̴̶̷̤̀)ᖘ؏؏ 小公举";
         public Form1()
         {
@@ -25,14 +26,42 @@ namespace Emoji处理
             //string rlt = convertEmojiToStr(str);
             //string rlt = toUnicode("\u1597");
             //newRichTextBox1.Text = @"؏؏ᖗ¤̴̶̷̤́‧̫̮¤̴̶̷̤̀)ᖘ؏؏ 小公举";
-            Encoding coding = Encoding.Unicode;
+            //Encoding coding = Encoding.Unicode;
 
-            byte[] gb = coding.GetBytes(str);
+            //byte[] gb = coding.GetBytes(str);
 
-            newRichTextBox1.Text = str;
-            textBox1.Text = str;
-            newRichTextBox2.Text = textBox1.Text;
+            //newRichTextBox1.Text = str;
+            //textBox1.Text = str;
+            //newRichTextBox2.Text = textBox1.Text;
+            //Test(str1);
 
+            newRichTextBox1.Text = str1;
+            Test(str1);
+        }
+
+        public string Test(string sources)
+        {
+            string pattern = @"(?is)(?<=\[)(\\u\w{4})+?(?=\])";
+            Regex reg = new Regex(pattern, RegexOptions.IgnoreCase);
+            Match match = reg.Match(sources);
+            string rlt = Regex.Unescape(sources.ToString());
+
+            MatchCollection mc = reg.Matches(sources);
+            foreach (Match item in mc)
+            {
+
+            }
+            if (match.Success)
+            {
+                GroupCollection gc = match.Groups;
+                foreach (Group item in gc)
+                {
+                    newRichTextBox2.AppendText(Regex.Unescape(item.Value));
+                }
+                return "";
+            }
+            else
+                return sources;
         }
 
         public string convertEmojiToStr(string sources)

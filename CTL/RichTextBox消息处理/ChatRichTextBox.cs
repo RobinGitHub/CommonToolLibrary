@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Collections.Specialized;
+using Newtonsoft.Json.Linq;
 
 namespace RichTextBox消息处理
 {
@@ -49,15 +50,12 @@ namespace RichTextBox消息处理
         {
             try
             {
-                //GifBox gif = new GifBox();
-                //gif.FilePath = path;
-                //gif.BackColor = base.BackColor;
-                //Image img = Image.FromFile(path);
-                //gif.Image = img;
-                //RichEditOle.InsertControl(gif);
-
-                ShowMsgControl ctl = new ShowMsgControl();
-                RichEditOle.InsertControl(ctl);
+                GifBox gif = new GifBox();
+                gif.FilePath = path;
+                gif.BackColor = base.BackColor;
+                Image img = Image.FromFile(path);
+                gif.Image = img;
+                RichEditOle.InsertControl(gif);
 
                 return true;
             }
@@ -142,9 +140,84 @@ namespace RichTextBox消息处理
                             }
                         }
                     }
+                    else if (data.GetDataPresent(DataFormats.Locale))
+                    {
+                        //object obj = data.GetData(DataFormats.Locale);
+                        //if (obj.GetType() == typeof(GifBox))
+                        //{ 
+
+                        //}
+
+
+                    }
                     break;
                 #endregion
 
+                #region Control + C
+                case Keys.Control | Keys.C:
+                    ///对于文本&表情的复制，先将表情转为unicode，然后在粘贴时在转为图片， 对于在发送消息时的粘贴
+                    /// 用json数据格式进行传递 {type:,content:} [text:],[pic:],[emoji:]
+                    List<GifBox> gifList = RichEditOle.GetGIFInfo();
+
+                    bool isCopyEmoji = false;
+
+                    StringBuilder sb = new StringBuilder();
+
+
+                    int lastIndex = 0;
+                    if (gifList.Count > 0)
+                    {
+                        sb.Append("[");
+                        foreach (GifBox gif in gifList)
+                        {
+                            //文本
+                            string content = this.SelectedText.Substring(lastIndex, gif.Index - lastIndex);
+                            if (!string.IsNullOrEmpty(content))
+                            {
+                                sb.Append("{");
+                                sb.Append(string.Format("'type':'text', 'content':'{0}'", content));
+                                sb.Append("},");
+                            }
+
+                            if (string.IsNullOrEmpty(gif.UnicodeText))
+                            {//图片 主要是针对发送消息时的判断
+                                sb.Append("{");
+                                sb.Append(string.Format(@"'type':'pic', 'content':'{0}'", gif.FilePath));
+                                sb.Append("},");
+                            }
+                            else
+                            { //表情
+                                sb.Append("{");
+                                sb.Append(string.Format(@"'type':'emoji', 'content':'{0}|{1}'", gif.UnicodeText, @gif.FilePath));
+                                sb.Append("},");
+                            }
+                            lastIndex = gif.Index + 1;
+                        }
+                        if (sb.Length > 1)
+                        {
+                            sb.Remove(sb.Length - 1, 1);
+                        }
+                        sb.Append("]");
+                    }
+                    else
+                    {
+                        sb.Append("[{");
+                        sb.Append(string.Format("'type':'text', 'content':'{0}'", this.SelectedText));
+                        sb.Append("}]");
+                    }
+                    try
+                    {
+                        JArray ja = JArray.Parse(sb.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw;
+                    }
+
+                    //Clipboard.SetText(sb.ToString());
+                    break;
+                #endregion
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);
             }

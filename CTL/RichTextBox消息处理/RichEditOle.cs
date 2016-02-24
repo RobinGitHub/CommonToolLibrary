@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
+using System.Text;
 
 namespace RichTextBox消息处理
 {
@@ -98,7 +99,7 @@ namespace RichTextBox消息处理
             pUnk.GetUserClassID(ref pClsid);
             NativeMethods.OleSetContainedObject(pUnk, true);
             REOBJECT lpreobject = new REOBJECT();
-            lpreobject.cp = _richEdit.SelectionStart; 
+            lpreobject.cp = _richEdit.SelectionStart;
             lpreobject.clsid = pClsid;
             lpreobject.pstg = storage;
             lpreobject.poleobj = Marshal.GetIUnknownForObject(pUnk);
@@ -214,21 +215,35 @@ namespace RichTextBox消息处理
         /// <summary>
         /// 获取所有图片信息
         /// </summary>
-        /// <returns></returns>
-        public string GetGIFInfo()
+        /// <returns>
+        /// 返回Json格式数据
+        /// </returns>
+        public List<GifBox> GetGIFInfo()
         {
-            string imageInfo = "";
+            List<GifBox> gifList = new List<GifBox>();
             REOBJECT reObject = new REOBJECT();
-            for (int i = 0; i < this._richEditOle.GetObjectCount(); i++)
+            try
             {
-                this._richEditOle.GetObject(i, reObject, GETOBJECTOPTIONS.REO_GETOBJ_ALL_INTERFACES);
-                GifBox gif = this.oleList[reObject.dwUser] as GifBox;
-                if (gif != null)
+                for (int i = 0; i < this.IRichEditOle.GetObjectCount(); i++)
                 {
-                    imageInfo += reObject.cp.ToString() + ":" + gif.FilePath + "|";
+                    IRichEditOle.GetObject(i, reObject, GETOBJECTOPTIONS.REO_GETOBJ_ALL_INTERFACES);
+                    GifBox gif = this.oleList[reObject.dwUser] as GifBox;
+                    if (gif != null)
+                    {
+                        //sb.Append("[");
+                        //sb.Append("Index:" + reObject.cp.ToString() + ",FilePath:" + gif.FilePath);
+                        //sb.Append("],");
+                        gif.Index = reObject.cp;
+                        gifList.Add(gif);
+                    }
                 }
+                return gifList;
             }
-            return imageInfo;
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }
