@@ -7,6 +7,8 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Collections.Specialized;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace RichTextBox消息处理
 {
@@ -96,60 +98,100 @@ namespace RichTextBox消息处理
             {
                 #region Control + V
                 case Keys.Control | Keys.V:
-                    System.Windows.Forms.IDataObject data = Clipboard.GetDataObject();
-                    if (data.GetDataPresent(DataFormats.Text) | data.GetDataPresent(DataFormats.OemText))
+                    this.Paste();
+                    //RichEditOle.GetGIFInfo();
+                    List<Image> imgList = GetImagesFromRtf(this.Rtf);
+                    foreach (var item in imgList)
                     {
-                        string text = this.Text;
-
-                        this.Text = text.Insert(this.SelectionStart, (String)data.GetData(DataFormats.Text));
-                    }
-                    else if (data.GetDataPresent(DataFormats.Bitmap) | data.GetDataPresent(DataFormats.Dib))
-                    {
-                        //图片
-                        Bitmap photo = (Bitmap)data.GetData(typeof(Bitmap));
                         if (!Directory.Exists(Path.Combine(Application.StartupPath, "tmp")))
                         {
                             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "tmp"));
                         }
 
                         string imagePath = Path.Combine(Application.StartupPath, string.Format(@"tmp/{0}.png", Guid.NewGuid()));
-                        photo.Save(imagePath);
+                        item.Save(imagePath);
                         InsertImageUseGifBox(imagePath);
                     }
-                    else if (data.GetDataPresent(DataFormats.FileDrop))
-                    {
-                        StringCollection sc = Clipboard.GetFileDropList();
-                        List<string> imgExt = new List<string> { ".png", ".jpg", ".gif", ".bmp" };
-                        for (int i = 0; i < sc.Count; i++)
-                        {
-                            if (File.Exists(sc[i]))
-                            {
-                                FileInfo fileInfo = new FileInfo(sc[i]);
-                                if (imgExt.Contains(fileInfo.Extension))
-                                {
-                                    InsertImageUseGifBox(sc[i]);
-                                }
-                                else
-                                {
-                                    InsertImageUseGifBox(sc[i]);
-                                }
-                            }
-                            else
-                            {
-                                //文件已不存在
-                            }
-                        }
-                    }
-                    else if (data.GetDataPresent(DataFormats.Locale))
-                    {
-                        //object obj = data.GetData(DataFormats.Locale);
-                        //if (obj.GetType() == typeof(GifBox))
-                        //{ 
+                    //System.Windows.Forms.IDataObject data = Clipboard.GetDataObject();
+                    //if (data.GetDataPresent(DataFormats.Text) | data.GetDataPresent(DataFormats.OemText))
+                    //{
+                    //    string text = this.Text;
+                    //    //this.Text = text.Insert(this.SelectionStart, (String)data.GetData(DataFormats.Text));
+                    //    try
+                    //    {
+                    //        string content = (String)data.GetData(DataFormats.Text);
+                    //        //JArray ja = JArray.Parse(content.Replace(@"\", @"\\"));
 
-                        //}
+                    //        //foreach (var item in ja)
+                    //        //{
+                    //        //    int insertIndex = this.SelectionStart;
+                    //        //    string value = JsonConvert.DeserializeObject(item["content"].ToString()).ToString();
+                    //        //    switch (JsonConvert.DeserializeObject(item["type"].ToString()).ToString())
+                    //        //    {
+                    //        //        case "text":
+                    //        //            this.SelectedText = value;
+                    //        //            insertIndex += value.Length;
+                    //        //            this.SelectionStart = insertIndex;
+                    //        //            break;
+                    //        //        case "pic":
+                    //        //            this.InsertImageUseGifBox(value);
+                    //        //            insertIndex += 1;
+                    //        //            this.SelectionStart = insertIndex;
+                    //        //            break;
+                    //        //        case "emoji":
+                    //        //            //一共有2项，第一项是Unicode,第二项是图片位置
+                    //        //            string[] split = value.Split(new char[] { '|' });
+                    //        //            //this.InsertImageUseGifBox(split[1], split[0]);
+                    //        //            this.InsertImageUseGifBox(value);
+                    //        //            insertIndex += 1;
+                    //        //            this.SelectionStart = insertIndex;
+                    //        //            break;
+                    //        //    }
+                    //        //}
+                    //    }
+                    //    catch (Exception)
+                    //    {
 
+                    //        throw;
+                    //    }
+                    //}
+                    //if (data.GetDataPresent(DataFormats.Bitmap) | data.GetDataPresent(DataFormats.Dib))
+                    //{
+                    //    //图片
+                    //    Bitmap photo = (Bitmap)data.GetData(typeof(Bitmap));
+                    //    if (!Directory.Exists(Path.Combine(Application.StartupPath, "tmp")))
+                    //    {
+                    //        Directory.CreateDirectory(Path.Combine(Application.StartupPath, "tmp"));
+                    //    }
 
-                    }
+                    //    string imagePath = Path.Combine(Application.StartupPath, string.Format(@"tmp/{0}.png", Guid.NewGuid()));
+                    //    photo.Save(imagePath);
+                    //    InsertImageUseGifBox(imagePath);
+                    //}
+                    //if (data.GetDataPresent(DataFormats.FileDrop))
+                    //{
+                    //    StringCollection sc = Clipboard.GetFileDropList();
+                    //    List<string> imgExt = new List<string> { ".png", ".jpg", ".gif", ".bmp" };
+                    //    for (int i = 0; i < sc.Count; i++)
+                    //    {
+                    //        if (File.Exists(sc[i]))
+                    //        {
+                    //            FileInfo fileInfo = new FileInfo(sc[i]);
+                    //            if (imgExt.Contains(fileInfo.Extension))
+                    //            {
+                    //                InsertImageUseGifBox(sc[i]);
+                    //            }
+                    //            else
+                    //            {
+                    //                InsertImageUseGifBox(sc[i]);
+                    //            }
+                    //        }
+                    //        else
+                    //        {
+                    //            //文件已不存在
+                    //        }
+                    //    }
+                    //}
                     break;
                 #endregion
 
@@ -159,11 +201,7 @@ namespace RichTextBox消息处理
                     /// 用json数据格式进行传递 {type:,content:} [text:],[pic:],[emoji:]
                     List<GifBox> gifList = RichEditOle.GetGIFInfo();
 
-                    bool isCopyEmoji = false;
-
                     StringBuilder sb = new StringBuilder();
-
-
                     int lastIndex = 0;
                     if (gifList.Count > 0)
                     {
@@ -175,7 +213,7 @@ namespace RichTextBox消息处理
                             if (!string.IsNullOrEmpty(content))
                             {
                                 sb.Append("{");
-                                sb.Append(string.Format("'type':'text', 'content':'{0}'", content));
+                                sb.Append(string.Format("'type':'text', 'content':'{0}'", JsonConvert.SerializeObject(content).ToString()));
                                 sb.Append("},");
                             }
 
@@ -188,7 +226,7 @@ namespace RichTextBox消息处理
                             else
                             { //表情
                                 sb.Append("{");
-                                sb.Append(string.Format(@"'type':'emoji', 'content':'{0}|{1}'", gif.UnicodeText, @gif.FilePath));
+                                sb.Append(string.Format(@"'type':'emoji', 'content':'{0}|{1}'", gif.UnicodeText, gif.FilePath));
                                 sb.Append("},");
                             }
                             lastIndex = gif.Index + 1;
@@ -205,23 +243,62 @@ namespace RichTextBox消息处理
                         sb.Append(string.Format("'type':'text', 'content':'{0}'", this.SelectedText));
                         sb.Append("}]");
                     }
-                    try
-                    {
-                        JArray ja = JArray.Parse(sb.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-
-                        throw;
-                    }
-
-                    //Clipboard.SetText(sb.ToString());
+                    Clipboard.SetText(sb.ToString());
                     break;
                 #endregion
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);
             }
             return true;
+        }
+
+        private List<Image> GetImagesFromRtf(string rtfText)
+        {
+            List<Image> imageList = new List<Image>();
+            int width = 0;
+            int height = 0;
+            int.TryParse(Regex.Match(rtfText, @"(?<=picw)[\d]+(?=\\pich)").Value, out width);
+            if (width != 0)
+                width = (int)(width / 26);
+
+            int.TryParse(Regex.Match(rtfText, @"(?<=pich)[\d]+(?=\\picwgoal)").Value, out height);
+            if (height != 0)
+                height = (int)(height / 26);
+            while (true)
+            {
+                int _Index = rtfText.IndexOf("pichgoal");
+                if (_Index == -1) break;
+                rtfText = rtfText.Remove(0, _Index + 8);
+
+                _Index = rtfText.IndexOf("\r\n");
+
+                int _Temp = Convert.ToInt32(rtfText.Substring(0, _Index));
+                rtfText = rtfText.Remove(0, _Index);
+
+                _Index = rtfText.IndexOf("}");
+                string imgByteStr = rtfText.Substring(0, _Index).Replace("\r\n", "");
+
+                rtfText = rtfText.Remove(0, _Index);
+
+                int _Count = imgByteStr.Length / 2;
+                byte[] bts = new byte[_Count];
+                for (int z = 0; z != _Count; z++)
+                {
+                    string _TempText = imgByteStr[z * 2].ToString() + imgByteStr[(z * 2) + 1].ToString();
+                    bts[z] = Convert.ToByte(_TempText, 16);
+                }
+
+                System.IO.MemoryStream ms = new System.IO.MemoryStream(bts);
+                System.Drawing.Image img = System.Drawing.Image.FromStream(ms);
+
+                using (var oriBmp = new Bitmap(img, width, height))
+                {
+                    img = (Image)oriBmp.Clone();
+                }
+                imageList.Add(img);
+            }
+
+            return imageList;
         }
     }
 }
