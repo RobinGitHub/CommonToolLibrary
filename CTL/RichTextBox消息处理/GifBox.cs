@@ -80,7 +80,7 @@ namespace RichTextBox消息处理
         /// <summary>
         /// 文件路径
         /// </summary>
-        public string FilePath { get { return filePath; } set { filePath = value; } }
+        public string FilePath { get { return filePath.Replace(@"\", "/"); } set { filePath = value; } }
 
         private Rectangle ImageRectangle
         {

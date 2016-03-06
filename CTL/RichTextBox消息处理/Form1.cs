@@ -20,6 +20,10 @@ namespace RichTextBox消息处理
 
             rtbReceive.SelectionIndent = 1;
             rtbReceive.SelectionRightIndent = 1;
+
+
+            string tmp = @"['5d595b0bac514397b8f97b0c5e56d9c3:~/Data/30080829000/5d595b0bac514397b8f97b0c5e56d9c3/5d595b0bac514397b8f97b0c5e56d9c3.png:~/Data/30080829000/5d595b0bac514397b8f97b0c5e56d9c3/mini_307_198_5d595b0bac514397b8f97b0c5e56d9c3.png']";
+            string[] split = tmp.Split(new char[] { ':' });
         }
 
         private void btnSend_Click(object sender, EventArgs e)
