@@ -51,17 +51,17 @@ namespace 播放音频
             ///如果当前正在播放，点击其他的，要停止现在播放的，播放点击的
             ///如果点击当前正在播放的，则暂停播放
             ///
-            
-            /////AMR 转 mp3
-            //string cmd = "ffmpeg -i A.amr A.mp3";
-            //ExecBatCommand(p =>
-            //{
-            //    p(@cmd);
-            //    // 这里连续写入的命令将依次在控制台窗口中得到体现
-            //    p("exit 0");
-            //});
 
-            //System.Media.SystemSounds.Beep.Play();
+            ///AMR 转 mp3
+            string cmd = "ffmpeg -i A.amr A.mp3";
+            ExecBatCommand(p =>
+            {
+                p(@cmd);
+                // 这里连续写入的命令将依次在控制台窗口中得到体现
+                p("exit 0");
+            });
+
+            System.Media.SystemSounds.Beep.Play();
 
             axWindowsMediaPlayer1.URL = Path.Combine(Application.StartupPath, "A.mp3");
             axWindowsMediaPlayer1.Ctlcontrols.play();
