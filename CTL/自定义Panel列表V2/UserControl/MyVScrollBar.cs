@@ -19,11 +19,17 @@ namespace 自定义Panel列表V2
         /// <summary>
         /// 轨道颜色
         /// </summary>
-        protected Color moChannelColor = Color.Empty;
+        private Color moChannelColor = Color.Transparent;
+
+        private Color moChannelDefaultColor = Color.Transparent;
+        /// <summary>
+        /// 轨道颜色
+        /// </summary>
+        protected Color moChannelMouseEnterColor = Color.FromArgb(250, 250, 250);
         /// <summary>
         /// 滑块的颜色
         /// </summary>
-        protected Color moThumbColor = Color.Empty;
+        protected Color moThumbColor = Color.FromArgb(193, 193, 193);
 
         protected int moLargeChange = 10;
         protected int moSmallChange = 1;
@@ -60,7 +66,6 @@ namespace 自定义Panel列表V2
         /// 要绑定的控件
         /// </summary>
         Control moControl = null;
-
         #endregion
 
         #region 事件
@@ -76,9 +81,6 @@ namespace 自定义Panel列表V2
             SetStyle(ControlStyles.ResizeRedraw, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.DoubleBuffer, true);
-
-            moChannelColor = Color.FromArgb(225, 225, 225);
-            moThumbColor = Color.FromArgb(124, 131, 135);
 
             customScrollInfo = new CustomScroll();
             customScrollInfo.TrackHeight = this.Height;
@@ -106,13 +108,7 @@ namespace 自定义Panel列表V2
                 this.moControl = value;
                 if (value != null)
                 {
-                    if (value.GetType() == typeof(DataPanelContainer))
-                    {
-                        value.MouseWheel += pnl_MouseWheel;
-                        //value.SizeChanged += pnl_SizeChanged;
-                        value.Click += pnl_Click;
-                    }
-                    else if (value.GetType() == typeof(DataGridView))
+                    if (value.GetType() == typeof(DataGridView))
                     {
                         DataGridView dgv = value as DataGridView;
                         dgv.RowStateChanged += dgv_RowStateChanged;
@@ -123,9 +119,9 @@ namespace 自定义Panel列表V2
                         value.MouseWheel += tv_MouseWheel;
                         value.SizeChanged += tv_SizeChanged;
                         value.Click += tv_Click;
-                    }
                 }
             }
+        }
         }
 
         
@@ -148,19 +144,13 @@ namespace 自定义Panel列表V2
         }
         #endregion
         #region Panel 的点击事件
-        void pnl_Click(object sender, EventArgs e)
+
+        void dpc_Click(object sender, EventArgs e)
         {
             DataPanelContainer pnl = sender as DataPanelContainer;
             this.Value = pnl.VScrollValue;
         }
-
-        void pnl_SizeChanged(object sender, EventArgs e)
-        {
-            DataPanelContainer pnl = sender as DataPanelContainer;
-            UpdateScrollbar(pnl.VScrollVisible, pnl.Height, pnl.DisplayRectangleHeight, pnl.VScrollValue, pnl.LargeChange, pnl.SmallChange);
-        }
-
-        void pnl_MouseWheel(object sender, MouseEventArgs e)
+        void dpc_MouseWheel(object sender, MouseEventArgs e)
         {
             MoveThumbMouseWheel(e.Delta > 0);
         }
@@ -233,10 +223,9 @@ namespace 自定义Panel列表V2
         {
             if (this.moControl == null)
                 return;
-            while (this.Visible != isVisible)
-            {//有时候赋值后没有变过来
+
                 this.Visible = isVisible;
-            }
+
             customScrollInfo.IsVisible = isVisible;
             customScrollInfo.Offset = offset;
             customScrollInfo.TrackHeight = this.Height;
@@ -261,8 +250,11 @@ namespace 自定义Panel列表V2
                     moLargeChange = 4;
                 }
             }
+            //有时候赋值后没有变过来
+            if (this.Visible != isVisible)
+                this.Visible = isVisible;
             this.Value = offset;
-            this.Invalidate(true);
+            this.Invalidate();
         }
         /// <summary>
         /// 当内容更新后，要调用此方法
@@ -271,12 +263,7 @@ namespace 自定义Panel列表V2
         {
             if (this.moControl == null)
                 return;
-            if (this.moControl.GetType() == typeof(DataPanelContainer))
-            {
-                DataPanelContainer control = this.moControl as DataPanelContainer;
-                UpdateScrollbar(control.VScrollVisible, control.Height, control.DisplayRectangleHeight, control.VScrollValue, control.LargeChange, control.SmallChange);
-            }
-            else if (this.moControl.GetType() == typeof(DataGridView))
+            if (this.moControl.GetType() == typeof(DataGridView))
             {
                 DataGridView control = this.moControl as DataGridView;
                 int rowHeight = 0;
@@ -289,6 +276,11 @@ namespace 自定义Panel列表V2
                 }
                 bool isVisible = control.DisplayedRowCount(false) != control.RowCount;
                 this.UpdateScrollbar(isVisible, control.Height, totalRowHeight, control.VerticalScrollingOffset, rowHeight * 3, rowHeight);
+            }
+            else if (this.moControl.GetType() == typeof(DataPanelContainer))
+            {
+                DataPanelContainer control = this.moControl as DataPanelContainer;
+                UpdateScrollbar(control.VScrollVisible, control.Height, control.DisplayRectangleHeight, control.VScrollValue, control.LargeChange, control.SmallChange);
             }
         }
         #endregion
@@ -327,8 +319,8 @@ namespace 自定义Panel列表V2
         [EditorBrowsable(EditorBrowsableState.Always), Browsable(true), DefaultValue(false), Category("Skin"), Description("Channel Color")]
         public Color ChannelColor
         {
-            get { return moChannelColor; }
-            set { moChannelColor = value; }
+            get { return moChannelMouseEnterColor; }
+            set { moChannelMouseEnterColor = value; }
         }
 
 
@@ -354,7 +346,6 @@ namespace 自定义Panel列表V2
             //draw thumb
             Brush oWhiteBrush = new SolidBrush(moThumbColor);
             e.Graphics.FillRectangle(oWhiteBrush, 0, moThumbTop, this.Width, customScrollInfo.ThumbHeight);
-            base.OnPaint(e);
         }
         #endregion
 
@@ -380,9 +371,11 @@ namespace 自定义Panel列表V2
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CustomScrollbar_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.CustomScrollbar_MouseMove);
             this.MouseEnter += MyVScrollBar_MouseEnter;
+            this.MouseLeave += MyVScrollBar_MouseLeave;
             this.SizeChanged += MyVScrollBar_SizeChanged;
             this.ResumeLayout(false);
         }
+
 
         void MyVScrollBar_SizeChanged(object sender, EventArgs e)
         {
@@ -398,6 +391,13 @@ namespace 自定义Panel列表V2
                     this.moControl.Focus();
                 }
             }
+            moChannelColor = moChannelMouseEnterColor;
+            this.Refresh();
+            }
+        void MyVScrollBar_MouseLeave(object sender, EventArgs e)
+        {
+            moChannelColor = moChannelDefaultColor;
+            this.Refresh();
         }
         #endregion
         #endregion
@@ -654,7 +654,6 @@ namespace 自定义Panel列表V2
             Invalidate();
         }
         #endregion
-
         #region 移动的方向
         /// <summary>
         /// 上次移动的位置

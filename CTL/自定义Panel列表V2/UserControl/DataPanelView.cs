@@ -50,6 +50,10 @@ namespace 自定义Panel列表V2
         /// </summary>
         public event EventHandler LoadMore;
         /// <summary>
+        /// 单击
+        /// </summary>
+        public event EventHandler ItemClick;
+        /// <summary>
         /// 双击内容项
         /// </summary>
         public event SelectionChangedDeletegate ItemDoubleClick;
@@ -406,7 +410,7 @@ namespace 自定义Panel列表V2
         {
             get { return groupTitleTextAlign; }
             set { groupTitleTextAlign = value; }
-        }
+        } 
         #endregion
 
         #region 分组统计要显示的内容 左边距
@@ -419,7 +423,7 @@ namespace 自定义Panel列表V2
         {
             get { return groupTitleLeft; }
             set { groupTitleLeft = value; }
-        }
+        } 
         #endregion
         #endregion
 
@@ -1525,7 +1529,7 @@ namespace 自定义Panel列表V2
                         if (tmpGroupRowNum >= groupList.Count)
                         {
                             if (isShowMore)
-                                rowIndex = itemList.Count - 1;
+                            rowIndex = itemList.Count - 1;
                             else
                                 rowIndex = itemList.Count;
                         }
@@ -1587,15 +1591,15 @@ namespace 自定义Panel列表V2
                 else
                     itemList[i].RowIndex += 1;
                 if (!groupRowIsTop)
-                {
+                    {
                     if (itemList[i].RowType == DataPanelRowType.GroupRow && isUpdateTotal)
-                    {//找到最近的一个统计行
+                        {//找到最近的一个统计行
                         DataPanelViewGroupRow groupItem = itemList[i] as DataPanelViewGroupRow;
-                        groupItem.RowCount += 1;
-                        isUpdateTotal = false;
+                            groupItem.RowCount += 1;
+                            isUpdateTotal = false;
+                        }
                     }
                 }
-            }
 
             if (groupRowIsTop)
             {//往上找
@@ -1708,8 +1712,14 @@ namespace 自定义Panel列表V2
                 item.MouseLeave += Item_MouseLeave;
                 item.MouseMove += Item_MouseMove;
                 item.DoubleClick += item_DoubleClick;
+                item.Click += item_Click;
                 item.SizeChanged += item_SizeChanged;
             }
+        }
+        void item_Click(object sender, EventArgs e)
+        {
+            if (ItemClick != null)
+                ItemClick(sender, e);
         }
 
         void item_SizeChanged(object sender, EventArgs e)
@@ -1764,7 +1774,7 @@ namespace 自定义Panel列表V2
             DataPanelViewRow tmpItem = itemList.First(t => t.RowIndex == dpvrc.DataPanelRow.RowIndex);
             if (tmpItem == null)//这里会出现当前控件上有个按钮，点击后删除了该控件，但是还是会进入这个方法
                 return;
-            bool isFocus = tmpItem.IsFocus;
+            bool isFocus = tmpItem.IsFocus; 
             if (dpvrc.Parent != null)
                 dpvrc.Parent.Focus();//只有点击的才是Focus,Focus永远只有一个
 
