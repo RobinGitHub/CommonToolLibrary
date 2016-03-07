@@ -60,7 +60,7 @@ namespace 获取系统文件的图标
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 textBox1.Text = openFileDialog1.FileName;
-                ///方案一
+                /////方案一
                 //ImageList list = new ImageList();
                 //GetSysIcon(textBox1.Text, list, false);
                 //pictureBox1.Image = list.Images[0];
@@ -71,7 +71,7 @@ namespace 获取系统文件的图标
                 //pictureBox1.Image = image;
 
                 ///方案三
-                pictureBox1.Image = GetIcon(this.textBox1.Text, false).ToBitmap();
+                //pictureBox1.Image = GetIcon(this.textBox1.Text, true).ToBitmap();
             }
         }
 
