@@ -24,14 +24,14 @@ namespace 图标格式转换
         void Form1_Load(object sender, EventArgs e)
         {
 
-            IntPtr rlt = NotifyHelper.FindNotifyIcon(notifyIcon1.Text);
-            string rlt1 = rlt.ToString();
+            //IntPtr rlt = NotifyHelper.FindNotifyIcon(notifyIcon1.Text);
+            //string rlt1 = rlt.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
 
-            notifyIcon1.Icon = BitmapToIcon(Resources._1, true);
+            //notifyIcon1.Icon = BitmapToIcon(Resources._1, true);
 
         }
 

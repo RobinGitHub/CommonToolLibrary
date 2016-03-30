@@ -63,6 +63,16 @@ namespace 右上角带数字.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap Cls01 {
+            get {
+                object obj = ResourceManager.GetObject("Cls01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap MessageNumbers {
             get {
                 object obj = ResourceManager.GetObject("MessageNumbers", resourceCulture);
@@ -86,6 +96,16 @@ namespace 右上角带数字.Properties {
         internal static System.Drawing.Bitmap T1 {
             get {
                 object obj = ResourceManager.GetObject("T1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap T3 {
+            get {
+                object obj = ResourceManager.GetObject("T3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

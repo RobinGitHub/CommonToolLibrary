@@ -147,8 +147,32 @@ namespace 自定义TreeView仿VS解决方案效果
                         tv.AfterCollapse += tv_AfterCollapse;
                         tv.AfterSelect += tv_AfterSelect;
                     }
+                    else if (value.GetType() == typeof(RichTextBox))
+                    {
+                        value.MouseWheel += rtb_MouseWheel;
+                        value.SizeChanged += rtb_SizeChanged;
+                        value.Click += rtb_Click;
+
+                        RichTextBox rtb = value as RichTextBox;
+                        rtb.ContentsResized += rtb_ContentsResized;
+                    }
                 }
             }
+        }
+
+        void rtb_Click(object sender, EventArgs e)
+        {
+        }
+
+        void rtb_SizeChanged(object sender, EventArgs e)
+        {
+        }
+
+        void rtb_MouseWheel(object sender, MouseEventArgs e)
+        {
+        }
+        void rtb_ContentsResized(object sender, ContentsResizedEventArgs e)
+        {
         }
 
         #endregion
