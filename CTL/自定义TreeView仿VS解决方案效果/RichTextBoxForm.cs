@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using 自定义TreeView仿VS解决方案效果.Properties;
 
 namespace 自定义TreeView仿VS解决方案效果
 {
@@ -101,6 +102,13 @@ namespace 自定义TreeView仿VS解决方案效果
                 }
             }
             Cursor = Cursors.IBeam;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetImage(Resources.minus);
+            Clipboard.SetImage(Resources.plus);
+            Clipboard.SetText("adf");
         }
     }
 }

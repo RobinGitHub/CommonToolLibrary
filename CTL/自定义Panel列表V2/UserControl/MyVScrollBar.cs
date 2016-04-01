@@ -119,21 +119,21 @@ namespace 自定义Panel列表V2
                         value.MouseWheel += tv_MouseWheel;
                         value.SizeChanged += tv_SizeChanged;
                         value.Click += tv_Click;
-                    }
+                }
                     else if (value.GetType() == typeof(RichTextBox))
                     {
                         value.MouseWheel += rtb_MouseWheel;
                         value.SizeChanged += rtb_SizeChanged;
                     }
-                }
             }
+        }
         }
 
         #region RichTextBox
         void rtb_SizeChanged(object sender, EventArgs e)
         {
         }
-
+        
         void rtb_MouseWheel(object sender, MouseEventArgs e)
         {
             MoveThumbMouseWheel(e.Delta > 0);
@@ -241,7 +241,7 @@ namespace 自定义Panel列表V2
             if (this.moControl == null)
                 return;
 
-            this.Visible = isVisible;
+                this.Visible = isVisible;
 
             customScrollInfo.IsVisible = isVisible;
             customScrollInfo.Offset = offset;
@@ -410,7 +410,7 @@ namespace 自定义Panel列表V2
             }
             moChannelColor = moChannelMouseEnterColor;
             this.Refresh();
-        }
+            }
         void MyVScrollBar_MouseLeave(object sender, EventArgs e)
         {
             moChannelColor = moChannelDefaultColor;
