@@ -17,43 +17,64 @@ namespace 自定义TreeView仿VS解决方案效果
     {
         [DllImport("user32.dll", EntryPoint = "SendMessageA")]
         private static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, string lParam);
+
+        [DllImport("user32.dll", EntryPoint = "GetScrollPos")]
+        public static extern int GetScrollPos(
+         int hwnd,
+         int nBar
+        );
+        [DllImport("user32.dll", EntryPoint = "SetScrollPos")]
+        public static extern int SetScrollPos(IntPtr hwnd, int nbar, int nPos, bool bRedraw);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
         public RichTextBoxForm()
         {
             InitializeComponent();
             this.richTextBox1.DragDrop += richTextBox1_DragDrop;
             this.richTextBox1.ContentsResized += richTextBox1_ContentsResized;
+            this.richTextBox1.Click += richTextBox1_Click;
             this.richTextBox1.DragEnter += richTextBox1_DragEnter;
 
-            RichTextBox rtb = new RichTextBox();
-            rtb.Text = "contentcontentcontentcontentcontentcontentcontentcontentcontent321";
-            rtb.Width = 200;
-            rtb.ScrollBars = RichTextBoxScrollBars.None;
-            rtb.Location = new Point(0,0);
-            // this.rtb.Anchor = (AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top);这句代码有问题
-            //得到RichTextBox高度
-            int EM_GETLINECOUNT = 0x00BA;//获取总行数的消息号 
-            int lc = SendMessage(rtb.Handle, EM_GETLINECOUNT, IntPtr.Zero, "");
-            int sf = rtb.Font.Height * (lc + 1) + rtb.Location.Y;
-            rtb.Height = sf;
-            rtb.Resize += new EventHandler(richTextBox1_Resize);
-            rtb.ContentsResized += richTextBox1_ContentsResized;
-            this.Controls.Add(rtb);
+            //Font font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            //RichTextBox rtb = new RichTextBox();
+            //rtb.Font = font;
+            //rtb.Text = "呜呜呜呜呜呜呜呜呜呜呜呜哇呜呜呜呜呜呜呜呜呜呜呜呜呜呜呜....";
+            //rtb.ScrollBars = RichTextBoxScrollBars.None;
+            //rtb.Location = new Point(0,0);
+            //// this.rtb.Anchor = (AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top);这句代码有问题
+            ////得到RichTextBox高度
+            //rtb.Width = 350;
+            //int EM_GETLINECOUNT = 0x00BA;//获取总行数的消息号 
+            //int lc = SendMessage(rtb.Handle, EM_GETLINECOUNT, IntPtr.Zero, "");
+            //int sf = rtb.Font.Height * (lc + 1) + rtb.Location.Y;
+            //rtb.Height = sf;
+            ////rtb.Resize += new EventHandler(richTextBox1_Resize);
+            ////rtb.ContentsResized += richTextBox1_ContentsResized;
+            //this.Controls.Add(rtb);
 
         }
-        void richTextBox1_Resize(object sender, EventArgs e)
+
+        void richTextBox1_Click(object sender, EventArgs e)
         {
-            int EM_GETLINECOUNT = 0x00BA;//获取总行数的消息号 
-            int lc = SendMessage(this.richTextBox1.Handle, EM_GETLINECOUNT, IntPtr.Zero, "");
-            int sf = this.richTextBox1.Font.Height * (lc + 1) + this.richTextBox1.Location.Y;
-            this.richTextBox1.Height = sf;
+            RichTextBox rtb = sender as RichTextBox;
+            int pos2 = GetScrollPos((int)rtb.Handle, 1);  //panel1的垂直滚动条位置
+            MessageBox.Show(pos2.ToString());
         }
 
         void richTextBox1_ContentsResized(object sender, ContentsResizedEventArgs e)
         {
-            RichTextBox rtb = sender as RichTextBox;
-            rtb.Height = e.NewRectangle.Height + 10;
+            //RichTextBox rtb = sender as RichTextBox;
+            //rtb.Height = e.NewRectangle.Height + 10;
         }
 
+        void richTextBox1_Resize(object sender, EventArgs e)
+        {
+            //int EM_GETLINECOUNT = 0x00BA;//获取总行数的消息号 
+            //int lc = SendMessage(this.richTextBox1.Handle, EM_GETLINECOUNT, IntPtr.Zero, "");
+            //int sf = this.richTextBox1.Font.Height * (lc + 1) + this.richTextBox1.Location.Y;
+            //this.richTextBox1.Height = sf;
+        }
         void richTextBox1_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Effect == DragDropEffects.Move)
@@ -106,9 +127,21 @@ namespace 自定义TreeView仿VS解决方案效果
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Clipboard.SetImage(Resources.minus);
-            Clipboard.SetImage(Resources.plus);
-            Clipboard.SetText("adf");
+            //Clipboard.SetImage(Resources.minus);
+            //Clipboard.SetImage(Resources.plus);
+            //Clipboard.SetText("adf");
+
+            //int start = richTextBox1.GetFirstCharIndexFromLine(2);
+            //this.richTextBox1.SelectionStart = start;
+            //this.richTextBox1.ScrollToCaret();
+
+            SetScrollPos(richTextBox1.Handle, 1, 15, true);
+            ///用垂直滚动条的方式没有效果，经过调试，如果直接移动本身的滚动条 wParam 值是随时变化的
+            ///而滚动条的值 是通过 HiWord 方法算出来的
+            ///而这里需要反推即：通过滚动条的值 算出 wParam 的值
+            ///这里为什么要 +5 因为算出来的值与本身滚动条的值相差5，具体原因不明
+            int wParam = (15 << 16) + 5;
+            SendMessage(richTextBox1.Handle, (int)0x0115, (System.IntPtr)wParam, (System.IntPtr)0);
         }
     }
 }
