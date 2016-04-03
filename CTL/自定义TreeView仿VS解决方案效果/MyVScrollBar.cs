@@ -147,35 +147,48 @@ namespace 自定义TreeView仿VS解决方案效果
                         tv.AfterCollapse += tv_AfterCollapse;
                         tv.AfterSelect += tv_AfterSelect;
                     }
-                    else if (value.GetType() == typeof(RichTextBox))
+                    else if (value.GetType() == typeof(MyRichTextBox))
                     {
-                        value.MouseWheel += rtb_MouseWheel;
                         value.SizeChanged += rtb_SizeChanged;
                         value.Click += rtb_Click;
 
-                        RichTextBox rtb = value as RichTextBox;
-                        rtb.ContentsResized += rtb_ContentsResized;
+                        MyRichTextBox rtb = value as MyRichTextBox;
+                        rtb.ContentsResized += Rtb_ContentsResized;
+                        rtb.VScroll += Rtb_VScroll;
                     }
                 }
             }
         }
 
+        #endregion
+        #region RichTextBox
         void rtb_Click(object sender, EventArgs e)
         {
+            MyRichTextBox rtb = sender as MyRichTextBox;
+            this.Value = rtb.VerticalScrollValue;
         }
 
         void rtb_SizeChanged(object sender, EventArgs e)
         {
+            MyRichTextBox rtb = sender as MyRichTextBox;
+            UpdateScrollbar(rtb.VerticalScrollVisible, rtb.Height, rtb.DisplayContentRectangle.Height, rtb.VerticalScrollValue, 0, 0);
+        }
+        
+        private void Rtb_VScroll(object sender, EventArgs e)
+        {
+            MyRichTextBox rtb = sender as MyRichTextBox;
+            this.Value = rtb.VerticalScrollValue;
+
         }
 
-        void rtb_MouseWheel(object sender, MouseEventArgs e)
-        {
-        }
-        void rtb_ContentsResized(object sender, ContentsResizedEventArgs e)
-        {
-        }
 
+        private void Rtb_ContentsResized(object sender, ContentsResizedEventArgs e)
+        {
+            MyRichTextBox rtb = sender as MyRichTextBox;
+            UpdateScrollbar(rtb.VerticalScrollVisible, rtb.Height, rtb.DisplayContentRectangle.Height, rtb.VerticalScrollValue, 0, 0);
+        }
         #endregion
+
 
         #region TreeView
         void tv_Click(object sender, EventArgs e)
@@ -517,6 +530,10 @@ namespace 自定义TreeView仿VS解决方案效果
             {
                 tv_SizeChanged(this.moControl, null);
             }
+            else if (this.moControl.GetType() == typeof(MyRichTextBox))
+            {
+                rtb_SizeChanged(this.moControl, null);
+            }
         }
         #endregion
 
@@ -852,6 +869,11 @@ namespace 自定义TreeView仿VS解决方案效果
                 {
                     TreeViewEx tv = this.moControl as TreeViewEx;
                     tv.VerticalScrollValue = Convert.ToInt32(Math.Ceiling((decimal)moValue / (decimal)tv.ItemHeight));
+                }
+                else if (this.moControl.GetType() == typeof(MyRichTextBox))
+                {
+                    MyRichTextBox rtb = this.moControl as MyRichTextBox;
+                    rtb.VerticalScrollValue = moValue;
                 }
             }
             #endregion

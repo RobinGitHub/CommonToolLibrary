@@ -73,6 +73,9 @@
     <Compile Include="MyHScrollBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="MyRichTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MyVScrollBar.cs">
       <SubType>UserControl</SubType>
     </Compile>

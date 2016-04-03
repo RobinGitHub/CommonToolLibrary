@@ -31,6 +31,8 @@ namespace 自定义TreeView仿VS解决方案效果
         public RichTextBoxForm()
         {
             InitializeComponent();
+            this.myVScrollBar1.BindControl = richTextBox1;
+
             this.richTextBox1.DragDrop += richTextBox1_DragDrop;
             this.richTextBox1.ContentsResized += richTextBox1_ContentsResized;
             this.richTextBox1.Click += richTextBox1_Click;
@@ -135,13 +137,9 @@ namespace 自定义TreeView仿VS解决方案效果
             //this.richTextBox1.SelectionStart = start;
             //this.richTextBox1.ScrollToCaret();
 
-            SetScrollPos(richTextBox1.Handle, 1, 15, true);
-            ///用垂直滚动条的方式没有效果，经过调试，如果直接移动本身的滚动条 wParam 值是随时变化的
-            ///而滚动条的值 是通过 HiWord 方法算出来的
-            ///而这里需要反推即：通过滚动条的值 算出 wParam 的值
-            ///这里为什么要 +5 因为算出来的值与本身滚动条的值相差5，具体原因不明
-            int wParam = (15 << 16) + 5;
-            SendMessage(richTextBox1.Handle, (int)0x0115, (System.IntPtr)wParam, (System.IntPtr)0);
+            MessageBox.Show(richTextBox1.VerticalScrollVisible.ToString());
+
+            Panel pnl = new Panel();
         }
     }
 }
