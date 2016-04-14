@@ -87,6 +87,9 @@
     <Compile Include="RichTextBoxForm.Designer.cs">
       <DependentUpon>RichTextBoxForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TestRtb.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="TreeViewEx.cs">
       <SubType>Component</SubType>
     </Compile>

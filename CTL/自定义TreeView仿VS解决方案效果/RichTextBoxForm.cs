@@ -32,6 +32,7 @@ namespace 自定义TreeView仿VS解决方案效果
         {
             InitializeComponent();
             this.myVScrollBar1.BindControl = richTextBox1;
+            this.myVScrollBar2.BindControl = richTextBox2;
 
             this.richTextBox1.DragDrop += richTextBox1_DragDrop;
             this.richTextBox1.ContentsResized += richTextBox1_ContentsResized;

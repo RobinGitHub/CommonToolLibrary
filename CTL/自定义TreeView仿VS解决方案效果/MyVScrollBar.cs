@@ -147,7 +147,8 @@ namespace 自定义TreeView仿VS解决方案效果
                         tv.AfterCollapse += tv_AfterCollapse;
                         tv.AfterSelect += tv_AfterSelect;
                     }
-                    else if (value.GetType() == typeof(MyRichTextBox))
+                    else if (value.GetType() == typeof(MyRichTextBox)
+                        || value.GetType().BaseType == typeof(MyRichTextBox))
                     {
                         value.SizeChanged += rtb_SizeChanged;
                         value.Click += rtb_Click;
@@ -530,7 +531,8 @@ namespace 自定义TreeView仿VS解决方案效果
             {
                 tv_SizeChanged(this.moControl, null);
             }
-            else if (this.moControl.GetType() == typeof(MyRichTextBox))
+            else if (this.moControl.GetType() == typeof(MyRichTextBox)
+                || this.moControl.GetType().BaseType == typeof(MyRichTextBox))
             {
                 rtb_SizeChanged(this.moControl, null);
             }
@@ -870,7 +872,8 @@ namespace 自定义TreeView仿VS解决方案效果
                     TreeViewEx tv = this.moControl as TreeViewEx;
                     tv.VerticalScrollValue = Convert.ToInt32(Math.Ceiling((decimal)moValue / (decimal)tv.ItemHeight));
                 }
-                else if (this.moControl.GetType() == typeof(MyRichTextBox))
+                else if (this.moControl.GetType() == typeof(MyRichTextBox)
+                    || this.moControl.GetType().BaseType == typeof(MyRichTextBox))
                 {
                     MyRichTextBox rtb = this.moControl as MyRichTextBox;
                     rtb.VerticalScrollValue = moValue;
