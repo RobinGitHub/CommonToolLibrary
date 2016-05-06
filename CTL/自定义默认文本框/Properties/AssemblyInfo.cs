@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的常规信息通过以下
 // 特性集控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("SocketClient")]
+[assembly: AssemblyTitle("自定义默认文本框")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("SocketClient")]
+[assembly: AssemblyProduct("自定义默认文本框")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 如果此项目向 COM 公开，则下列 GUID 用于类型库的 ID
-[assembly: Guid("dc4e9683-4efe-401a-8a03-8500d7d878bf")]
+[assembly: Guid("c9f321fa-d4ef-4070-90fe-3d4b25375cf5")]
 
 // 程序集的版本信息由下面四个值组成: 
 //
