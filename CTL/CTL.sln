@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "自定义默认文本框", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelFileHelper", "ExcelFileHelper\ExcelFileHelper.csproj", "{6D2FAC4C-DEB7-4898-A934-5775B299F651}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComboBox自定义下拉项", "ComboBox自定义下拉项\ComboBox自定义下拉项.csproj", "{6E291B71-FCD7-4885-B054-ED21435866F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +203,12 @@ Global
 		{6D2FAC4C-DEB7-4898-A934-5775B299F651}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6D2FAC4C-DEB7-4898-A934-5775B299F651}.Release|x86.ActiveCfg = Release|x86
 		{6D2FAC4C-DEB7-4898-A934-5775B299F651}.Release|x86.Build.0 = Release|x86
+		{6E291B71-FCD7-4885-B054-ED21435866F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E291B71-FCD7-4885-B054-ED21435866F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E291B71-FCD7-4885-B054-ED21435866F0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6E291B71-FCD7-4885-B054-ED21435866F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E291B71-FCD7-4885-B054-ED21435866F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E291B71-FCD7-4885-B054-ED21435866F0}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
