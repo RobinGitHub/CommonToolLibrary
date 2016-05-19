@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -30,7 +31,10 @@ namespace 图标格式转换
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            Icon icon = BitmapToIcon(Resources.a, true);
+            FileStream fs = new FileStream("a.ico", FileMode.Create);
+            icon.Save(fs);//将Icon保存的指定的输出
+            fs.Close();
             //notifyIcon1.Icon = BitmapToIcon(Resources._1, true);
 
         }
