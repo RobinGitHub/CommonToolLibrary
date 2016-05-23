@@ -15,7 +15,7 @@ namespace 自定义TreeView仿VS解决方案效果
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new RichTextBoxForm());
+            Application.Run(new Form1());
         }
     }
 }
