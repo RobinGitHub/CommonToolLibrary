@@ -19,8 +19,10 @@ namespace 获取系统托盘图标位置
 
         private void button1_Click(object sender, EventArgs e)
         {
-            bool isHide = false;
-            GetIconRec("Haobitou.exe", "深圳", out isHide);
+            //bool isHide = false;
+            //GetIconRec("Haobitou.exe", "深圳", out isHide);
+
+            Cursor.Position = new Point(1170, 862);
         }
 
         /// <summary>
@@ -56,7 +58,7 @@ namespace 获取系统托盘图标位置
             //图标宽度
             int iconWidth = 25;
             //每行图标显示的个数，考虑多行显示的情况
-            int disRowCount = (rct.Right - rct.Left) / iconWidth;
+            int disRowCount = (int)Math.Ceiling((rct.Right - rct.Left) / (decimal)iconWidth);
             //显示行数
             int disLines = (int)Math.Ceiling(lButton / (decimal)disRowCount);
 
