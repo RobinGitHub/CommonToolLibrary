@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 namespace CommonControls
 {
+    //DataGridView自定义添加DateTimePicker控件日期列 参考http://msdn.microsoft.com/en-us/library/7tas5c80.aspx
     public class CalendarCell : DataGridViewTextBoxCell
     {
         public CalendarCell()
