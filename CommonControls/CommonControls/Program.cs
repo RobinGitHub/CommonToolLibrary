@@ -15,7 +15,8 @@ namespace CommonControls
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CommonControls.自定义ComboBox.MainForm());
+            Application.Run(new CommonControls.自定义LookUp.MainForm());
+            //Application.Run(new CommonControls.自定义ComboBox.MainForm());
             //Application.Run(new CommonControls.DataGridViewControl.MainForm());
             //Application.Run(new Form1());
         }

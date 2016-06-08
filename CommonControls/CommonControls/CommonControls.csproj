@@ -93,6 +93,44 @@
     <Compile Include="自定义ComboBox\UCTest.Designer.cs">
       <DependentUpon>UCTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="自定义LookUp\BxControlPart.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="自定义LookUp\BxDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="自定义LookUp\BxDataGridView.designer.cs">
+      <DependentUpon>BxDataGridView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="自定义LookUp\BxTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="自定义LookUp\LookupContext.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="自定义LookUp\LookupContext.designer.cs">
+      <DependentUpon>LookupContext.cs</DependentUpon>
+    </Compile>
+    <Compile Include="自定义LookUp\LookupEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="自定义LookUp\LookupEditor.designer.cs">
+      <DependentUpon>LookupEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="自定义LookUp\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="自定义LookUp\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="自定义LookUp\MessageFilter.cs" />
+    <Compile Include="自定义LookUp\NativeMethods.cs" />
+    <Compile Include="自定义LookUp\PopupControlHost.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="自定义LookUp\ScrollArrowButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="DataGridViewControl\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -109,6 +147,15 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <EmbeddedResource Include="自定义ComboBox\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="自定义LookUp\LookupContext.resx">
+      <DependentUpon>LookupContext.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="自定义LookUp\LookupEditor.resx">
+      <DependentUpon>LookupEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="自定义LookUp\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
