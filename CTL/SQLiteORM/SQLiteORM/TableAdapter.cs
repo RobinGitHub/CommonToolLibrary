@@ -1,32 +1,55 @@
-﻿/*
- *  Sqlite ORM - GNU General Public License, version 3 (GPL-3.0)
- *  Copyright (C)  2010-2012. Ian Quigley
- *  
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *  
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- */
-
+﻿using SQLiteORM.Dialect;
+using SQLiteORM.ExpressionTree;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
-using SQLiteORM.Dialect;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
 
 namespace SQLiteORM
 {
-
-    public class TableAdapter<T> : DbConnection
-        where T: class, new()
+    public class TableAdapter<T> : DbConnection, IDisposable
+        where T : class
     {
+
+        #region 私有属性
         protected TableMeta _meta;
         protected string _tableName;
         private bool _isMultiTableJoin = false;
 
+        private SQLiteHelper sqlHelper = new SQLiteHelper();
+
+        #region 查询语句
+        private string _insertSql;
+        private string _updateSql;
+        private string _selectRowSql;
+        private string _selectAllSql;
+        private string _selectRowCountSql;
+        private string _deleteRowSql;
+        private string _deleteAllSql;
+        
+        private string InsertSql { get { return _insertSql ?? (_insertSql = Actions.InsertSql(_meta, _tableName)); } }
+        private string UpdateSql { get { return _updateSql ?? (_updateSql = Actions.UpdateSql(_meta, _tableName)); } }
+        private string SelectRowSql { get { return _selectRowSql ?? (_selectRowSql = Actions.SelectRowSql(_meta, _tableName)); } }
+        private string SelectAllSql { get { return _selectAllSql ?? (_selectAllSql = Actions.SelectAllSql(_meta, _tableName)); } }
+        private string SelectRowCountSql { get { return _selectRowCountSql ?? (_selectRowCountSql = Actions.SelectRowCountSql(_meta, _tableName)); } }
+        private string DeleteRowSql { get { return _deleteRowSql ?? (_deleteRowSql = Actions.DeleteRowSql(_meta, _tableName)); } }
+        private string DeleteAllSql { get { return _deleteAllSql ?? (_deleteAllSql = Actions.DeleteSql(_meta, _tableName)); } }
+        #endregion
+
+        #endregion
+
+        #region 公共方法
+
+        #region 创建对象 实例化
+        /// <summary>
+        /// 创建对象
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static TableAdapter<T> Open(params object[] args)
         {
             TableAdapter<T> adapter = Activator.CreateInstance<TableAdapter<T>>();
@@ -58,7 +81,15 @@ namespace SQLiteORM
 
             return adapter;
         }
+        #endregion
 
+        #region 两个对象是否相同
+        /// <summary>
+        /// 两个对象是否相同
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
         public bool AreSame(T one, T two)
         {
             foreach (var tableColumn in _meta.Columns)
@@ -83,94 +114,263 @@ namespace SQLiteORM
 
             return true;
         }
+        #endregion
 
-        private string _updateSql;
-        private string _selectRowSql;
-        private string _selectAllSql;
-        private string _deleteRowSql;
-        private string _deleteAllSql;
+        #region Insert
+        /// <summary>
+        /// 插入
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public bool Insert(T model)
+        {
+            return Insert(null, model);
+        }
 
-        private string UpdateSql { get { return _updateSql ?? (_updateSql = Actions.UpdateSql(_meta, _tableName)); } }
-        private string SelectRowSql { get { return _selectRowSql ?? (_selectRowSql = Actions.SelectRowSql(_meta, _tableName)); } }
-        private string SelectAllSql { get { return _selectAllSql ?? (_selectAllSql = Actions.SelectAllSql(_meta, _tableName)); } }
-        private string DeleteRowSql { get { return _deleteRowSql ?? (_deleteRowSql = Actions.DeleteRowSql(_meta, _tableName)); } }
-        private string DeleteAllSql { get { return _deleteAllSql ?? (_deleteAllSql = Actions.DeleteSql(_meta, _tableName)); } }
+        public bool Insert(SQLiteTransaction trans, T model)
+        {
+            try
+            {
+                using (SQLiteCommand command = new SQLiteCommand(InsertSql, Connection))
+                {
+                    if (trans != null)
+                        command.Transaction = trans;
+                    QueryParams(command, model);
 
+                    BroadcastToListeners(command);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (SQLiteException ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool Insert(IList<T> models)
+        {
+            return Insert(null, models);
+        }
+
+        public bool Insert(SQLiteTransaction trans, IList<T> models)
+        {
+            bool rlt = false;
+
+            if (trans == null)
+                trans = Connection.BeginTransaction();
+            using (trans)
+            {
+                try
+                {
+                    using (SQLiteCommand command = new SQLiteCommand(InsertSql, Connection))
+                    {
+                        foreach (T item in models)
+                        {
+                            QueryParams(command, item);
+                            BroadcastToListeners(command);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    rlt = true;
+                    trans.Commit();
+                }
+                catch (SQLiteException ex)
+                {
+                    trans.Rollback();
+                    throw ex;
+                }
+            }
+            return rlt;
+        }
+        #endregion
+
+        #region Update
+        public bool Update(T model)
+        {
+            return Update(null, model);
+        }
+        public bool Update(SQLiteTransaction trans, T model)
+        {
+            using (SQLiteCommand command = new SQLiteCommand(UpdateSql, Connection))
+            {
+                if (trans != null)
+                    command.Transaction = trans;
+                QueryParams(command, model);
+                BroadcastToListeners(command);
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
+
+        #endregion
+
+        #region Delete
+        /// <summary>
+        /// Delete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool Delete(int id)
+        {
+            return Delete(null, id);
+        }
+
+        public bool Delete(SQLiteTransaction trans, int id)
+        {
+            using (SQLiteCommand command = new SQLiteCommand(DeleteRowSql, Connection))
+            {
+                if (trans != null)
+                    command.Transaction = trans;
+                QueryParams(command, false, id);
+                BroadcastToListeners(command);
+
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public bool Delete(Expression<Func<T, bool>> condition)
+        {
+            return Delete(null, condition);
+        }
+
+        public bool Delete(SQLiteTransaction trans, Expression<Func<T, bool>> condition)
+        {
+            using (SQLiteCommand command = new SQLiteCommand(Connection))
+            {
+                if (trans != null)
+                    command.Transaction = trans;
+                command.CommandText = DeleteAllSql;
+                QueryParams(command, condition);
+                BroadcastToListeners(command);
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
+        #endregion
+
+        #region GetModel
+        public T GetModel(int id)
+        {
+            using (SQLiteCommand command = new SQLiteCommand(SelectRowSql, Connection))
+            {
+                QueryParams(command, false, id);
+                BroadcastToListeners(command);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    return (T)ReadRow(reader, _meta);
+                }
+            }
+            return null;
+        }
+        #endregion
+
+        #region GetList
+        public IList GetList(Expression<Func<T, bool>> condition)
+        {
+            List<T> _results = new List<T>();
+            using (SQLiteCommand command = new SQLiteCommand(SelectAllSql, Connection))
+            {
+                QueryParams(command, condition);
+                BroadcastToListeners(command);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    _results.Add((T)ReadRow(reader, _meta));
+                }
+            }
+            return _results;
+        }
+
+        public IList GetList<TKey>(int pageIndex, int pageSize, out int total, Expression<Func<T, bool>> condition, Expression<Func<T, TKey>> orderBy, bool isAsc = true)
+        {
+            List<T> _results = new List<T>();
+
+            using (SQLiteCommand command = new SQLiteCommand(Connection))
+            {
+                command.CommandText = SelectRowCountSql;
+                QueryParams(command, condition);
+                BroadcastToListeners(command);
+                total = Convert.ToInt32(command.ExecuteScalar());
+
+                command.CommandText = SelectAllSql + BuildOrderBy(orderBy, isAsc) + BuildLimit(pageIndex, pageSize);
+                BroadcastToListeners(command);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    _results.Add((T)ReadRow(reader, _meta));
+                }
+            }
+            return _results;
+        }
+
+        public DataTable GetDataTable(Expression<Func<T, bool>> condition)
+        {
+            using (SQLiteCommand command = new SQLiteCommand(SelectAllSql, Connection))
+            {
+                QueryParams(command, condition);
+                BroadcastToListeners(command);
+
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(command);
+                DataTable data = new DataTable();
+                data.TableName = "table1";
+                adapter.Fill(data);
+                return data;
+            }
+        }
+
+        public DataTable GetDataTable<TKey>(int pageIndex, int pageSize, out int total, Expression<Func<T, bool>> condition, Expression<Func<T, TKey>> orderBy, bool isAsc = true)
+        {
+            using (SQLiteCommand command = new SQLiteCommand(Connection))
+            {
+                command.CommandText = SelectRowCountSql;
+                QueryParams(command, condition);
+                BroadcastToListeners(command);
+                total = Convert.ToInt32(command.ExecuteScalar());
+
+                command.CommandText = SelectAllSql + BuildOrderBy(orderBy, isAsc) + BuildLimit(pageIndex, pageSize);
+                BroadcastToListeners(command);
+
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(command);
+                DataTable data = new DataTable();
+                data.TableName = "table1";
+                adapter.Fill(data);
+                return data;
+            }
+        }
+        #endregion
+
+        #endregion
+
+        #region 私有方法
+
+        #region 创建表
+        /// <summary>
+        /// 创建表
+        /// </summary>
+        /// <param name="tableMeta"></param>
+        /// <param name="tableName"></param>
         private void CreateTable(TableMeta tableMeta, string tableName)
         {
-            ExecuteSql(Actions.CreateTable(tableMeta, tableName));
+            sqlHelper.ExecuteNonQuery(Actions.CreateTable(tableMeta, tableName), null);
         }
+        #endregion
 
-        public long CreateUpdate(params object[] args)
+        #region 组织参数
+        /// <summary>
+        /// 组织参数
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="insertOp"></param>
+        /// <param name="args"></param>
+        private void QueryParams(SQLiteCommand command, T instance)
         {
-            if (_isMultiTableJoin)
-                throw new NotSupportedException();
-
-            long id;
-            if (args.Length == 1 && (typeof(T).IsAssignableFrom(args[0].GetType())))
-            {
-                id = ExecuteUpdate((T)args[0]);
-
-                if (_meta.HasAutoIncrementPrimaryKey)
-                    _meta.Columns.ForEach(col => { if (col.PrimaryKey && col.AutoIncrement) col.SetValue(args[0], id); });
-            }
-            else
-            {
-                id = ExecuteInsert(args);
-            }
-            return id;
+            for (int i = 0; i < _meta.Columns.Count; i++)
+                if (_meta.Columns[i].PrimaryKey && _meta.Columns[i].IsDefaultValue(instance))
+                    command.Parameters.Add(_meta.Columns[i].ParamName, _meta.Columns[i].DbType).Value = null;
+                else
+                    command.Parameters.Add(_meta.Columns[i].ParamName, _meta.Columns[i].DbType).Value = _meta.Columns[i].GetValue(instance);
         }
 
-        public void Delete(params object[] args)
-        {
-            if (_isMultiTableJoin)
-                throw new NotSupportedException();
-
-            if (args.Length == 1 && (typeof(T).IsAssignableFrom(args[0].GetType())))
-                ExecuteDeleteInst((T)args[0]);
-            else if (args.Length == 1 && (typeof(Where).IsAssignableFrom(args[0].GetType())))
-                ExecuteDeleteWhere((Where)args[0]);
-            else
-                ExecuteDelete(args);
-        }
-
-        public void DeleteAll()
-        {
-            if (_isMultiTableJoin)
-                throw new NotSupportedException();
-
-            ExecuteSql(DeleteAllSql);
-        }
-
-        public T Read(params object[] args)
-        {
-            if (_isMultiTableJoin)
-                throw new NotSupportedException();
-
-            return ExecuteRow(args);
-        }
-
-        public Query<T> Select()
-        {
-            Query<T> query;
-
-            if (_isMultiTableJoin)
-            {
-                IMash t = Activator.CreateInstance<T>() as IMash;
-                if (t == null)
-                    throw new Exception("puke");
-
-                query = new Query<T>(t.SelectAllSql(), (TableMeta)t);
-            }
-            else
-            {
-                query = new Query<T>(SelectAllSql, _meta);
-            }
-
-            //query.SetConnection( Connection );
-
-            return query;
-        }
 
         private void QueryParams(SQLiteCommand command, bool insertOp, params object[] args)
         {
@@ -195,145 +395,66 @@ namespace SQLiteORM
             }
         }
 
-        private long ExecuteUpdate(T instance)
+        private void QueryParams(SQLiteCommand command, Expression<Func<T, bool>> condition)
         {
-            using (SQLiteCommand command = new SQLiteCommand(UpdateSql + " select last_insert_rowid();", Connection))
-            {
-                for (int i = 0; i < _meta.Columns.Count; i++)
-                    if (_meta.Columns[i].PrimaryKey && _meta.Columns[i].IsDefaultValue(instance))
-                        command.Parameters.Add(_meta.Columns[i].ParamName, _meta.Columns[i].DbType).Value = null;
-                    else
-                        command.Parameters.Add(_meta.Columns[i].ParamName, _meta.Columns[i].DbType).Value = _meta.Columns[i].GetValue(instance);
-
-                BroadcastToListeners(command);
-
-                return (long)command.ExecuteScalar();
-            }
+            var t = (new WhereExpressionVisitor<T>()).ConvertToWhere(condition);
+            string where = t.Build(command);
+            command.CommandText += " " + where;
         }
+        #endregion
 
-        private long ExecuteInsert(params object[] args)
+        #region 转换成对象 ReadRow
+        private object ReadRow(IDataRecord reader, TableMeta meta)
         {
-            using (SQLiteCommand command = new SQLiteCommand(UpdateSql + " select last_insert_rowid();", Connection))
-            {
-                QueryParams(command, true, args);
+            object instance = Activator.CreateInstance<T>();
 
-                BroadcastToListeners(command);
-
-                return (long)command.ExecuteScalar();
-            }
-        }
-
-        private T ExecuteRow(params object[] args)
-        {
-            T instance = Activator.CreateInstance<T>();
-
-            using (SQLiteCommand command = new SQLiteCommand(SelectRowSql, Connection))
-            {
-                QueryParams(command, false, args);
-
-                BroadcastToListeners(command);
-
-                SQLiteDataReader reader = command.ExecuteReader();
-                if (!reader.Read())
-                    return default(T);
-
-                for (int i = 0; i < _meta.Columns.Count; i++)
-                {
-                    object fieldValue = ConvertType(reader[i], _meta.Columns[i].Type, reader[i].GetType());
-                    _meta.Columns[i].SetValue(instance, fieldValue);
-                }
-            }
+            for (int i = 0; i < meta.Columns.Count; i++)
+                if (Convert.IsDBNull(reader[i]))
+                    meta.Columns[i].SetValue(instance, null);
+                else if (typeof(Enum).IsAssignableFrom(meta.Columns[i].Type))
+                    meta.Columns[i].SetValue(instance, Enum.Parse(meta.Columns[i].Type, (string)reader[i]));
+                else
+                    meta.Columns[i].SetValue(instance, reader[i]);
 
             return instance;
         }
+        #endregion
 
-        private object ConvertType(object val, Type to, Type from)
+        #region 排序
+        /// <summary>
+        /// 排序
+        /// 返回SQL语句
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="orderBy"></param>
+        /// <param name="isAsc"></param>
+        /// <returns></returns>
+        private string BuildOrderBy<TKey>(Expression<Func<T, TKey>> orderBy, bool isAsc = true)
         {
-            if (from.IsAssignableFrom(to))
-                return Convert.ChangeType(val, to);
-
-            if (to == typeof(TimeSpan))
-                return TimeSpan.Parse(val.ToString());
-
-            if (to == typeof(UInt16))
-                return Convert.ToUInt16(val);
-
-            if (to == typeof(Decimal))
-            {
-                if (((double)val) >= (double)Decimal.MaxValue)
-                    return Decimal.MaxValue;
-
-                if (((double)val) <= (double)Decimal.MinValue)
-                    return Decimal.MinValue;
-
-                return Convert.ToDecimal(val);
-            }
-
-            if (to == typeof(Single) && from == typeof(Double))
-                return Convert.ToSingle(val);
-
-            if (typeof(Enum).IsAssignableFrom(to))
-            {
-                try
-                {
-                    return Enum.Parse(to, val as string);
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-
-            return null;
+            if (orderBy == null)
+                return string.Empty;
+            var ex = ((MemberExpression)orderBy.Body).Member;
+            var colmn = _meta.Columns.First(col => col.FieldName == ex.Name);
+            StringBuilder orderBySb = new StringBuilder();
+            orderBySb.Append(" ORDER BY " + colmn.FieldName + (isAsc ? " ASC" : " DESC"));
+            return orderBySb.ToString();
         }
 
-        private void ExecuteDelete(params object[] args)
+        #endregion
+
+        #region 分页
+        /// <summary>
+        /// 分页
+        /// 返回SQL语句
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        private string BuildLimit(int pageIndex, int pageSize)
         {
-            using (SQLiteCommand command = new SQLiteCommand(DeleteRowSql, Connection))
-            {
-                QueryParams(command, false, args);
-                BroadcastToListeners(command);
-
-                command.ExecuteNonQuery();
-            }
+            return string.Format(" LIMIT {0}, {1}", (pageIndex - 1) * pageSize, pageSize);
         }
-
-        private void ExecuteDeleteInst(T instance)
-        {
-            using (SQLiteCommand command = new SQLiteCommand(DeleteRowSql, Connection))
-            {
-                for (int i = 0; i < _meta.Columns.Count; i++)
-                {
-                    if (!_meta.Columns[i].PrimaryKey)
-                        continue;
-
-                    command.Parameters.Add(_meta.Columns[i].ParamName, _meta.Columns[i].DbType).Value = _meta.Columns[i].GetValue(instance);
-                }
-
-                BroadcastToListeners(command);
-                command.ExecuteNonQuery();
-            }
-        }
-
-        private void ExecuteDeleteWhere(Where where)
-        {
-            using (SQLiteCommand command = new SQLiteCommand())
-            {
-                command.Connection = Connection;
-                command.CommandText = DeleteAllSql + where.Build(command);
-                BroadcastToListeners(command);
-
-                command.ExecuteNonQuery();
-            }
-        }
-
-        protected void ExecuteSql(string sql)
-        {
-            using (SQLiteCommand command = new SQLiteCommand(sql, Connection))
-            {
-                BroadcastToListeners(command);
-                command.ExecuteNonQuery();
-            }
-        }
+        #endregion
+        #endregion
     }
 }

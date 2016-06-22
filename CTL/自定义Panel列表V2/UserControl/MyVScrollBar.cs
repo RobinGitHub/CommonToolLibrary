@@ -120,11 +120,27 @@ namespace 自定义Panel列表V2
                         value.SizeChanged += tv_SizeChanged;
                         value.Click += tv_Click;
                 }
+                    else if (value.GetType() == typeof(RichTextBox))
+                    {
+                        value.MouseWheel += rtb_MouseWheel;
+                        value.SizeChanged += rtb_SizeChanged;
+                    }
             }
         }
         }
 
+        #region RichTextBox
+        void rtb_SizeChanged(object sender, EventArgs e)
+        {
+        }
         
+        void rtb_MouseWheel(object sender, MouseEventArgs e)
+        {
+            MoveThumbMouseWheel(e.Delta > 0);
+        } 
+        #endregion
+
+
         #endregion
         #region TreeView
         void tv_Click(object sender, EventArgs e)
@@ -143,6 +159,7 @@ namespace 自定义Panel列表V2
             //this.Value = 
         }
         #endregion
+
         #region Panel 的点击事件
 
         void dpc_Click(object sender, EventArgs e)

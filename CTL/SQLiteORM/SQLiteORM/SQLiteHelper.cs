@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SQLiteORM
 {
-    public class SQLiteHelper : DbConnection
+    internal sealed class SQLiteHelper : DbConnection
     {
         /// <summary>
         /// 执行SQL语句
@@ -161,6 +161,7 @@ namespace SQLiteORM
                         }
                         SQLiteDataAdapter adapter = new SQLiteDataAdapter(command);
                         DataTable data = new DataTable();
+                        data.TableName = "table1";
                         adapter.Fill(data);
                         return data;
                     }

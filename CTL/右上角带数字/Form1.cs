@@ -19,6 +19,9 @@ namespace 右上角带数字
         private void button1_Click(object sender, EventArgs e)
         {
             this.pictureBox1.Image = MessageNumberGraphics.GetMessageNumber(int.Parse(textBox1.Text));
+            this.pictureBox2.Image = MessageNumberGraphics.GetNumberBack(textBox1.Text.Length);
+            this.pictureBox3.Image = MessageNumberGraphics.GetNumberImage(int.Parse(textBox1.Text));
+            this.pictureBox4.Image = MessageNumberGraphics.GetSingleNumberImage(1);
             this.Invalidate();
         }
     }

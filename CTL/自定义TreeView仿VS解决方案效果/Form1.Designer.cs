@@ -34,9 +34,9 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.txtPos = new System.Windows.Forms.TextBox();
             this.treeViewEx1 = new 自定义TreeView仿VS解决方案效果.TreeViewEx();
             this.treeViewMenu = new 自定义TreeView仿VS解决方案效果.TreeViewEx();
-            this.txtPos = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnLoad
@@ -89,14 +89,23 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // txtPos
+            // 
+            this.txtPos.Location = new System.Drawing.Point(257, 84);
+            this.txtPos.Name = "txtPos";
+            this.txtPos.Size = new System.Drawing.Size(25, 21);
+            this.txtPos.TabIndex = 7;
+            // 
             // treeViewEx1
             // 
+            this.treeViewEx1.AllowDrop = true;
             this.treeViewEx1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.treeViewEx1.BottomLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(221)))), ((int)(((byte)(237)))), ((int)(((byte)(252)))));
             this.treeViewEx1.FullRowSelect = true;
             this.treeViewEx1.HideSelection = false;
             this.treeViewEx1.HorizontalScrollValue = 0;
+            this.treeViewEx1.HorizontalScrollVisible = false;
             this.treeViewEx1.HotTracking = true;
             this.treeViewEx1.ItemHeight = 40;
             this.treeViewEx1.Location = new System.Drawing.Point(0, 0);
@@ -109,6 +118,7 @@
             this.treeViewEx1.Size = new System.Drawing.Size(231, 336);
             this.treeViewEx1.TabIndex = 2;
             this.treeViewEx1.VerticalScrollValue = 0;
+            this.treeViewEx1.VerticalScrollVisible = false;
             // 
             // treeViewMenu
             // 
@@ -120,6 +130,7 @@
             this.treeViewMenu.FullRowSelect = true;
             this.treeViewMenu.HideSelection = false;
             this.treeViewMenu.HorizontalScrollValue = 0;
+            this.treeViewMenu.HorizontalScrollVisible = false;
             this.treeViewMenu.HotTracking = true;
             this.treeViewMenu.ItemHeight = 40;
             this.treeViewMenu.Location = new System.Drawing.Point(348, 0);
@@ -135,13 +146,7 @@
             this.treeViewMenu.Size = new System.Drawing.Size(253, 336);
             this.treeViewMenu.TabIndex = 0;
             this.treeViewMenu.VerticalScrollValue = 0;
-            // 
-            // txtPos
-            // 
-            this.txtPos.Location = new System.Drawing.Point(257, 84);
-            this.txtPos.Name = "txtPos";
-            this.txtPos.Size = new System.Drawing.Size(25, 21);
-            this.txtPos.TabIndex = 7;
+            this.treeViewMenu.VerticalScrollVisible = false;
             // 
             // Form1
             // 

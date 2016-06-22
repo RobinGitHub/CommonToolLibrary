@@ -6,9 +6,9 @@ using System.Text;
 namespace SQLiteORM.Demo.Model
 {
     [Table]
-    public class SimpleTable : TableBase<SimpleTable>
+    public class SimpleTable
     {
-        [PrimaryKey]
+        [PrimaryKey(true)]
         public long Id { get; set; }
 
         [Field]

@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class1.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -58,7 +59,6 @@
     <Compile Include="Model\NumberTable.cs" />
     <Compile Include="Model\ParamTable.cs" />
     <Compile Include="Model\SimpleTable.cs" />
-    <Compile Include="Model\TableBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -73,6 +73,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -85,6 +86,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SQLiteORMV1\SQLiteORMV1.csproj">
+      <Project>{49f8658b-8795-4498-bb30-f48f0e922477}</Project>
+      <Name>SQLiteORMV1</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SQLiteORM\SQLiteORM.csproj">
       <Project>{aeee7e70-7026-4e39-af53-bb1c410bd063}</Project>
       <Name>SQLiteORM</Name>
