@@ -45,11 +45,59 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseControls\ButtonEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\CheckBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\ComboBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\ContextMenuStripEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\DataGridViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\DateTimePickerEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\IntInput.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\LabelEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\PanelEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\PictureBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\RichTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BaseControls\TextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DataGridViewControl\下拉框\ComboBoxEditingControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DataGridViewControl\下拉框\ComboBoxColumn.cs" />
     <Compile Include="DataGridViewControl\下拉框\ComboBoxCell.cs" />
+    <Compile Include="SplitButton\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SplitButton\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SplitButton\UCSplitButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SplitButton\UCSplitButton.Designer.cs">
+      <DependentUpon>UCSplitButton.cs</DependentUpon>
+    </Compile>
     <Compile Include="自定义ComboBox\CustomComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -146,6 +194,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SplitButton\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SplitButton\UCSplitButton.resx">
+      <DependentUpon>UCSplitButton.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="自定义ComboBox\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -170,6 +224,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DataGridViewControl\ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{a449401f-9584-4744-b0f0-9c7e14dc33ff}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
