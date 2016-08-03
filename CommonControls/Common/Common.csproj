@@ -81,6 +81,7 @@
     <Compile Include="JSONHelper.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegExpHelper.cs" />
     <Compile Include="Win32API.cs" />
     <Compile Include="Win32APIEnums.cs" />
     <Compile Include="Win32APIStruct.cs" />
